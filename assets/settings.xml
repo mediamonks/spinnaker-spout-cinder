@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<spinnakerSpoutCinder>
+	<sendHeight>480</sendHeight>
+	<sendWidth>640</sendWidth>
+	<binning>2</binning>
+	<pixelFormat>BayerRG8</pixelFormat>
+</spinnakerSpoutCinder>
+
