@@ -45,9 +45,9 @@ class SpinnakerSpoutApp : public App {
 	void checkCameraStopped();
 	float lastCameraStartCheckTime = -100;
 
-	SurfaceRef surface;
 	int prevCaptureWidth = 0;
 	int prevCaptureHeight = 0;
+	gl::TextureRef texture;
 	gl::TextureRef getCameraTexture();
 
 	// -------- CINDER PARAM UI --------
@@ -307,6 +307,7 @@ gl::TextureRef SpinnakerSpoutApp::getCameraTexture() {
 		if (capturedImage->IsIncomplete())
 		{
 			console() << "Image incomplete with image status " << capturedImage->GetImageStatus() << "..." << endl;
+			capturedImage->Release();
 			droppedFrames++;
 		}
 		else
@@ -321,16 +322,15 @@ gl::TextureRef SpinnakerSpoutApp::getCameraTexture() {
 			}
 
 			ImagePtr convertedImage = capturedImage->Convert(PixelFormat_RGB8, NEAREST_NEIGHBOR); // Note that color processing algorithms other than NEAREST_NEIGHBOR are probably too slow for continous acquisition at high resolutions.
+			capturedImage->Release();
 
-			if (surface == NULL || surface->getWidth() != w || surface->getHeight() != h) {
-				surface = Surface::create(w, h, false, SurfaceChannelOrder::RGB);
+			if (texture == NULL || texture->getWidth() != w || texture->getHeight() != h) {
+				texture = gl::Texture2d::create(w, h);
 			}
 
-			memcpy(surface->getData(), convertedImage->GetData(), convertedImage->GetBufferSize());
-			return gl::Texture2d::create(*surface);
+			texture->update(convertedImage->GetData(), GL_RGB, GL_UNSIGNED_BYTE, 0, w, h);
+			return texture;
 		}
-
-		capturedImage->Release();
 	}
 	catch (Spinnaker::Exception &e)
 	{
