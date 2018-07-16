@@ -15,97 +15,91 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_INTERFACELIST_H
-#define PGR_SPINNAKER_INTERFACELIST_H
+#ifndef FLIR_SPINNAKER_INTERFACELIST_H
+#define FLIR_SPINNAKER_INTERFACELIST_H
 
-#include "SpinnakerPlatform.h"
-#include "SpinnakerDefs.h"
-#include "Interface.h"
-#include "InterfacePtr.h"
+#include "Interface/IInterfaceList.h"
 
 namespace Spinnaker
 {
-	/**
-	 * @defgroup SpinnakerClasses Spinnaker Classes
-	 */
+    /**
+     * @defgroup SpinnakerClasses Spinnaker Classes
+     */
 
-	/*@{*/
+    /*@{*/
 
-	/**
-	 * @defgroup InterfaceList_h InterfaceList Class
-	 */
+    /**
+     * @defgroup InterfaceList_h InterfaceList Class
+     */
 
-	/*@{*/
+    /*@{*/
 
     /**
     * @brief A list of the available interfaces on the system.
     */
 
-	class SPINNAKER_API InterfaceList
-	{
-	public:
+    class SPINNAKER_API InterfaceList : public IInterfaceList
+    {
+    public:
+        /*
+        * Default Constructor
+        */
+        InterfaceList(void);
 
-		/*
-		* Default Constructor
-		*/
-		InterfaceList(void);
+        /*
+        * Virtual Destructor
+        */
+        virtual ~InterfaceList(void);
 
-		/*
-		* Virtual Destructor
-		*/
-		virtual ~InterfaceList(void);
+        /*
+        * Copy Constructor
+        */
+        InterfaceList(const InterfaceList & iface);
 
-		/*
-		* Copy Constructor
-		*/
-		InterfaceList(const InterfaceList & iface);
-
-		/**
+        /**
          * Assignment operator.
          */
-		InterfaceList&	operator=( const InterfaceList& iface );
+        InterfaceList&	operator=( const InterfaceList& iface );
 
-		/**
-		 * Array subscription operators
-		 */
-		InterfacePtr operator[](int index);
+        /**
+         * Array subscription operators
+         */
+        InterfacePtr operator[](unsigned int index);
 
-		/**
+        /**
          * Returns the size of the interface list.  The size is the number
-		 * of Interface objects stored in the list.
+         * of Interface objects stored in the list.
          *
          * @return An integer that represents the list size.
          */
-		int GetSize() const;
+        unsigned int GetSize() const;
 
-		/**
+        /**
          * Returns a pointer to an Interface object at the "index".
          *
-		 * @param index The index at which to retrieve the Interface object
-		 *
+         * @param index The index at which to retrieve the Interface object
+         *
          * @return A pointer to an Interface object.
          */
-		InterfacePtr GetByIndex(int index) const;
+        InterfacePtr GetByIndex(unsigned int index) const;
 
-		/**
+        /**
          * Clears the list of interfaces and destroys their corresponding objects.
-		 * It is important to first make sure there are no referenced cameras still
-		 * in use before calling Clear().  If a camera on any of the interfaces is still
-		 * in use this function will throw an exception.
+         * It is important to first make sure there are no referenced cameras still
+         * in use before calling Clear().  If a camera on any of the interfaces is still
+         * in use this function will throw an exception.
          *
          */
-		void Clear();
+        void Clear();
 
+    protected:
+        friend class SystemImpl;
 
-	protected:
-		friend class SystemImpl;
-		struct InterfaceListData; // Forward declaration
-		InterfaceListData* m_pInterfaceListData;
-	};
+    };
 
-	/*@}*/
+    /*@}*/
 
-	/*@}*/
+    /*@}*/
 }
 
-#endif // PGR_SPINNAKER_INTERFACELIST_H
+#endif // FLIR_SPINNAKER_INTERFACELIST_H

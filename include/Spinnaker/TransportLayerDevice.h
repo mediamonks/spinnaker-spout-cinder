@@ -17,8 +17,8 @@
    
 /* Auto-generated file. Do not modify. */
 
-#ifndef PGR_SPINNAKER_TRANSPORTLAYERDEVICE_H
-#define PGR_SPINNAKER_TRANSPORTLAYERDEVICE_H
+#ifndef FLIR_SPINNAKER_TRANSPORTLAYERDEVICE_H
+#define FLIR_SPINNAKER_TRANSPORTLAYERDEVICE_H
 
 #include "SpinnakerPlatform.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
@@ -251,6 +251,7 @@ namespace Spinnaker
 
 	protected:
 		friend class CameraBase;
+		friend class ICameraBase;
 		friend class CameraInternal;
 
 	};
@@ -259,4 +260,4 @@ namespace Spinnaker
 	/*@}*/
 
 }
-#endif // PGR_SPINNAKER_TRANSPORTLAYERDEVICE_H
+#endif // FLIR_SPINNAKER_TRANSPORTLAYERDEVICE_H

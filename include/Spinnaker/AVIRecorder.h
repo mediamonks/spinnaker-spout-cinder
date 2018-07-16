@@ -15,31 +15,33 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_AVIRECORDER_H
-#define PGR_SPINNAKER_AVIRECORDER_H
+#ifndef FLIR_SPINNAKER_AVIRECORDER_H
+#define FLIR_SPINNAKER_AVIRECORDER_H
 
 #include "SpinnakerPlatform.h"
 #include "SpinnakerDefs.h"
 
 namespace Spinnaker
 {
-	class ImagePtr;
+    class ImagePtr;
 
-	/**
-	*  @defgroup SpinnakerClasses Spinnaker Classes
-	*/
-	/*@{*/
+    /**
+    *  @defgroup SpinnakerClasses Spinnaker Classes
+    */
+    /*@{*/
 
-	/**
-	*  @defgroup AVIRecorder_h AVI Recorder Class
-	*/
-	/*@{*/
-	
-	/**
-	* @brief Provides the functionality for the user to record images to an AVI file.
-	*/
-    
-    class SPINNAKER_API AVIRecorder
+    /**
+    *  @defgroup AVIRecorder_h AVI Recorder Class
+    */
+    /*@{*/
+
+    /**
+    * @brief Provides the functionality for the user to record images to an AVI file.
+    *
+    * NOTE: This class is deprecated and replaced by SpinVideo. Refer to SpinVideo.h instead.
+    */
+
+    class DEPRECATED_CLASS("AVIRecorder is deprecated, use SpinVideo instead.") SPINNAKER_API AVIRecorder
     {
     public:
 
@@ -77,7 +79,7 @@ namespace Spinnaker
          * @param pOption MJPEG options to apply to the AVI file.
          *
          * @see AVIClose()
-		 * @see MJPGOption
+         * @see MJPGOption
          *
          */
         virtual void AVIOpen(
@@ -85,7 +87,7 @@ namespace Spinnaker
             MJPGOption &  pOption );
 
 
-		 /**
+         /**
          * Open an H264 MP4 file in preparation for writing Images to disk.
          * The size of MP4 files is limited to 2GB. The filenames are
          * automatically generated using the filename specified.
@@ -94,7 +96,7 @@ namespace Spinnaker
          * @param pOption H264 options to apply to the MP4 file.
          *
          * @see AVIClose()
-		 * @see H264Option
+         * @see H264Option
          *
          */
         virtual void AVIOpen(
@@ -118,6 +120,18 @@ namespace Spinnaker
          */
         virtual void AVIClose( );
 
+        /**
+         * Set the maximum file size (in megabytes) of a AVI/MP4 file. A new AVI/MP4 file
+         * is created automatically when file size limit is reached. Setting
+         * a maximum size of 0 indicates no limit on file size.
+         *
+         * @param size The maximum AVI file size in MB.
+         *
+         * @see AVIAppend( ImagePtr pImage)
+         *
+         */
+        virtual void SetMaximumAVISize(unsigned int size);
+
     private:
 
         AVIRecorder( const AVIRecorder& );
@@ -128,9 +142,9 @@ namespace Spinnaker
         AVIRecorderData* m_pAVIRecorderData;
     };
 
-	/*@}*/
+    /*@}*/
 
     /*@}*/
 }
 
-#endif //PGR_FC2_AVIRECORDER_H
+#endif // FLIR_SPINNAKER_AVIRECORDER_H

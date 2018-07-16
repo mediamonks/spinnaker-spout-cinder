@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright © 2018 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -15,8 +15,8 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_PLATFORM_C_H
-#define PGR_SPINNAKER_PLATFORM_C_H
+#ifndef FLIR_SPINNAKER_PLATFORM_C_H
+#define FLIR_SPINNAKER_PLATFORM_C_H
 
 #if defined(_WIN32) || defined(_WIN64)
 
@@ -92,7 +92,24 @@ typedef __int64	int64_t;
 #error Unknown platform, file needs adaptation
 #endif
 
+// Helper to deprecate functions and methods
+// For C++14
+#if __cplusplus >= 201402L
+	#if defined(__has_cpp_attribute)
+		#if __has_cpp_attribute(deprecated)
+			#define SPINNAKERC_API_DEPRECATED(msg, func) [[deprecated(msg)]] SPINC_IMPORT_EXPORT spinError SPINC_CALLTYPE func
+		#endif
+	#endif
+// For other C++ versions
+#else
+	#ifdef __GNUC__
+		#define SPINNAKERC_API_DEPRECATED(msg, func) SPINC_IMPORT_EXPORT spinError SPINC_CALLTYPE func __attribute__ ((deprecated(msg)))
+	#elif defined(_MSC_VER)
+		#define SPINNAKERC_API_DEPRECATED(msg, func) __declspec(deprecated(msg)) SPINC_IMPORT_EXPORT spinError SPINC_CALLTYPE func
+	#endif
+#endif
+
 /* C API Interface Functions */
 #define SPINNAKERC_API SPINC_IMPORT_EXPORT spinError SPINC_CALLTYPE
 
-#endif //PGR_SPINNAKER_PLATFORM_C_H
+#endif // FLIR_SPINNAKER_PLATFORM_C_H

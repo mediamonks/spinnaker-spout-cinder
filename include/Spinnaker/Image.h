@@ -15,15 +15,10 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_IMAGE_H
-#define PGR_SPINNAKER_IMAGE_H
+#ifndef FLIR_SPINNAKER_IMAGE_H
+#define FLIR_SPINNAKER_IMAGE_H
 
-#include "SpinGenApi/GCTypes.h"
-#include "SpinGenApi/GCString.h"
-#include "SpinnakerPlatform.h"
-#include "CameraDefs.h"
-#include "SpinnakerDefs.h"
-#include "ChunkData.h"
+#include "Interface/IImage.h"
 
 namespace Spinnaker
 {
@@ -45,7 +40,7 @@ namespace Spinnaker
      * @brief The image object class.
      */
 
-    class SPINNAKER_API Image
+    class SPINNAKER_API Image: public IImage
     {
     friend class IDataStream;
     friend class Stream;
@@ -93,8 +88,7 @@ namespace Spinnaker
          * @see GetDefaultColorProcessing()
          *
          */
-        static void SetDefaultColorProcessing(
-            ColorProcessingAlgorithm defaultMethod );
+        static void SetDefaultColorProcessing(ColorProcessingAlgorithm defaultMethod);
 
         /**
          * Gets the default color processing algorithm.
@@ -139,7 +133,7 @@ namespace Spinnaker
          * @param pixelFormat Pixel format to set.
          *
          */
-        void ResetImage(size_t width, size_t height, size_t offsetX, size_t offsetY, Spinnaker::PixelFormatEnums pixelFormat );
+        void ResetImage(size_t width, size_t height, size_t offsetX, size_t offsetY, Spinnaker::PixelFormatEnums pixelFormat);
 
         /**
          * Sets new dimensions of the image object.
@@ -152,7 +146,7 @@ namespace Spinnaker
          * @param pData Pointer to the image buffer.
          *
          */
-        void ResetImage(size_t width, size_t height, size_t offsetX, size_t offsetY, Spinnaker::PixelFormatEnums pixelFormat, void* pData );
+        void ResetImage(size_t width, size_t height, size_t offsetX, size_t offsetY, Spinnaker::PixelFormatEnums pixelFormat, void* pData);
 
         /*
         * Releases an image that was acquired by calling camera->GetNextImage().
@@ -335,7 +329,7 @@ namespace Spinnaker
          *
          * @return Transport Layer specific pixel format.
          */
-        uint64_t    GetTLPixelFormat() const;
+        uint64_t GetTLPixelFormat() const;
 
         /**
          * Returns an enum value that represents the namespace in which this
@@ -346,7 +340,7 @@ namespace Spinnaker
          *
          * @return enum value representing the PixelFormatNamespace.
          */
-        PixelFormatNamespaceID  GetTLPixelFormatNamespace() const;
+        PixelFormatNamespaceID GetTLPixelFormatNamespace() const;
 
         /**
          * Returns a string value that represents this image's pixel format. The string
@@ -355,7 +349,7 @@ namespace Spinnaker
          *
          * @return string value representing the PixelFormat.
          */
-        GenICam::gcstring   GetPixelFormatName() const;
+        GenICam::gcstring GetPixelFormatName() const;
 
         /**
          * Returns an enum value that represents the pixel format of this image.
@@ -384,7 +378,7 @@ namespace Spinnaker
          *
          * @return Returns true if image is incomplete, false otherwise.
          */
-        bool    IsIncomplete() const;
+        bool IsIncomplete() const;
 
         /**
          * Returns the size of valid data in the image payload.  This is the actual amount
@@ -395,21 +389,21 @@ namespace Spinnaker
          *
          * @return size_t value representing valid payload.
          */
-        size_t      GetValidPayloadSize() const;
+        size_t GetValidPayloadSize() const;
 
         /**
         * Returns the id of the chunk data layout.
         *
         * @return uint64_t value representing the id of the chunk data layout.
         */
-        uint64_t    GetChunkLayoutId() const;
+        uint64_t GetChunkLayoutId() const;
 
         /**
         * Gets the time stamp for the image in nanoseconds.
         *
         * @return The time stamp of the image.
         */
-        uint64_t    GetTimeStamp() const;
+        uint64_t GetTimeStamp() const;
 
         /**
          * Saves the image to the specified file name with the file format
@@ -419,7 +413,7 @@ namespace Spinnaker
          * @param format File format to save in.
          *
          */
-        void    Save(const char* pFilename, ImageFileFormat format = FROM_FILE_EXT );
+        void Save(const char* pFilename, ImageFileFormat format = FROM_FILE_EXT);
 
         /**
          * Saves the image to the specified file name with the options specified.
@@ -428,7 +422,7 @@ namespace Spinnaker
          * @param pOption Options to use while saving image.
          *
          */
-        void    Save(const char* pFilename, PNGOption & pOption );
+        void Save(const char* pFilename, PNGOption & pOption);
 
         /**
          * Saves the image to the specified file name with the options specified.
@@ -437,7 +431,7 @@ namespace Spinnaker
          * @param pOption Options to use while saving image.
          *
          */
-        void    Save(const char* pFilename, PPMOption & pOption );
+        void Save(const char* pFilename, PPMOption & pOption);
 
         /**
          * Saves the image to the specified file name with the options specified.
@@ -446,7 +440,7 @@ namespace Spinnaker
          * @param pOption Options to use while saving image.
          *
          */
-        void    Save(const char* pFilename, PGMOption & pOption );
+        void Save(const char* pFilename, PGMOption & pOption);
 
         /**
          * Saves the image to the specified file name with the options specified.
@@ -455,7 +449,7 @@ namespace Spinnaker
          * @param pOption Options to use while saving image.
          *
          */
-        void    Save(const char* pFilename, TIFFOption & pOption );
+        void Save(const char* pFilename, TIFFOption & pOption);
 
         /**
          * Saves the image to the specified file name with the options specified.
@@ -464,7 +458,7 @@ namespace Spinnaker
          * @param pOption Options to use while saving image.
          *
          */
-        void    Save(const char* pFilename, JPEGOption & pOption );
+        void Save(const char* pFilename, JPEGOption & pOption);
 
         /**
          * Saves the image to the specified file name with the options specified.
@@ -473,7 +467,7 @@ namespace Spinnaker
          * @param pOption Options to use while saving image.
          *
          */
-        void    Save(const char* pFilename, JPG2Option & pOption );
+        void Save(const char* pFilename, JPG2Option & pOption);
 
         /**
          * Saves the image to the specified file name with the options specified.
@@ -482,7 +476,7 @@ namespace Spinnaker
          * @param pOption Options to use while saving image.
          *
          */
-        void    Save(const char* pFilename, BMPOption & pOption );
+        void Save(const char* pFilename, BMPOption & pOption);
 
 
         /**
@@ -500,7 +494,7 @@ namespace Spinnaker
         *
         * @param pStatistics The statistics of an image.
         */
-        void    CalculateStatistics(ImageStatistics& pStatistics);
+        void CalculateStatistics(ImageStatistics& pStatistics);
 
         /**
         * Checks if the image contains ImageCRC checksum from chunk data
@@ -535,7 +529,7 @@ namespace Spinnaker
         *
         * @return Returns whether image has any data integrity issues.
         */
-        ImageStatus GetImageStatus()  const;
+        ImageStatus GetImageStatus() const;
 
         /**
         * Returns a string describing the meaning of the status enum
@@ -559,7 +553,6 @@ namespace Spinnaker
         ImagePtr CreateShared() const;
         void DeepCopy(const Image & pSrcImage);
         void Convert(Spinnaker::PixelFormatEnums format, Image & pDestImage, ColorProcessingAlgorithm algorithm = DEFAULT) const;
-
     };
 
     /*@}*/
@@ -567,4 +560,4 @@ namespace Spinnaker
     /*@}*/
 }
 
-#endif // PGR_SPINNAKER_IMAGE_H
+#endif // FLIR_SPINNAKER_IMAGE_H

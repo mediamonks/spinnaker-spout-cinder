@@ -57,6 +57,8 @@
 // This is a portability warning
 #pragma warning( disable : 4312 )
 
+// MacOS doesn't like us redefining standard namespace
+#if !defined ( __APPLE__ )
 namespace std
 {
     /**
@@ -70,6 +72,7 @@ namespace std
 
     /*@}*/
 }
+#endif
 
 
 namespace Spinnaker

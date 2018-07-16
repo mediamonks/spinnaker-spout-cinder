@@ -14,74 +14,74 @@
 // SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
-#ifndef PGR_SPINNAKER_SYSTEM_H
-#define PGR_SPINNAKER_SYSTEM_H
 
-#include "SpinnakerPlatform.h"
-#include "SpinnakerDefs.h"
-#include "InterfaceList.h"
-#include "CameraList.h"
-#include "LoggingEvent.h"
+#ifndef FLIR_SPINNAKER_SYSTEM_H
+#define FLIR_SPINNAKER_SYSTEM_H
+
+#include "Interface/ISystem.h"
 
 namespace Spinnaker
 {
-	// Forward declaration of implementation class
-	class SystemImpl;
-	class SystemPtr;
-	class LoggingEvent;
+    // Forward declaration of implementation class
+    class SystemImpl;
+    class SystemPtr;
+    class LoggingEvent;
 
-	/**
-	 * @defgroup SpinnakerClasses Spinnaker Classes
-	 */
-	/*@{*/
+#define	FLIR_SPINNAKER_VERSION_MAJOR 1
+#define FLIR_SPINNAKER_VERSION_MINOR 13
+#define	FLIR_SPINNAKER_VERSION_TYPE 0
+#define	FLIR_SPINNAKER_VERSION_BUILD 33
+    /**
+     * @defgroup SpinnakerClasses Spinnaker Classes
+     */
+    /*@{*/
 
-	/**
-	 * @defgroup System_h System Class
-	 */
-	/*@{*/
+    /**
+     * @defgroup System_h System Class
+     */
+    /*@{*/
 
     /**
     * @brief The system object is used to retrieve the list of interfaces and cameras available.
     */
 
-    class SPINNAKER_API System
+    class SPINNAKER_API System: public ISystem
     {
     public:
 
-
-		/**
+        /**
          * Returns a pointer to a Singleton instance of a System object.
-		 * The System object may be used to get cameras or interfaces.
-		 * When an application is done using the cameras it is necessary
-		 * to free the System by calling ReleaseInstance().
-		 *
-		 * @see ReleaseInstance()
+         * The System object may be used to get cameras or interfaces.
+         * When an application is done using the cameras it is necessary
+         * to free the System by calling ReleaseInstance().
+         *
+         * @see ReleaseInstance()
          *
          * @return A const ref to a system object.
          */
-		static SystemPtr GetInstance();
+        static SystemPtr GetInstance();
 
         /**
         * Default destructor.
         */
         virtual ~System();
 
-		/**
+        /**
          * This call releases the instance of the System Singleton for
-		 * this process.  After successfully releasing the System instance
-		 * the pointer returned by GetInstance() will be invalid.  Calling
-		 * ReleaseInstance while a camera reference is still held will throw
-		 * an error of type SPINNAKER_ERR_RESOURCE_IN_USE.
-		 *
+         * this process.  After successfully releasing the System instance
+         * the pointer returned by GetInstance() will be invalid.  Calling
+         * ReleaseInstance while a camera reference is still held will throw
+         * an error of type SPINNAKER_ERR_RESOURCE_IN_USE.
+         *
          * @see Error
-		 * @see GetInstance()
+         * @see GetInstance()
          *
          */
-		void ReleaseInstance();
+        void ReleaseInstance();
 
-		/**
+        /**
          * Returns a list of interfaces available on the system.  This call
-		 * returns GigE and Usb2 and Usb3 interfaces.
+         * returns GigE and Usb2 and Usb3 interfaces.
          *
          * @param updateInterface Determines whether or not UpdateInterfaceList() is called before getting available interfaces
          *
@@ -89,18 +89,18 @@ namespace Spinnaker
          */
         InterfaceList GetInterfaces(bool updateInterface = true);
 
-		/**
+        /**
          * Returns a list of cameras that are available on the system.  This call
-		 * returns both GigE Vision and Usb3 Vision cameras from all interfaces.
-		 * The camera list object will reference count the cameras it returns.  It
-		 * is important that the camera list is destroyed or is cleared before calling
-		 * system->ReleaseInstance() or else the call to system->ReleaseInstance() 
+         * returns both GigE Vision and Usb3 Vision cameras from all interfaces.
+         * The camera list object will reference count the cameras it returns.  It
+         * is important that the camera list is destroyed or is cleared before calling
+         * system->ReleaseInstance() or else the call to system->ReleaseInstance() 
          * will result in an error message thrown that a reference to the camera 
          * is still held.
-		 *
-		 * @see ReleaseInstance()
-		 *
-		 * @see CameraList::Clear()
+         *
+         * @see ReleaseInstance()
+         *
+         * @see CameraList::Clear()
          *
          * @param updateInterfaces Determines whether or not updateInterfaceList() is called before getting cameras 
          *                         from available interfaces on the system
@@ -115,10 +115,10 @@ namespace Spinnaker
         /**
          * Updates the list of cameras on the system.  Note that System::GetCameras() 
          * internally calls UpdateCameras() for each interface it enumerates.  If the list
-		 * changed between this call and the last time UpdateCameras was called then the return
-		 * value will be true, otherwise it is false.
-		 *	
-		 * @see GetCameras()
+         * changed between this call and the last time UpdateCameras was called then the return
+         * value will be true, otherwise it is false.
+         *	
+         * @see GetCameras()
          *
          * @param updateInterfaces Determines whether or not UpdateInterfaceList() is called before updating cameras
          *                         for available interfaces on the system
@@ -143,101 +143,108 @@ namespace Spinnaker
         */
         void UnregisterInterfaceEvent(Event & evtToUnregister);
 
-		 /**
+         /**
          * Registers a logging event.
          *
          * @param handler The logging event handler to register
          */
-		void RegisterLoggingEvent(LoggingEvent & handler);
+        void RegisterLoggingEvent(LoggingEvent & handler);
 
-		/**
+        /**
          * Unregisters all previously registered logging events.
          *
          */
-		void UnregisterAllLoggingEvent();
+        void UnregisterAllLoggingEvent();
 
-		/**
+        /**
          * Unregisters a logging event.
          *
          * @param handler The logging event handler to unregister
          */
-		void UnregisterLoggingEvent(LoggingEvent & handler);
+        void UnregisterLoggingEvent(LoggingEvent & handler);
 
-		/**
+        /**
          * Sets a threshold priority level for logging event. Logging events
-		 * below such level will not trigger callbacks.
-		 *
-		 * Spinnaker uses five levels of logging:
-		 *	- Error		- failures that are non-recoverable without user intervention.
-		 *	- Warning	- failures that are recoverable without user intervention.
-		 *	- Notice	- information about events such as camera arrival and removal, initialization and deinitialization, starting and stopping image acquisition, and feature modification.
-		 *	- Info		- information about recurring events that are generated regularly such as information on individual images.
-		 *	- Debug		- information that can be used to troubleshoot the system.
-		 *
+         * below such level will not trigger callbacks.
+         *
+         * Spinnaker uses five levels of logging:
+         *	- Error		- failures that are non-recoverable without user intervention.
+         *	- Warning	- failures that are recoverable without user intervention.
+         *	- Notice	- information about events such as camera arrival and removal, initialization and deinitialization, starting and stopping image acquisition, and feature modification.
+         *	- Info		- information about recurring events that are generated regularly such as information on individual images.
+         *	- Debug		- information that can be used to troubleshoot the system.
+         *
          *
          * @see SpinnakerLogLevel 
          *
          * @param level The threshold level
          */
-		void SetLoggingEventPriorityLevel(SpinnakerLogLevel level);
+        void SetLoggingEventPriorityLevel(SpinnakerLogLevel level);
 
-		/**
+        /**
          * Retrieves the current logging event priority level.
          *
-		 * Spinnaker uses five levels of logging:
-		 *	- Error		- failures that are non-recoverable without user intervention.
-		 *	- Warning	- failures that are recoverable without user intervention.
-		 *	- Notice	- information about events such as camera arrival and removal, initialization and deinitialization, starting and stopping image acquisition, and feature modification.
-		 *	- Info		- information about recurring events that are generated regularly such as information on individual images.
-		 *	- Debug		- information that can be used to troubleshoot the system.
-		 *
+         * Spinnaker uses five levels of logging:
+         *	- Error		- failures that are non-recoverable without user intervention.
+         *	- Warning	- failures that are recoverable without user intervention.
+         *	- Notice	- information about events such as camera arrival and removal, initialization and deinitialization, starting and stopping image acquisition, and feature modification.
+         *	- Info		- information about recurring events that are generated regularly such as information on individual images.
+         *	- Debug		- information that can be used to troubleshoot the system.
+         *
          * @see SpinnakerLogLevel 
          *
          * @return Level The threshold level
          */
-		SpinnakerLogLevel GetLoggingEventPriorityLevel();
+        SpinnakerLogLevel GetLoggingEventPriorityLevel();
 
-		/**
+        /**
          * Checks if the system is in use by any interface or camera objects.
          *
-		 * @return Returns true if the system is in use and false otherwise.
+         * @return Returns true if the system is in use and false otherwise.
          */
-		bool IsInUse();
+        bool IsInUse();
 
-		/**
-		* Broadcast an Action Command to all devices on system
-		*
-		* @param deviceKey The Action Command's device key
-		* @param groupKey The Action Command's group key
-		* @param groupMask The Action Command's group mask
-		* @param actionTime (Optional) Time when to assert a future action. Zero means immediate action.
-		* @param pResultSize (Optional) The number of results in the results array. The value passed should be equal to the expected number of devices that acknowledge the command. Returns the number of received results.
-		* @param results (Optional) An Array with *pResultSize elements to hold the action command result status. The buffer is filled starting from index 0. If received results are less than expected number of devices that acknowledge the command, remaining results are not changed. If received results are more than expected number of devices that acknowledge the command, extra results are ignored and not appended to array. This parameter is ignored if pResultSize is 0. Thus this parameter can be NULL if pResultSize is 0 or NULL.
-		*
-		*/
-		void SendActionCommand(unsigned int deviceKey, unsigned int groupKey, unsigned int groupMask, unsigned long long actionTime = 0, unsigned int* pResultSize = 0, ActionCommandResult results[] = NULL);
+        /**
+        * Broadcast an Action Command to all devices on system
+        *
+        * @param deviceKey The Action Command's device key
+        * @param groupKey The Action Command's group key
+        * @param groupMask The Action Command's group mask
+        * @param actionTime (Optional) Time when to assert a future action. Zero means immediate action.
+        * @param pResultSize (Optional) The number of results in the results array. The value passed should be equal to the expected number of devices that acknowledge the command. Returns the number of received results.
+        * @param results (Optional) An Array with *pResultSize elements to hold the action command result status. The buffer is filled starting from index 0. If received results are less than expected number of devices that acknowledge the command, remaining results are not changed. If received results are more than expected number of devices that acknowledge the command, extra results are ignored and not appended to array. This parameter is ignored if pResultSize is 0. Thus this parameter can be NULL if pResultSize is 0 or NULL.
+        *
+        */
+        void SendActionCommand(unsigned int deviceKey, unsigned int groupKey, unsigned int groupMask, unsigned long long actionTime = 0, unsigned int* pResultSize = 0, ActionCommandResult results[] = NULL);
+
+        /**
+         * Get current library version of Spinnaker.
+         * 
+         * @return A struct containing the current version of Spinnaker (major, minor, type, build).
+         */
+        const LibraryVersion GetLibraryVersion(void);
 
     private:
 
-		 /**
+         /**
          * Default constructor.
          */
         System();
 
-		/**
+        /**
          * Copy constructor.
          */
-		System( const System& );
+        System( const System& );
 
-		/**
+        /**
          * Assignment operator.
          */
-		System& operator=( const System& );
+        System& operator=( const System& );
     };
 
-	/*@}*/
+    /*@}*/
 
-	/*@}*/
+    /*@}*/
 }
 
-#endif // PGR_SPINNAKER_SYSTEM_H
+#endif // FLIR_SPINNAKER_SYSTEM_H

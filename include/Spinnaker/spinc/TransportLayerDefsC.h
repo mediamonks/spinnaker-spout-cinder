@@ -17,8 +17,8 @@
    
 /* Auto-generated file. Do not modify. */
 
-#ifndef PGR_SPINNAKERC_TRANSPORTLAYERDEFSC_H
-#define PGR_SPINNAKERC_TRANSPORTLAYERDEFSC_H
+#ifndef FLIR_SPINNAKERC_TRANSPORTLAYERDEFSC_H
+#define FLIR_SPINNAKERC_TRANSPORTLAYERDEFSC_H
 
 /**
 * @defgroup CQuickSpin Spinnaker C QuickSpin API
@@ -50,19 +50,27 @@ typedef enum _spinTLStreamTypeEnums	/*!< Stream type of the device.*/
 	NUMSTREAMTYPE
 } spinTLStreamTypeEnums;
 
-typedef enum _spinTLStreamDefaultBufferCountModeEnums	/*!< Controls the number of buffers used for the stream.*/
+typedef enum _spinTLStreamDefaultBufferCountModeEnums	/*!< DEPRECATED; Replaced by StreamBufferCountMode. Controls access to setting the number of buffers used for the stream. Locked to Manual mode on 32-bit Windows due to memory constraints.*/
 {
-	StreamDefaultBufferCountMode_Manual,/*!< Controls the number of buffers used for the stream.*/
-	StreamDefaultBufferCountMode_Auto,/*!< The number of buffers used for the stream is automatically calculated based on the device bandwidth.*/
+	StreamDefaultBufferCountMode_Manual,/*!< DEPRECATED. The number of buffers used for the stream are set by the user.*/
+	StreamDefaultBufferCountMode_Auto,/*!< DEPRECATED. The number of buffers used for the stream is automatically calculated.*/
 	NUMSTREAMDEFAULTBUFFERCOUNTMODE
 } spinTLStreamDefaultBufferCountModeEnums;
+
+typedef enum _spinTLStreamBufferCountModeEnums	/*!< Controls access to setting the number of buffers used for the stream. Locked to Manual mode on 32-bit Windows due to memory constraints.*/
+{
+	StreamBufferCountMode_Manual,/*!< The number of buffers used for the stream are set by the user.*/
+	StreamBufferCountMode_Auto,/*!< The number of buffers used for the stream is automatically calculated based on the device frame rate.*/
+	NUMSTREAMBUFFERCOUNTMODE
+} spinTLStreamBufferCountModeEnums;
 
 typedef enum _spinTLStreamBufferHandlingModeEnums	/*!< Available buffer handling modes of this data stream:*/
 {
 	StreamBufferHandlingMode_OldestFirst,/*!< The application always gets the buffer from the head of the output buffer queue (thus, the oldest available one). If the output buffer queue is empty, the application waits for a newly acquired buffer until the timeout expires.*/
 	StreamBufferHandlingMode_OldestFirstOverwrite,/*!< The application always gets the buffer from the head of the output buffer queue (thus, the oldest available one). If the output buffer queue is empty, the application waits for a newly acquired buffer until the timeout expires. If a new buffer arrives it will overwrite the existing buffer from the head of the queue (behaves like a circular buffer).*/
 	StreamBufferHandlingMode_NewestFirst,/*!< The application always gets the buffer from the tail of the output buffer queue (thus, the newest available one). If the output buffer queue is empty, the application waits for a newly acquired buffer until the timeout expires.*/
-	StreamBufferHandlingMode_NewestFirstOverwrite,/*!< The application always gets the buffer from the tail of the output buffer queue (thus, the newest available one). If the output buffer queue is empty, the application waits for a newly acquired buffer until the timeout expires. If a new buffer arrives it will overwrite the existing buffer from the tail of the queue.*/
+	StreamBufferHandlingMode_NewestFirstOverwrite,/*!< DEPRECATED.  This is replaced by NewestOnly.*/
+	StreamBufferHandlingMode_NewestOnly,/*!< The application always gets the latest completed buffer (the newest one).  If the Output Buffer Queue is empty, the application waits for a newly acquired buffer until the timeout expires.  This buffer handling mode is typically used in a live display GUI where it is important that there is no lag between camera and display.*/
 	NUMSTREAMBUFFERHANDLINGMODE
 } spinTLStreamBufferHandlingModeEnums;
 
@@ -142,4 +150,4 @@ typedef enum _spinTLPOEStatusEnums	/*!< Reports and controls the interface's pow
 
 /*@}*/
 
-#endif // PGR_SPINNAKER_TRANSPORTLAYERDEFSC_H
+#endif // FLIR_SPINNAKER_TRANSPORTLAYERDEFSC_H

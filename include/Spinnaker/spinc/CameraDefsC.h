@@ -37,63 +37,34 @@
 *@brief The enum definitions for camera nodes.
 */
 
-typedef enum _spinExposureModeEnums    /*!< Sets the operation mode of the Exposure.*/
+typedef enum _spinLUTSelectorEnums    /*!< 
+      Selects which LUT to control.
+    */
 {
-    ExposureMode_Timed,    /*!< Timed exposure. The exposure time is set using the ExposureTime or ExposureAuto features and the exposure starts with the FrameStart or LineStart.*/
-    ExposureMode_TriggerWidth,    /*!< Uses the width of the current Frame trigger signal pulse to control the exposure time.*/
+    LUTSelector_LUT1,    /*!< 
+        This LUT is for re-mapping pixels of all formats 
+        (mono, Bayer, red, green and blue).
+      */
+    NUM_LUTSELECTOR
+} spinLUTSelectorEnums;
+
+typedef enum _spinExposureModeEnums    /*!< 
+      Sets the operation mode of the Exposure.
+    */
+{
+    ExposureMode_Timed,    /*!< 
+        Timed exposure. The exposure time is set using the 
+        ExposureTime or ExposureAuto features and the exposure starts with the
+        FrameStart or LineStart.
+      */
+    ExposureMode_TriggerWidth,    /*!< 
+        Uses the width of the current Frame trigger signal pulse to control the
+        exposure time.
+      */
     NUM_EXPOSUREMODE
 } spinExposureModeEnums;
 
-typedef enum _spinSensorShutterModeEnums    /*!< Sets the shutter mode of the device.*/
-{
-    SensorShutterMode_Global,    /*!< The shutter opens and closes at the same time for all pixels. All the pixels are exposed for the same length of time at the same time.*/
-    SensorShutterMode_Rolling,    /*!< The shutter opens and closes sequentially for groups (typically lines) of pixels. All the pixels are exposed for the same length of time but not at the same time.*/
-    SensorShutterMode_GlobalReset,    /*!< The shutter opens at the same time for all pixels but ends in a sequential manner. The pixels are exposed for different lengths of time.*/
-    NUM_SENSORSHUTTERMODE
-} spinSensorShutterModeEnums;
-
-typedef enum _spinTriggerOverlapEnums    /*!< Specifies the overlap mode of the trigger.*/
-{
-    TriggerOverlap_Off,    /*!< */
-    TriggerOverlap_ReadOut,    /*!< */
-    TriggerOverlap_PreviousFrame,    /*!< */
-    NUM_TRIGGEROVERLAP
-} spinTriggerOverlapEnums;
-
-typedef enum _spinTriggerActivationEnums    /*!< Specifies the activation mode of the trigger.*/
-{
-    TriggerActivation_LevelLow,    /*!< */
-    TriggerActivation_LevelHigh,    /*!< */
-    TriggerActivation_FallingEdge,    /*!< */
-    TriggerActivation_RisingEdge,    /*!< */
-    TriggerActivation_AnyEdge,    /*!< */
-    NUM_TRIGGERACTIVATION
-} spinTriggerActivationEnums;
-
-typedef enum _spinTriggerModeEnums    /*!< Controls whether or not trigger is active.*/
-{
-    TriggerMode_Off,    /*!< */
-    TriggerMode_On,    /*!< */
-    NUM_TRIGGERMODE
-} spinTriggerModeEnums;
-
-typedef enum _spinExposureAutoEnums    /*!< Sets the automatic exposure mode*/
-{
-    ExposureAuto_Off,    /*!< Exposure time is manually controlled using ExposureTime*/
-    ExposureAuto_Once,    /*!< Exposure time is adapted once by the device. Once it has converged, it returns to the Off state.*/
-    ExposureAuto_Continuous,    /*!< Exposure time is constantly adapted by the device to maximize the dynamic range.*/
-    NUM_EXPOSUREAUTO
-} spinExposureAutoEnums;
-
-typedef enum _spinTriggerSelectorEnums    /*!< Selects the type of trigger to configure.*/
-{
-    TriggerSelector_AcquisitionStart,    /*!< */
-    TriggerSelector_FrameStart,    /*!< */
-    TriggerSelector_FrameBurstStart,    /*!< */
-    NUM_TRIGGERSELECTOR
-} spinTriggerSelectorEnums;
-
-typedef enum _spinAcquisitionModeEnums    /*!< Sets the acquisition mode of the device. Continuous: acquires images continuously. Multi Frame: acquires a specified number of images before stopping acquisition. Single Frame: acquires 1 image before stopping acquisition.*/
+typedef enum _spinAcquisitionModeEnums    /*!< Sets the acquisition mode of the device. Continuous: acquires images continuously. Multi Frame: acquires a specified number of images before stopping acquisition. Single Frame: acquires 1 image before stopping acquisition. */
 {
     AcquisitionMode_Continuous,    /*!< */
     AcquisitionMode_SingleFrame,    /*!< */
@@ -101,7 +72,10 @@ typedef enum _spinAcquisitionModeEnums    /*!< Sets the acquisition mode of the 
     NUM_ACQUISITIONMODE
 } spinAcquisitionModeEnums;
 
-typedef enum _spinTriggerSourceEnums    /*!< Specifies the internal signal or physical input line to use as the trigger source.*/
+typedef enum _spinTriggerSourceEnums    /*!< 
+      Specifies the internal signal or physical input line to use as the 
+      trigger source. 
+    */
 {
     TriggerSource_Software,    /*!< */
     TriggerSource_Line0,    /*!< */
@@ -122,93 +96,88 @@ typedef enum _spinTriggerSourceEnums    /*!< Specifies the internal signal or ph
     NUM_TRIGGERSOURCE
 } spinTriggerSourceEnums;
 
-typedef enum _spinDeviceCharacterSetEnums    /*!< Character set used by the strings of the device`s bootstrap registers.*/
+typedef enum _spinTriggerActivationEnums    /*!< Specifies the activation mode of the trigger.*/
 {
-    DeviceCharacterSet_UTF8,    /*!< */
-    DeviceCharacterSet_ASCII,    /*!< */
-    NUM_DEVICECHARACTERSET
-} spinDeviceCharacterSetEnums;
+    TriggerActivation_LevelLow,    /*!< */
+    TriggerActivation_LevelHigh,    /*!< */
+    TriggerActivation_FallingEdge,    /*!< */
+    TriggerActivation_RisingEdge,    /*!< */
+    TriggerActivation_AnyEdge,    /*!< */
+    NUM_TRIGGERACTIVATION
+} spinTriggerActivationEnums;
 
-typedef enum _spinDeviceScanTypeEnums    /*!< Scan type of the sensor of the device.*/
+typedef enum _spinSensorShutterModeEnums    /*!< Sets the shutter mode of the device.*/
 {
-    DeviceScanType_Areascan,    /*!< */
-    NUM_DEVICESCANTYPE
-} spinDeviceScanTypeEnums;
+    SensorShutterMode_Global,    /*!< 
+        The shutter opens and closes at the same time for all pixels.
+        All the pixels are exposed for the same length of time at the same time.
+      */
+    SensorShutterMode_Rolling,    /*!< 
+        The shutter opens and closes sequentially for groups (typically lines) of pixels.
+        All the pixels are exposed for the same length of time but not at the same time.
+      */
+    SensorShutterMode_GlobalReset,    /*!< 
+        The shutter opens at the same time for all pixels but ends in a sequential manner.
+        The pixels are exposed for different lengths of time.
+      */
+    NUM_SENSORSHUTTERMODE
+} spinSensorShutterModeEnums;
 
-typedef enum _spinDeviceTLTypeEnums    /*!< Transport Layer type of the device.*/
+typedef enum _spinTriggerModeEnums    /*!< 
+      Controls whether or not trigger is active.
+    */
 {
-    DeviceTLType_GigEVision,    /*!< */
-    DeviceTLType_CameraLink,    /*!< */
-    DeviceTLType_CameraLinkHS,    /*!< */
-    DeviceTLType_CoaXPress,    /*!< */
-    DeviceTLType_USB3Vision,    /*!< */
-    DeviceTLType_Custom,    /*!< */
-    NUM_DEVICETLTYPE
-} spinDeviceTLTypeEnums;
+    TriggerMode_Off,    /*!< */
+    TriggerMode_On,    /*!< */
+    NUM_TRIGGERMODE
+} spinTriggerModeEnums;
 
-typedef enum _spinDevicePowerSupplySelectorEnums    /*!< Selects the power supply source to control or read.*/
+typedef enum _spinTriggerOverlapEnums    /*!< Specifies the overlap mode of the trigger.*/
 {
-    DevicePowerSupplySelector_External,    /*!< */
-    NUM_DEVICEPOWERSUPPLYSELECTOR
-} spinDevicePowerSupplySelectorEnums;
+    TriggerOverlap_Off,    /*!< */
+    TriggerOverlap_ReadOut,    /*!< */
+    TriggerOverlap_PreviousFrame,    /*!< */
+    NUM_TRIGGEROVERLAP
+} spinTriggerOverlapEnums;
 
-typedef enum _spinDeviceTemperatureSelectorEnums    /*!< Selects the location within the device, where the temperature will be measured.*/
+typedef enum _spinTriggerSelectorEnums    /*!< Selects the type of trigger to configure.*/
 {
-    DeviceTemperatureSelector_Sensor,    /*!< */
-    NUM_DEVICETEMPERATURESELECTOR
-} spinDeviceTemperatureSelectorEnums;
+    TriggerSelector_AcquisitionStart,    /*!< */
+    TriggerSelector_FrameStart,    /*!< */
+    TriggerSelector_FrameBurstStart,    /*!< */
+    NUM_TRIGGERSELECTOR
+} spinTriggerSelectorEnums;
 
-typedef enum _spinDeviceIndicatorModeEnums    /*!< Controls the LED behaviour: Inactive (off), Active (current status), or Error Status (off unless an error occurs).*/
+typedef enum _spinExposureAutoEnums    /*!< Sets the automatic exposure mode*/
 {
-    DeviceIndicatorMode_Inactive,    /*!< */
-    DeviceIndicatorMode_Active,    /*!< */
-    DeviceIndicatorMode_ErrorStatus,    /*!< */
-    NUM_DEVICEINDICATORMODE
-} spinDeviceIndicatorModeEnums;
+    ExposureAuto_Off,    /*!< 
+        Exposure time is manually controlled using ExposureTime
+      */
+    ExposureAuto_Once,    /*!< 
+        Exposure time is adapted once by the device. Once it has converged,
+        it returns to the Off state.
+      */
+    ExposureAuto_Continuous,    /*!< 
+        Exposure time is constantly adapted by the device to maximize the
+        dynamic range.
+      */
+    NUM_EXPOSUREAUTO
+} spinExposureAutoEnums;
 
-typedef enum _spinDeviceRegistersEndiannessEnums    /*!< Endianess of the registers of the device.*/
+typedef enum _spinEventSelectorEnums    /*!< Selects which Event to enable or disable.*/
 {
-    DeviceRegistersEndianness_Little,    /*!< */
-    DeviceRegistersEndianness_Big,    /*!< */
-    NUM_DEVICEREGISTERSENDIANNESS
-} spinDeviceRegistersEndiannessEnums;
+    EventSelector_Error,    /*!< */
+    EventSelector_ExposureEnd,    /*!< */
+    EventSelector_SerialPortReceive,    /*!< */
+    NUM_EVENTSELECTOR
+} spinEventSelectorEnums;
 
-typedef enum _spinBalanceWhiteAutoEnums    /*!< White Balance compensates for color shifts caused by different lighting conditions. It can be automatically or manually controlled. For manual control, set to Off. For automatic control, set to Once or Continuous.*/
+typedef enum _spinEventNotificationEnums    /*!< Enables/Disables the selected event.*/
 {
-    BalanceWhiteAuto_Off,    /*!< Sets operation mode to Off, which is manual control.*/
-    BalanceWhiteAuto_Once,    /*!< Sets operation mode to once. Once runs for a number of iterations and then sets White Balance Auto to Off.*/
-    BalanceWhiteAuto_Continuous,    /*!< Sets operation mode to continuous. Continuous automatically adjusts values if the colors are imbalanced.*/
-    NUM_BALANCEWHITEAUTO
-} spinBalanceWhiteAutoEnums;
-
-typedef enum _spinBalanceRatioSelectorEnums    /*!< Selects a balance ratio to configure once a balance ratio control has been selected.*/
-{
-    BalanceRatioSelector_Red,    /*!< Selects the red balance ratio control for adjustment.  The red balance ratio is relative to the green channel.*/
-    BalanceRatioSelector_Blue,    /*!< Selects the blue balance ratio control for adjustment. The blue balance ratio is relative to the green channel.*/
-    NUM_BALANCERATIOSELECTOR
-} spinBalanceRatioSelectorEnums;
-
-typedef enum _spinGainAutoEnums    /*!< Sets the automatic gain mode. Set to Off for manual control. Set to Once for a single automatic adjustment then return to Off. Set to Continuous for constant adjustment. In automatic modes, the camera adjusts the gain to maximize the dynamic range.*/
-{
-    GainAuto_Off,    /*!< Gain is manually controlled*/
-    GainAuto_Once,    /*!< Gain is adapted once by the device. Once it has converged, it returns to the Off state.*/
-    GainAuto_Continuous,    /*!< Gain is constantly adapted by the device to maximize the dynamic range.*/
-    NUM_GAINAUTO
-} spinGainAutoEnums;
-
-typedef enum _spinBlackLevelSelectorEnums    /*!< Selects which black level to control.  Only All can be set by the user. Analog and Digital are read-only.*/
-{
-    BlackLevelSelector_All,    /*!< */
-    BlackLevelSelector_Analog,    /*!< */
-    BlackLevelSelector_Digital,    /*!< */
-    NUM_BLACKLEVELSELECTOR
-} spinBlackLevelSelectorEnums;
-
-typedef enum _spinGainSelectorEnums    /*!< Selects which gain to control. The All selection is a total amplification across all channels (or taps).*/
-{
-    GainSelector_All,    /*!< */
-    NUM_GAINSELECTOR
-} spinGainSelectorEnums;
+    EventNotification_On,    /*!< */
+    EventNotification_Off,    /*!< */
+    NUM_EVENTNOTIFICATION
+} spinEventNotificationEnums;
 
 typedef enum _spinLogicBlockSelectorEnums    /*!< Selects which LogicBlock to configure*/
 {
@@ -267,277 +236,52 @@ typedef enum _spinLogicBlockLUTSelectorEnums    /*!< Selects which LogicBlock LU
     NUM_LOGICBLOCKLUTSELECTOR
 } spinLogicBlockLUTSelectorEnums;
 
-typedef enum _spinEventSelectorEnums    /*!< Selects which Event to enable or disable.*/
-{
-    EventSelector_Error,    /*!< */
-    EventSelector_ExposureEnd,    /*!< */
-    EventSelector_SerialPortReceive,    /*!< */
-    NUM_EVENTSELECTOR
-} spinEventSelectorEnums;
-
-typedef enum _spinEventNotificationEnums    /*!< Enables/Disables the selected event.*/
-{
-    EventNotification_On,    /*!< */
-    EventNotification_Off,    /*!< */
-    NUM_EVENTNOTIFICATION
-} spinEventNotificationEnums;
-
-typedef enum _spinFileOperationStatusEnums    /*!< Represents the file operation execution status.*/
-{
-    FileOperationStatus_Success,    /*!< File Operation was sucessful.*/
-    FileOperationStatus_Failure,    /*!< File Operation failed.*/
-    FileOperationStatus_Overflow,    /*!< An overflow occurred while executing the File Operation.*/
-    NUM_FILEOPERATIONSTATUS
-} spinFileOperationStatusEnums;
-
-typedef enum _spinFileOpenModeEnums    /*!< The mode of the file when it is opened. The file can be opened for reading, writting or both. This must be set before opening the file.*/
-{
-    FileOpenMode_Read,    /*!< */
-    FileOpenMode_Write,    /*!< */
-    FileOpenMode_ReadWrite,    /*!< */
-    NUM_FILEOPENMODE
-} spinFileOpenModeEnums;
-
-typedef enum _spinFileOperationSelectorEnums    /*!< Sets operation to execute on the selected file when the execute command is given.*/
-{
-    FileOperationSelector_Open,    /*!< */
-    FileOperationSelector_Close,    /*!< */
-    FileOperationSelector_Read,    /*!< */
-    FileOperationSelector_Write,    /*!< */
-    FileOperationSelector_Delete,    /*!< */
-    NUM_FILEOPERATIONSELECTOR
-} spinFileOperationSelectorEnums;
-
-typedef enum _spinFileSelectorEnums    /*!< Selects which file is being operated on. This must be set before performing any file operations.*/
-{
-    FileSelector_UserSetDefault,    /*!< */
-    FileSelector_UserSet0,    /*!< */
-    FileSelector_UserSet1,    /*!< */
-    FileSelector_UserFile1,    /*!< */
-    FileSelector_SerialPort0,    /*!< */
-    NUM_FILESELECTOR
-} spinFileSelectorEnums;
-
-typedef enum _spinAutoExposureControlPriorityEnums    /*!< Selects whether to adjust gain or exposure first. When gain priority is selected, the camera fixes the gain to 0 dB, and the exposure is adjusted according to the target grey level. If the maximum exposure is reached before the target grey level is hit, the gain starts to change to meet the target. This mode is used to have the minimum noise. When exposure priority is selected, the camera sets the exposure to a small value (default is 5 ms). The gain is adjusted according to the target grey level. If maximum gain is reached before the target grey level is hit, the exposure starts to change to meet the target. This mode is used to capture fast motion.*/
-{
-    AutoExposureControlPriority_Gain,    /*!< */
-    AutoExposureControlPriority_ExposureTime,    /*!< */
-    NUM_AUTOEXPOSURECONTROLPRIORITY
-} spinAutoExposureControlPriorityEnums;
-
-typedef enum _spinAutoExposureMeteringModeEnums    /*!< Selects a metering mode: average, spot, or partial metering. a. Average: Measures the light from the entire scene uniformly to determine the final exposure value. Every portion of the exposed area has the same contribution. b. Spot: Measures a small area (about 3%) in the center of the scene while the rest of the scene is ignored. This mode is used when the scene has a high contrast and the object of interest is relatively small. c. Partial: Measures the light from a larger area (about 11%) in the center of the scene. This mode is used when very dark or bright regions appear at the edge of the frame. Note: Metering mode is available only when Lighting Mode Selector is Normal.*/
-{
-    AutoExposureMeteringMode_Average,    /*!< */
-    AutoExposureMeteringMode_Spot,    /*!< */
-    AutoExposureMeteringMode_Partial,    /*!< */
-    AutoExposureMeteringMode_CenterWeighted,    /*!< */
-    AutoExposureMeteringMode_HistgramPeak,    /*!< */
-    NUM_AUTOEXPOSUREMETERINGMODE
-} spinAutoExposureMeteringModeEnums;
-
-typedef enum _spinBalanceWhiteAutoProfileEnums    /*!< Selects the profile used by BalanceWhiteAuto.*/
-{
-    BalanceWhiteAutoProfile_Indoor,    /*!< Indoor auto white balance Profile. Can be used to compensate for artificial lighting.*/
-    BalanceWhiteAutoProfile_Outdoor,    /*!< Outdoor auto white balance profile. Designed for scenes with natural lighting.*/
-    NUM_BALANCEWHITEAUTOPROFILE
-} spinBalanceWhiteAutoProfileEnums;
-
-typedef enum _spinAutoAlgorithmSelectorEnums    /*!< Selects which Auto Algorithm is controlled by the RoiEnable, OffsetX, OffsetY, Width, Height features.*/
-{
-    AutoAlgorithmSelector_Awb,    /*!< Selects the Auto White Balance algorithm.*/
-    AutoAlgorithmSelector_Ae,    /*!< Selects the Auto Exposure algorithm.*/
-    NUM_AUTOALGORITHMSELECTOR
-} spinAutoAlgorithmSelectorEnums;
-
-typedef enum _spinAutoExposureTargetGreyValueAutoEnums    /*!< This indicates whether the target image grey level is automatically set by the camera or manually set by the user. Note that the target grey level is in the linear domain before gamma correction is applied.*/
-{
-    AutoExposureTargetGreyValueAuto_Off,    /*!< Target grey value is manually controlled*/
-    AutoExposureTargetGreyValueAuto_Continuous,    /*!< Target grey value is constantly adapted by the device to maximize the dynamic range.*/
-    NUM_AUTOEXPOSURETARGETGREYVALUEAUTO
-} spinAutoExposureTargetGreyValueAutoEnums;
-
-typedef enum _spinAutoExposureLightingModeEnums    /*!< Selects a lighting mode: Backlight, Frontlight or Normal (default). a. Backlight compensation: used when a strong light is coming from the back of the object. b. Frontlight compensation: used when a strong light is shining in the front of the object while the background is dark. c. Normal lighting: used when the object is not under backlight or frontlight conditions. When normal lighting is selected, metering modes are available.*/
-{
-    AutoExposureLightingMode_AutoDetect,    /*!< */
-    AutoExposureLightingMode_Backlight,    /*!< */
-    AutoExposureLightingMode_Frontlight,    /*!< */
-    AutoExposureLightingMode_Normal,    /*!< */
-    NUM_AUTOEXPOSURELIGHTINGMODE
-} spinAutoExposureLightingModeEnums;
-
-typedef enum _spinLineModeEnums    /*!< Controls if the physical Line is used to Input or Output a signal.*/
-{
-    LineMode_Input,    /*!< */
-    LineMode_Output,    /*!< */
-    NUM_LINEMODE
-} spinLineModeEnums;
-
-typedef enum _spinLineFormatEnums    /*!< Displays the current electrical format of the selected physical input or output Line.*/
-{
-    LineFormat_NoConnect,    /*!< */
-    LineFormat_TriState,    /*!< */
-    LineFormat_TTL,    /*!< */
-    LineFormat_LVDS,    /*!< */
-    LineFormat_RS422,    /*!< */
-    LineFormat_OptoCoupled,    /*!< */
-    LineFormat_OpenDrain,    /*!< */
-    NUM_LINEFORMAT
-} spinLineFormatEnums;
-
-typedef enum _spinExposureActiveModeEnums    /*!< Control sensor active exposure mode.*/
-{
-    ExposureActiveMode_Line1,    /*!< */
-    ExposureActiveMode_AnyPixels,    /*!< */
-    ExposureActiveMode_AllPixels,    /*!< */
-    NUM_EXPOSUREACTIVEMODE
-} spinExposureActiveModeEnums;
-
-typedef enum _spinLineSourceEnums    /*!< Selects which internal acquisition or I/O source signal to output on the selected line. LineMode must be Output.*/
-{
-    LineSource_Off,    /*!< */
-    LineSource_Line0,    /*!< */
-    LineSource_Line1,    /*!< */
-    LineSource_Line2,    /*!< */
-    LineSource_Line3,    /*!< */
-    LineSource_UserOutput0,    /*!< */
-    LineSource_UserOutput1,    /*!< */
-    LineSource_UserOutput2,    /*!< */
-    LineSource_UserOutput3,    /*!< */
-    LineSource_Counter0Active,    /*!< */
-    LineSource_Counter1Active,    /*!< */
-    LineSource_LogicBlock0,    /*!< */
-    LineSource_LogicBlock1,    /*!< */
-    LineSource_ExposureActive,    /*!< */
-    LineSource_FrameTriggerWait,    /*!< */
-    LineSource_PPSSignal,    /*!< */
-    LineSource_SerialPort0,    /*!< */
-    NUM_LINESOURCE
-} spinLineSourceEnums;
-
-typedef enum _spinLineInputFilterSelectorEnums    /*!< Selects the kind of input filter to configure: Deglitch or Debounce.*/
-{
-    LineInputFilterSelector_Deglitch,    /*!< */
-    LineInputFilterSelector_Debounce,    /*!< */
-    NUM_LINEINPUTFILTERSELECTOR
-} spinLineInputFilterSelectorEnums;
-
-typedef enum _spinLineSelectorEnums    /*!< Selects the physical line (or pin) of the external device connector to configure*/
-{
-    LineSelector_Line0,    /*!< */
-    LineSelector_Line1,    /*!< */
-    LineSelector_Line2,    /*!< */
-    LineSelector_Line3,    /*!< */
-    NUM_LINESELECTOR
-} spinLineSelectorEnums;
-
-typedef enum _spinUserOutputSelectorEnums    /*!< Selects which bit of the User Output register is set by UserOutputValue.*/
-{
-    UserOutputSelector_UserOutput0,    /*!< */
-    UserOutputSelector_UserOutput1,    /*!< */
-    UserOutputSelector_UserOutput2,    /*!< */
-    UserOutputSelector_UserOutput3,    /*!< */
-    NUM_USEROUTPUTSELECTOR
-} spinUserOutputSelectorEnums;
-
-typedef enum _spinBsiFlatFieldCorrectionGainSelectorEnums    /*!< Selects which pixel position has its correction gain controlled by the BsiFlatFieldCorrectionGain feature.*/
-{
-    BsiFlatFieldCorrectionGainSelector_Pixel0,    /*!< Top-left pixel in 2x2 cell*/
-    BsiFlatFieldCorrectionGainSelector_Pixel1,    /*!< Top-right pixel in 2x2 cell*/
-    BsiFlatFieldCorrectionGainSelector_Pixel2,    /*!< Bottom-left pixel in 2x2 cell*/
-    BsiFlatFieldCorrectionGainSelector_Pixel3,    /*!< Bottom-right pixel in 2x2 cell*/
-    NUM_BSIFLATFIELDCORRECTIONGAINSELECTOR
-} spinBsiFlatFieldCorrectionGainSelectorEnums;
-
-typedef enum _spinBsiFlatFieldCorrectionAutoEnums    /*!< Sets the auto BSI flat field correction mode.  Set to Off to manually set the correction gains.  Set to Continuous to automaticaly adjust the gains continually based on the current image content. Set to Once for a one-time admatic adjustment of the gains.*/
-{
-    BsiFlatFieldCorrectionAuto_Off,    /*!< */
-    BsiFlatFieldCorrectionAuto_Once,    /*!< */
-    BsiFlatFieldCorrectionAuto_Continuous,    /*!< */
-    NUM_BSIFLATFIELDCORRECTIONAUTO
-} spinBsiFlatFieldCorrectionAutoEnums;
-
-typedef enum _spinLUTSelectorEnums    /*!< Selects which LUT to control.*/
-{
-    LUTSelector_LUT1,    /*!< This LUT is for re-mapping pixels of all formats (mono, Bayer, red, green and blue).*/
-    NUM_LUTSELECTOR
-} spinLUTSelectorEnums;
-
-typedef enum _spinChunkGainSelectorEnums    /*!< Selects which gain to retrieve*/
-{
-    ChunkGainSelector_All,    /*!< */
-    ChunkGainSelector_Red,    /*!< */
-    ChunkGainSelector_Green,    /*!< */
-    ChunkGainSelector_Blue,    /*!< */
-    NUM_CHUNKGAINSELECTOR
-} spinChunkGainSelectorEnums;
-
-typedef enum _spinChunkSelectorEnums    /*!< Selects which chunk data to enable or disable.*/
-{
-    ChunkSelector_Image,    /*!< */
-    ChunkSelector_CRC,    /*!< */
-    ChunkSelector_FrameID,    /*!< */
-    ChunkSelector_OffsetX,    /*!< */
-    ChunkSelector_OffsetY,    /*!< */
-    ChunkSelector_Width,    /*!< */
-    ChunkSelector_Height,    /*!< */
-    ChunkSelector_ExposureTime,    /*!< */
-    ChunkSelector_Gain,    /*!< */
-    ChunkSelector_BlackLevel,    /*!< */
-    ChunkSelector_PixelFormat,    /*!< */
-    ChunkSelector_Timestamp,    /*!< */
-    ChunkSelector_SequencerSetActive,    /*!< */
-    ChunkSelector_SerialData,    /*!< */
-    NUM_CHUNKSELECTOR
-} spinChunkSelectorEnums;
-
-typedef enum _spinChunkBlackLevelSelectorEnums    /*!< Selects which black level to retrieve*/
-{
-    ChunkBlackLevelSelector_All,    /*!< */
-    NUM_CHUNKBLACKLEVELSELECTOR
-} spinChunkBlackLevelSelectorEnums;
-
-typedef enum _spinChunkPixelFormatEnums    /*!< Format of the pixel provided by the camera*/
-{
-    ChunkPixelFormat_Mono8,    /*!< */
-    ChunkPixelFormat_Mono12Packed,    /*!< */
-    ChunkPixelFormat_Mono16,    /*!< */
-    ChunkPixelFormat_RGB8Packed,    /*!< */
-    ChunkPixelFormat_YUV422Packed,    /*!< */
-    ChunkPixelFormat_BayerGR8,    /*!< */
-    ChunkPixelFormat_BayerRG8,    /*!< */
-    ChunkPixelFormat_BayerGB8,    /*!< */
-    ChunkPixelFormat_BayerBG8,    /*!< */
-    ChunkPixelFormat_YCbCr601_422_8_CbYCrY,    /*!< */
-    NUM_CHUNKPIXELFORMAT
-} spinChunkPixelFormatEnums;
-
-typedef enum _spinTransferQueueModeEnums    /*!< Specifies the operation mode of the transfer queue.*/
-{
-    TransferQueueMode_FirstInFirstOut,    /*!< Blocks first In are transferred Out first.*/
-    NUM_TRANSFERQUEUEMODE
-} spinTransferQueueModeEnums;
-
-typedef enum _spinColorTransformationSelectorEnums    /*!< Selects which Color Transformation module is controlled by the various Color Transformation features*/
+typedef enum _spinColorTransformationSelectorEnums    /*!< 
+        Selects which Color Transformation module is controlled by the various Color Transformation features
+      */
 {
     ColorTransformationSelector_RGBtoRGB,    /*!< */
     ColorTransformationSelector_RGBtoYUV,    /*!< */
     NUM_COLORTRANSFORMATIONSELECTOR
 } spinColorTransformationSelectorEnums;
 
-typedef enum _spinRgbTransformLightSourceEnums    /*!< Used to select from a set of RGBtoRGB transform matricies calibrated for different light sources. Selecting a value also sets the white balance ratios (BalanceRatioRed and BalanceRatioBlue), but those can be overwritten through manual or auto white balance.*/
+typedef enum _spinRgbTransformLightSourceEnums    /*!< 
+      Used to select from a set of RGBtoRGB transform matricies calibrated for different light sources.
+      Selecting a value also sets the white balance ratios 
+      (BalanceRatioRed and BalanceRatioBlue), but those can be overwritten through manual or auto white balance.
+    */
 {
-    RgbTransformLightSource_General,    /*!< Uses a matrix calibrated for a wide range of light sources.*/
-    RgbTransformLightSource_Tungsten2800K,    /*!< Uses a matrix optimized for tungsten/incandescent light with color temperature 2800K.*/
-    RgbTransformLightSource_WarmFluorescent3000K,    /*!< Uses a matrix optimized for a typical warm fluoresecent light with color temperature 3000K.*/
-    RgbTransformLightSource_CoolFluorescent4000K,    /*!< Uses a matrix optimized for a typical cool fluoresecent light with color temperature 4000K.*/
-    RgbTransformLightSource_Daylight5000K,    /*!< Uses a matrix optimized for noon Daylight with color temperature 5000K.*/
-    RgbTransformLightSource_Cloudy6500K,    /*!< Uses a matrix optimized for a cloudy sky with color temperature 6500K.*/
-    RgbTransformLightSource_Shade8000K,    /*!< Uses a matrix optimized for shade with color temperature 8000K.*/
-    RgbTransformLightSource_Custom,    /*!< Uses a custom matrix set by the user through the ColorTransformationValueSelector and ColorTransformationValue controls.*/
+    RgbTransformLightSource_General,    /*!< 
+        Uses a matrix calibrated for a wide range of light sources.
+      */
+    RgbTransformLightSource_Tungsten2800K,    /*!< 
+        Uses a matrix optimized for tungsten/incandescent light with color temperature 2800K.
+      */
+    RgbTransformLightSource_WarmFluorescent3000K,    /*!< 
+        Uses a matrix optimized for a typical warm fluoresecent light with color temperature 3000K.
+      */
+    RgbTransformLightSource_CoolFluorescent4000K,    /*!< 
+        Uses a matrix optimized for a typical cool fluoresecent light with color temperature 4000K.
+      */
+    RgbTransformLightSource_Daylight5000K,    /*!< 
+        Uses a matrix optimized for noon Daylight with color temperature 5000K.
+      */
+    RgbTransformLightSource_Cloudy6500K,    /*!< 
+        Uses a matrix optimized for a cloudy sky with color temperature 6500K.
+      */
+    RgbTransformLightSource_Shade8000K,    /*!< 
+        Uses a matrix optimized for shade with color temperature 8000K.
+      */
+    RgbTransformLightSource_Custom,    /*!< 
+        Uses a custom matrix set by the user through the 
+        ColorTransformationValueSelector and ColorTransformationValue controls.
+      */
     NUM_RGBTRANSFORMLIGHTSOURCE
 } spinRgbTransformLightSourceEnums;
 
-typedef enum _spinColorTransformationValueSelectorEnums    /*!< Selects the Gain factor or Offset of the Transformation matrix to access in the selected Color Transformation module*/
+typedef enum _spinColorTransformationValueSelectorEnums    /*!< 
+      Selects the Gain factor or Offset of the Transformation matrix to access in the selected Color Transformation module
+    */
 {
     ColorTransformationValueSelector_Gain00,    /*!< */
     ColorTransformationValueSelector_Gain01,    /*!< */
@@ -554,143 +298,136 @@ typedef enum _spinColorTransformationValueSelectorEnums    /*!< Selects the Gain
     NUM_COLORTRANSFORMATIONVALUESELECTOR
 } spinColorTransformationValueSelectorEnums;
 
-typedef enum _spinCounterTriggerSourceEnums    /*!< Selects the source of the trigger to start the counter*/
+typedef enum _spinDeviceRegistersEndiannessEnums    /*!< Endianess of the registers of the device.*/
 {
-    CounterTriggerSource_Off,    /*!< Off*/
-    CounterTriggerSource_Line0,    /*!< Line0*/
-    CounterTriggerSource_Line1,    /*!< Line1*/
-    CounterTriggerSource_Line2,    /*!< Line2*/
-    CounterTriggerSource_Line3,    /*!< Line3*/
-    CounterTriggerSource_UserOutput0,    /*!< UserOutput0*/
-    CounterTriggerSource_UserOutput1,    /*!< UserOutput1*/
-    CounterTriggerSource_UserOutput2,    /*!< UserOutput2*/
-    CounterTriggerSource_UserOutput3,    /*!< UserOutput3*/
-    CounterTriggerSource_Counter0Start,    /*!< Counter0Start*/
-    CounterTriggerSource_Counter1Start,    /*!< Counter1Start*/
-    CounterTriggerSource_Counter0End,    /*!< Counter0End*/
-    CounterTriggerSource_Counter1End,    /*!< Counter1End*/
-    CounterTriggerSource_LogicBlock0,    /*!< LogicBlock0*/
-    CounterTriggerSource_LogicBlock1,    /*!< LogicBlock1*/
-    CounterTriggerSource_ExposureStart,    /*!< ExposureStart*/
-    CounterTriggerSource_ExposureEnd,    /*!< ExposureEnd*/
-    CounterTriggerSource_FrameTriggerWait,    /*!< FrameTriggerWait*/
-    NUM_COUNTERTRIGGERSOURCE
-} spinCounterTriggerSourceEnums;
+    DeviceRegistersEndianness_Little,    /*!< */
+    DeviceRegistersEndianness_Big,    /*!< */
+    NUM_DEVICEREGISTERSENDIANNESS
+} spinDeviceRegistersEndiannessEnums;
 
-typedef enum _spinCounterEventActivationEnums    /*!< Selects the activation mode of the event to increment the Counter.*/
+typedef enum _spinDeviceScanTypeEnums    /*!< Scan type of the sensor of the device.*/
 {
-    CounterEventActivation_LevelLow,    /*!< */
-    CounterEventActivation_LevelHigh,    /*!< */
-    CounterEventActivation_FallingEdge,    /*!< */
-    CounterEventActivation_RisingEdge,    /*!< */
-    CounterEventActivation_AnyEdge,    /*!< */
-    NUM_COUNTEREVENTACTIVATION
-} spinCounterEventActivationEnums;
+    DeviceScanType_Areascan,    /*!< */
+    NUM_DEVICESCANTYPE
+} spinDeviceScanTypeEnums;
 
-typedef enum _spinCounterResetActivationEnums    /*!< Selects the Activation mode of the Counter Reset Source signal.*/
+typedef enum _spinDeviceCharacterSetEnums    /*!< 
+      Character set used by the strings of the device`s bootstrap registers.
+    */
 {
-    CounterResetActivation_LevelLow,    /*!< */
-    CounterResetActivation_LevelHigh,    /*!< */
-    CounterResetActivation_FallingEdge,    /*!< */
-    CounterResetActivation_RisingEdge,    /*!< */
-    CounterResetActivation_AnyEdge,    /*!< */
-    NUM_COUNTERRESETACTIVATION
-} spinCounterResetActivationEnums;
+    DeviceCharacterSet_UTF8,    /*!< */
+    DeviceCharacterSet_ASCII,    /*!< */
+    NUM_DEVICECHARACTERSET
+} spinDeviceCharacterSetEnums;
 
-typedef enum _spinCounterTriggerActivationEnums    /*!< Selects the activation mode of the trigger to start the Counter.*/
+typedef enum _spinDeviceTLTypeEnums    /*!< Transport Layer type of the device.*/
 {
-    CounterTriggerActivation_LevelLow,    /*!< */
-    CounterTriggerActivation_LevelHigh,    /*!< */
-    CounterTriggerActivation_FallingEdge,    /*!< */
-    CounterTriggerActivation_RisingEdge,    /*!< */
-    CounterTriggerActivation_AnyEdge,    /*!< */
-    NUM_COUNTERTRIGGERACTIVATION
-} spinCounterTriggerActivationEnums;
+    DeviceTLType_GigEVision,    /*!< */
+    DeviceTLType_CameraLink,    /*!< */
+    DeviceTLType_CameraLinkHS,    /*!< */
+    DeviceTLType_CoaXPress,    /*!< */
+    DeviceTLType_USB3Vision,    /*!< */
+    DeviceTLType_Custom,    /*!< */
+    NUM_DEVICETLTYPE
+} spinDeviceTLTypeEnums;
 
-typedef enum _spinCounterSelectorEnums    /*!< Selects which counter to configure*/
+typedef enum _spinDevicePowerSupplySelectorEnums    /*!< 
+      Selects the power supply source to control or read.
+    */
 {
-    CounterSelector_Counter0,    /*!< */
-    CounterSelector_Counter1,    /*!< */
-    NUM_COUNTERSELECTOR
-} spinCounterSelectorEnums;
+    DevicePowerSupplySelector_External,    /*!< */
+    NUM_DEVICEPOWERSUPPLYSELECTOR
+} spinDevicePowerSupplySelectorEnums;
 
-typedef enum _spinCounterStatusEnums    /*!< Returns the current status of the Counter.*/
+typedef enum _spinDeviceTemperatureSelectorEnums    /*!< 
+      Selects the location within the device, where the temperature will be measured.
+    */
 {
-    CounterStatus_CounterIdle,    /*!< The counter is idle.*/
-    CounterStatus_CounterTriggerWait,    /*!< The counter is waiting for a start trigger.*/
-    CounterStatus_CounterActive,    /*!< The counter is counting for the specified duration.*/
-    CounterStatus_CounterCompleted,    /*!< The counter reached the CounterDuration count.*/
-    CounterStatus_CounterOverflow,    /*!< The counter reached its maximum possible count.*/
-    NUM_COUNTERSTATUS
-} spinCounterStatusEnums;
+    DeviceTemperatureSelector_Sensor,    /*!< */
+    NUM_DEVICETEMPERATURESELECTOR
+} spinDeviceTemperatureSelectorEnums;
 
-typedef enum _spinCounterResetSourceEnums    /*!< Selects the signal that will be the source to reset the Counter.*/
+typedef enum _spinDeviceIndicatorModeEnums    /*!< Controls the LED behaviour: Inactive (off), Active (current status), or Error Status (off unless an error occurs).*/
 {
-    CounterResetSource_Off,    /*!< Off*/
-    CounterResetSource_Line0,    /*!< Line0*/
-    CounterResetSource_Line1,    /*!< Line1*/
-    CounterResetSource_Line2,    /*!< Line2*/
-    CounterResetSource_Line3,    /*!< Line3*/
-    CounterResetSource_UserOutput0,    /*!< UserOutput0*/
-    CounterResetSource_UserOutput1,    /*!< UserOutput1*/
-    CounterResetSource_UserOutput2,    /*!< UserOutput2*/
-    CounterResetSource_UserOutput3,    /*!< UserOutput3*/
-    CounterResetSource_Counter0Start,    /*!< Counter0Start*/
-    CounterResetSource_Counter1Start,    /*!< Counter1Start*/
-    CounterResetSource_Counter0End,    /*!< Counter0End*/
-    CounterResetSource_Counter1End,    /*!< Counter1End*/
-    CounterResetSource_LogicBlock0,    /*!< LogicBlock0*/
-    CounterResetSource_LogicBlock1,    /*!< LogicBlock1*/
-    CounterResetSource_ExposureStart,    /*!< ExposureStart*/
-    CounterResetSource_ExposureEnd,    /*!< ExposureEnd*/
-    CounterResetSource_FrameTriggerWait,    /*!< FrameTriggerWait*/
-    NUM_COUNTERRESETSOURCE
-} spinCounterResetSourceEnums;
+    DeviceIndicatorMode_Inactive,    /*!< */
+    DeviceIndicatorMode_Active,    /*!< */
+    DeviceIndicatorMode_ErrorStatus,    /*!< */
+    NUM_DEVICEINDICATORMODE
+} spinDeviceIndicatorModeEnums;
 
-typedef enum _spinCounterEventSourceEnums    /*!< Selects the event that will increment the counter*/
+typedef enum _spinAutoExposureControlPriorityEnums    /*!< 
+      Selects whether to adjust gain or exposure first. 
+      When gain priority is selected, the camera fixes the gain to 0 dB, and the exposure is adjusted according to the target grey level. If the maximum exposure is reached before the target grey level is hit, the gain starts to change to meet the target. This mode is used to have the minimum noise.
+	  When exposure priority is selected, the camera sets the exposure to a small value (default is 5 ms). The gain is adjusted according to the target grey level. If maximum gain is reached before the target grey level is hit, the exposure starts to change to meet the target. This mode is used to capture fast motion. 
+    */
 {
-    CounterEventSource_Off,    /*!< Off*/
-    CounterEventSource_MHzTick,    /*!< MHzTick*/
-    CounterEventSource_Line0,    /*!< Line0*/
-    CounterEventSource_Line1,    /*!< Line1*/
-    CounterEventSource_Line2,    /*!< Line2*/
-    CounterEventSource_Line3,    /*!< Line3*/
-    CounterEventSource_UserOutput0,    /*!< UserOutput0*/
-    CounterEventSource_UserOutput1,    /*!< UserOutput1*/
-    CounterEventSource_UserOutput2,    /*!< UserOutput2*/
-    CounterEventSource_UserOutput3,    /*!< UserOutput3*/
-    CounterEventSource_Counter0Start,    /*!< Counter0Start*/
-    CounterEventSource_Counter1Start,    /*!< Counter1Start*/
-    CounterEventSource_Counter0End,    /*!< Counter0End*/
-    CounterEventSource_Counter1End,    /*!< Counter1End*/
-    CounterEventSource_LogicBlock0,    /*!< LogicBlock0*/
-    CounterEventSource_LogicBlock1,    /*!< LogicBlock1*/
-    CounterEventSource_ExposureStart,    /*!< ExposureStart*/
-    CounterEventSource_ExposureEnd,    /*!< ExposureEnd*/
-    CounterEventSource_FrameTriggerWait,    /*!< FrameTriggerWait*/
-    NUM_COUNTEREVENTSOURCE
-} spinCounterEventSourceEnums;
+    AutoExposureControlPriority_Gain,    /*!< */
+    AutoExposureControlPriority_ExposureTime,    /*!< */
+    NUM_AUTOEXPOSURECONTROLPRIORITY
+} spinAutoExposureControlPriorityEnums;
 
-typedef enum _spinGevIEEE1588ClockAccuracyEnums    /*!< Indicates the expected accuracy of the device clock when it is the grandmaster, or in the event it becomes the grandmaster.*/
+typedef enum _spinAutoExposureMeteringModeEnums    /*!< 
+      Selects a metering mode: average, spot, or partial metering.
+      a. Average: Measures the light from the entire
+      scene uniformly to determine the final exposure value. Every portion
+      of the exposed area has the same contribution.
+      b. Spot: Measures a small area (about 3%) in the
+      center of the scene while the rest of the scene is ignored. This mode
+      is used when the scene has a high contrast and the object of
+      interest is relatively small.
+      c. Partial: Measures the light from a larger area (about 11%) in the center of the scene. This mode is used when very dark or bright regions appear at the edge of the frame.
+      Note: Metering mode is available only when Lighting Mode Selector is Normal. 
+    */
 {
-    GevIEEE1588ClockAccuracy_Unknown,    /*!< Unknown Accuracy*/
-    NUM_GEVIEEE1588CLOCKACCURACY
-} spinGevIEEE1588ClockAccuracyEnums;
+    AutoExposureMeteringMode_Average,    /*!< */
+    AutoExposureMeteringMode_Spot,    /*!< */
+    AutoExposureMeteringMode_Partial,    /*!< */
+    AutoExposureMeteringMode_CenterWeighted,    /*!< */
+    AutoExposureMeteringMode_HistgramPeak,    /*!< */
+    NUM_AUTOEXPOSUREMETERINGMODE
+} spinAutoExposureMeteringModeEnums;
 
-typedef enum _spinGevIEEE1588ModeEnums    /*!< Provides the mode of the IEEE 1588 clock.*/
+typedef enum _spinBalanceWhiteAutoProfileEnums    /*!< Selects the profile used by BalanceWhiteAuto.*/
 {
-    GevIEEE1588Mode_Auto,    /*!< Automatic*/
-    GevIEEE1588Mode_SlaveOnly,    /*!< Slave Only*/
-    NUM_GEVIEEE1588MODE
-} spinGevIEEE1588ModeEnums;
+    BalanceWhiteAutoProfile_Indoor,    /*!< Indoor auto white balance Profile. Can be used to compensate for artificial lighting.*/
+    BalanceWhiteAutoProfile_Outdoor,    /*!< Outdoor auto white balance profile. Designed for scenes with
+        natural lighting.
+      */
+    NUM_BALANCEWHITEAUTOPROFILE
+} spinBalanceWhiteAutoProfileEnums;
 
-typedef enum _spinGevCCPEnums    /*!< Controls the device access privilege of an application.*/
+typedef enum _spinAutoAlgorithmSelectorEnums    /*!< 
+      Selects which Auto Algorithm is controlled by the RoiEnable, OffsetX, 
+      OffsetY, Width, Height features.
+    */
 {
-    GevCCP_OpenAccess,    /*!< */
-    GevCCP_ExclusiveAccess,    /*!< */
-    GevCCP_ControlAccess,    /*!< */
-    NUM_GEVCCP
-} spinGevCCPEnums;
+    AutoAlgorithmSelector_Awb,    /*!< Selects the Auto White Balance algorithm.*/
+    AutoAlgorithmSelector_Ae,    /*!< Selects the Auto Exposure algorithm.*/
+    NUM_AUTOALGORITHMSELECTOR
+} spinAutoAlgorithmSelectorEnums;
+
+typedef enum _spinAutoExposureTargetGreyValueAutoEnums    /*!< 
+      This indicates whether the target image grey level is automatically set by the camera or manually set by the user. Note that the target grey level is in the linear domain before gamma correction is applied.
+    */
+{
+    AutoExposureTargetGreyValueAuto_Off,    /*!< Target grey value is manually controlled*/
+    AutoExposureTargetGreyValueAuto_Continuous,    /*!< Target grey value is constantly adapted by the device to maximize the dynamic range.*/
+    NUM_AUTOEXPOSURETARGETGREYVALUEAUTO
+} spinAutoExposureTargetGreyValueAutoEnums;
+
+typedef enum _spinAutoExposureLightingModeEnums    /*!< 
+      Selects a lighting mode: Backlight, Frontlight or Normal (default).
+      a. Backlight compensation: used when a strong light is coming from the back of the object.
+      b. Frontlight compensation: used when a strong light is shining in the front of the object while the background is dark. 
+      c. Normal lighting: used when the object is not under backlight or frontlight conditions. When normal lighting is selected, metering modes are available.
+    */
+{
+    AutoExposureLightingMode_AutoDetect,    /*!< */
+    AutoExposureLightingMode_Backlight,    /*!< */
+    AutoExposureLightingMode_Frontlight,    /*!< */
+    AutoExposureLightingMode_Normal,    /*!< */
+    NUM_AUTOEXPOSURELIGHTINGMODE
+} spinAutoExposureLightingModeEnums;
 
 typedef enum _spinGevIEEE1588StatusEnums    /*!< Provides the status of the IEEE 1588 clock.*/
 {
@@ -705,6 +442,27 @@ typedef enum _spinGevIEEE1588StatusEnums    /*!< Provides the status of the IEEE
     GevIEEE1588Status_Slave,    /*!< Slave*/
     NUM_GEVIEEE1588STATUS
 } spinGevIEEE1588StatusEnums;
+
+typedef enum _spinGevIEEE1588ModeEnums    /*!< Provides the mode of the IEEE 1588 clock.*/
+{
+    GevIEEE1588Mode_Auto,    /*!< Automatic*/
+    GevIEEE1588Mode_SlaveOnly,    /*!< Slave Only*/
+    NUM_GEVIEEE1588MODE
+} spinGevIEEE1588ModeEnums;
+
+typedef enum _spinGevIEEE1588ClockAccuracyEnums    /*!< Indicates the expected accuracy of the device clock when it is the grandmaster, or in the event it becomes the grandmaster.*/
+{
+    GevIEEE1588ClockAccuracy_Unknown,    /*!< Unknown Accuracy*/
+    NUM_GEVIEEE1588CLOCKACCURACY
+} spinGevIEEE1588ClockAccuracyEnums;
+
+typedef enum _spinGevCCPEnums    /*!< Controls the device access privilege of an application.*/
+{
+    GevCCP_OpenAccess,    /*!< */
+    GevCCP_ExclusiveAccess,    /*!< */
+    GevCCP_ControlAccess,    /*!< */
+    NUM_GEVCCP
+} spinGevCCPEnums;
 
 typedef enum _spinGevSupportedOptionSelectorEnums    /*!< Selects the GEV option to interrogate for existing support.*/
 {
@@ -733,16 +491,76 @@ typedef enum _spinGevSupportedOptionSelectorEnums    /*!< Selects the GEV option
     NUM_GEVSUPPORTEDOPTIONSELECTOR
 } spinGevSupportedOptionSelectorEnums;
 
-typedef enum _spinU3VCurrentSpeedEnums    /*!< Specifies the current speed of the USB link.*/
+typedef enum _spinBlackLevelSelectorEnums    /*!< 
+      Selects which black level to control.  Only All can be set by the user. Analog and Digital are read-only.
+    */
 {
-    U3VCurrentSpeed_LowSpeed,    /*!< */
-    U3VCurrentSpeed_FullSpeed,    /*!< */
-    U3VCurrentSpeed_HighSpeed,    /*!< */
-    U3VCurrentSpeed_SuperSpeed,    /*!< */
-    NUM_U3VCURRENTSPEED
-} spinU3VCurrentSpeedEnums;
+    BlackLevelSelector_All,    /*!< */
+    BlackLevelSelector_Analog,    /*!< */
+    BlackLevelSelector_Digital,    /*!< */
+    NUM_BLACKLEVELSELECTOR
+} spinBlackLevelSelectorEnums;
 
-typedef enum _spinUserSetSelectorEnums    /*!< Selects the feature User Set to load, save or configure.*/
+typedef enum _spinBalanceWhiteAutoEnums    /*!< 
+      White Balance compensates for color shifts caused by different lighting conditions. It can be automatically or manually controlled. For manual control, set to Off. For automatic control, set to Once or Continuous.
+    */
+{
+    BalanceWhiteAuto_Off,    /*!< Sets operation mode to Off, which is manual control.*/
+    BalanceWhiteAuto_Once,    /*!< Sets operation mode to once. Once runs for a number of iterations and then sets White Balance Auto to Off.*/
+    BalanceWhiteAuto_Continuous,    /*!< Sets operation mode to continuous. Continuous automatically adjusts values if the colors are imbalanced.*/
+    NUM_BALANCEWHITEAUTO
+} spinBalanceWhiteAutoEnums;
+
+typedef enum _spinGainAutoEnums    /*!< 
+      Sets the automatic gain mode. Set to Off for manual control. Set to Once for a single automatic adjustment then return to Off. Set to Continuous for constant adjustment. In automatic modes, the camera adjusts the gain to maximize the dynamic range.*/
+{
+    GainAuto_Off,    /*!< Gain is manually controlled*/
+    GainAuto_Once,    /*!< 
+        Gain is adapted once by the device. Once it has converged, it returns to the Off state.
+      */
+    GainAuto_Continuous,    /*!< 
+        Gain is constantly adapted by the device to maximize the dynamic range.
+      */
+    NUM_GAINAUTO
+} spinGainAutoEnums;
+
+typedef enum _spinBalanceRatioSelectorEnums    /*!< 
+      Selects a balance ratio to configure once a balance ratio control has 
+      been selected.
+    */
+{
+    BalanceRatioSelector_Red,    /*!< 
+        Selects the red balance ratio control for adjustment.  The red balance 
+        ratio is relative to the green channel.
+      */
+    BalanceRatioSelector_Blue,    /*!< 
+        Selects the blue balance ratio control for adjustment. The blue balance
+        ratio is relative to the green channel.
+      */
+    NUM_BALANCERATIOSELECTOR
+} spinBalanceRatioSelectorEnums;
+
+typedef enum _spinGainSelectorEnums    /*!< 
+	Selects which gain to control. The All selection is a total amplification across all channels (or taps).
+	*/
+{
+    GainSelector_All,    /*!< */
+    NUM_GAINSELECTOR
+} spinGainSelectorEnums;
+
+typedef enum _spinDefectCorrectionModeEnums    /*!< 
+    	Controls the method used for replacing defective pixels.
+    */
+{
+    DefectCorrectionMode_Average,    /*!< Pixels are replaced with the average of their neighbours.  This is the normal mode of operation.*/
+    DefectCorrectionMode_Highlight,    /*!< Pixels are replaced with the maximum pixel value (i.e., 255 for 8-bit images).  Can be used for debugging the table.*/
+    DefectCorrectionMode_Zero,    /*!< Pixels are replaced by the value zero.  Can be used for testing the table.*/
+    NUM_DEFECTCORRECTIONMODE
+} spinDefectCorrectionModeEnums;
+
+typedef enum _spinUserSetSelectorEnums    /*!< 
+      Selects the feature User Set to load, save or configure.
+    */
 {
     UserSetSelector_Default,    /*!< Factory default set.*/
     UserSetSelector_UserSet0,    /*!< User configurable set 0.*/
@@ -750,195 +568,15 @@ typedef enum _spinUserSetSelectorEnums    /*!< Selects the feature User Set to l
     NUM_USERSETSELECTOR
 } spinUserSetSelectorEnums;
 
-typedef enum _spinUserSetDefaultEnums    /*!< Selects the feature User Set to load and make active by default when the device is restarted.*/
+typedef enum _spinUserSetDefaultEnums    /*!< 
+      Selects the feature User Set to load and make active by default when the device is restarted.
+    */
 {
     UserSetDefault_Default,    /*!< Factory default set.*/
     UserSetDefault_UserSet0,    /*!< User configurable set 0.*/
     UserSetDefault_UserSet1,    /*!< User configurable set 1.*/
     NUM_USERSETDEFAULT
 } spinUserSetDefaultEnums;
-
-typedef enum _spinUserSetFeatureSelectorEnums    /*!< List of features that are saved to user sets.*/
-{
-    UserSetFeatureSelector_AasRoiEnableAe,    /*!< */
-    UserSetFeatureSelector_AasRoiEnableAwb,    /*!< */
-    UserSetFeatureSelector_AasRoiHeightAe,    /*!< */
-    UserSetFeatureSelector_AasRoiHeightAwb,    /*!< */
-    UserSetFeatureSelector_AasRoiOffsetXAe,    /*!< */
-    UserSetFeatureSelector_AasRoiOffsetXAwb,    /*!< */
-    UserSetFeatureSelector_AasRoiOffsetYAe,    /*!< */
-    UserSetFeatureSelector_AasRoiOffsetYAwb,    /*!< */
-    UserSetFeatureSelector_AasRoiWidthAe,    /*!< */
-    UserSetFeatureSelector_AasRoiWidthAwb,    /*!< */
-    UserSetFeatureSelector_AcquisitionBurstFrameCount,    /*!< */
-    UserSetFeatureSelector_AcquisitionFrameCount,    /*!< */
-    UserSetFeatureSelector_AcquisitionFrameRate,    /*!< */
-    UserSetFeatureSelector_AcquisitionFrameRateEnable,    /*!< */
-    UserSetFeatureSelector_AcquisitionLineRate,    /*!< */
-    UserSetFeatureSelector_AcquisitionMode,    /*!< */
-    UserSetFeatureSelector_AdcBitDepth,    /*!< */
-    UserSetFeatureSelector_AutoExposureControlLoopDamping,    /*!< */
-    UserSetFeatureSelector_AutoExposureControlPriority,    /*!< */
-    UserSetFeatureSelector_AutoExposureEVCompensation,    /*!< */
-    UserSetFeatureSelector_AutoExposureExposureTimeLowerLimit,    /*!< */
-    UserSetFeatureSelector_AutoExposureExposureTimeUpperLimit,    /*!< */
-    UserSetFeatureSelector_AutoExposureGainLowerLimit,    /*!< */
-    UserSetFeatureSelector_AutoExposureGainUpperLimit,    /*!< */
-    UserSetFeatureSelector_AutoExposureGreyValueLowerLimit,    /*!< */
-    UserSetFeatureSelector_AutoExposureGreyValueUpperLimit,    /*!< */
-    UserSetFeatureSelector_AutoExposureLightingMode,    /*!< */
-    UserSetFeatureSelector_AutoExposureMeteringMode,    /*!< */
-    UserSetFeatureSelector_AutoExposureTargetGreyValue,    /*!< */
-    UserSetFeatureSelector_AutoExposureTargetGreyValueAuto,    /*!< */
-    UserSetFeatureSelector_BalanceRatioBlue,    /*!< */
-    UserSetFeatureSelector_BalanceRatioRed,    /*!< */
-    UserSetFeatureSelector_BalanceWhiteAuto,    /*!< */
-    UserSetFeatureSelector_BalanceWhiteAutoDamping,    /*!< */
-    UserSetFeatureSelector_BalanceWhiteAutoLowerLimit,    /*!< */
-    UserSetFeatureSelector_BalanceWhiteAutoProfile,    /*!< */
-    UserSetFeatureSelector_BalanceWhiteAutoUpperLimit,    /*!< */
-    UserSetFeatureSelector_BinningHorizontalAll,    /*!< */
-    UserSetFeatureSelector_BinningHorizontalMode,    /*!< */
-    UserSetFeatureSelector_BinningVerticalAll,    /*!< */
-    UserSetFeatureSelector_BinningVerticalMode,    /*!< */
-    UserSetFeatureSelector_BlackLevelAll,    /*!< */
-    UserSetFeatureSelector_ChunkEnableAll,    /*!< */
-    UserSetFeatureSelector_ChunkModeActive,    /*!< */
-    UserSetFeatureSelector_ColorTransformationEnable,    /*!< */
-    UserSetFeatureSelector_CounterDelayCounter0,    /*!< */
-    UserSetFeatureSelector_CounterDelayCounter1,    /*!< */
-    UserSetFeatureSelector_CounterDurationCounter0,    /*!< */
-    UserSetFeatureSelector_CounterDurationCounter1,    /*!< */
-    UserSetFeatureSelector_CounterEventActivationCounter0,    /*!< */
-    UserSetFeatureSelector_CounterEventActivationCounter1,    /*!< */
-    UserSetFeatureSelector_CounterEventSourceCounter0,    /*!< */
-    UserSetFeatureSelector_CounterEventSourceCounter1,    /*!< */
-    UserSetFeatureSelector_CounterResetActivationCounter0,    /*!< */
-    UserSetFeatureSelector_CounterResetActivationCounter1,    /*!< */
-    UserSetFeatureSelector_CounterResetSourceCounter0,    /*!< */
-    UserSetFeatureSelector_CounterResetSourceCounter1,    /*!< */
-    UserSetFeatureSelector_CounterTriggerActivationCounter0,    /*!< */
-    UserSetFeatureSelector_CounterTriggerActivationCounter1,    /*!< */
-    UserSetFeatureSelector_CounterTriggerSourceCounter0,    /*!< */
-    UserSetFeatureSelector_CounterTriggerSourceCounter1,    /*!< */
-    UserSetFeatureSelector_DecimationHorizontalAll,    /*!< */
-    UserSetFeatureSelector_DecimationVerticalAll,    /*!< */
-    UserSetFeatureSelector_DefectCorrectStaticEnable,    /*!< */
-    UserSetFeatureSelector_DefectCorrectionMode,    /*!< */
-    UserSetFeatureSelector_DeviceIndicatorMode,    /*!< */
-    UserSetFeatureSelector_DeviceLinkBandwidthReserve,    /*!< */
-    UserSetFeatureSelector_DeviceLinkThroughputLimit,    /*!< */
-    UserSetFeatureSelector_EvCompensationRaw,    /*!< */
-    UserSetFeatureSelector_EventNotificationError,    /*!< */
-    UserSetFeatureSelector_EventNotificationExposureEnd,    /*!< */
-    UserSetFeatureSelector_EventNotificationSerialPortReceive,    /*!< */
-    UserSetFeatureSelector_ExposureActiveMode,    /*!< */
-    UserSetFeatureSelector_ExposureAuto,    /*!< */
-    UserSetFeatureSelector_ExposureMode,    /*!< */
-    UserSetFeatureSelector_ExposureTime,    /*!< */
-    UserSetFeatureSelector_FfcEnable,    /*!< */
-    UserSetFeatureSelector_FfcMode,    /*!< */
-    UserSetFeatureSelector_GainAll,    /*!< */
-    UserSetFeatureSelector_GainAuto,    /*!< */
-    UserSetFeatureSelector_Gamma,    /*!< */
-    UserSetFeatureSelector_GammaEnable,    /*!< */
-    UserSetFeatureSelector_Height,    /*!< */
-    UserSetFeatureSelector_IspEnable,    /*!< */
-    UserSetFeatureSelector_LUTEnable,    /*!< */
-    UserSetFeatureSelector_LineFilterWidthLine0Debounce,    /*!< */
-    UserSetFeatureSelector_LineFilterWidthLine0Deglitch,    /*!< */
-    UserSetFeatureSelector_LineFilterWidthLine1Debounce,    /*!< */
-    UserSetFeatureSelector_LineFilterWidthLine1Deglitch,    /*!< */
-    UserSetFeatureSelector_LineFilterWidthLine2Debounce,    /*!< */
-    UserSetFeatureSelector_LineFilterWidthLine2Deglitch,    /*!< */
-    UserSetFeatureSelector_LineFilterWidthLine3Debounce,    /*!< */
-    UserSetFeatureSelector_LineFilterWidthLine3Deglitch,    /*!< */
-    UserSetFeatureSelector_LineInverterLine0,    /*!< */
-    UserSetFeatureSelector_LineInverterLine1,    /*!< */
-    UserSetFeatureSelector_LineInverterLine2,    /*!< */
-    UserSetFeatureSelector_LineInverterLine3,    /*!< */
-    UserSetFeatureSelector_LineModeLine0,    /*!< */
-    UserSetFeatureSelector_LineModeLine1,    /*!< */
-    UserSetFeatureSelector_LineModeLine2,    /*!< */
-    UserSetFeatureSelector_LineModeLine3,    /*!< */
-    UserSetFeatureSelector_LineSourceLine0,    /*!< */
-    UserSetFeatureSelector_LineSourceLine1,    /*!< */
-    UserSetFeatureSelector_LineSourceLine2,    /*!< */
-    UserSetFeatureSelector_LineSourceLine3,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputActivationLogicBlock0Input0,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputActivationLogicBlock0Input1,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputActivationLogicBlock0Input2,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputActivationLogicBlock0Input3,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputActivationLogicBlock1Input0,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputActivationLogicBlock1Input1,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputActivationLogicBlock1Input2,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputActivationLogicBlock1Input3,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputSourceLogicBlock0Input0,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputSourceLogicBlock0Input1,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputSourceLogicBlock0Input2,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputSourceLogicBlock0Input3,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputSourceLogicBlock1Input0,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputSourceLogicBlock1Input1,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputSourceLogicBlock1Input2,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTInputSourceLogicBlock1Input3,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTOutputValueAllLogicBlock0Enable,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTOutputValueAllLogicBlock0Value,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTOutputValueAllLogicBlock1Enable,    /*!< */
-    UserSetFeatureSelector_LogicBlockLUTOutputValueAllLogicBlock1Value,    /*!< */
-    UserSetFeatureSelector_OffsetX,    /*!< */
-    UserSetFeatureSelector_OffsetY,    /*!< */
-    UserSetFeatureSelector_PixelFormat,    /*!< */
-    UserSetFeatureSelector_ReverseX,    /*!< */
-    UserSetFeatureSelector_ReverseY,    /*!< */
-    UserSetFeatureSelector_RgbTransformLightSource,    /*!< */
-    UserSetFeatureSelector_Saturation,    /*!< */
-    UserSetFeatureSelector_SaturationEnable,    /*!< */
-    UserSetFeatureSelector_SensorShutterMode,    /*!< */
-    UserSetFeatureSelector_SerialPortBaudRateSerialPort0,    /*!< */
-    UserSetFeatureSelector_SerialPortDataBitsSerialPort0,    /*!< */
-    UserSetFeatureSelector_SerialPortParitySerialPort0,    /*!< */
-    UserSetFeatureSelector_SerialPortSourceSerialPort0,    /*!< */
-    UserSetFeatureSelector_SerialPortStopBitsSerialPort0,    /*!< */
-    UserSetFeatureSelector_Sharpening,    /*!< */
-    UserSetFeatureSelector_SharpeningAuto,    /*!< */
-    UserSetFeatureSelector_SharpeningEnable,    /*!< */
-    UserSetFeatureSelector_SharpeningThreshold,    /*!< */
-    UserSetFeatureSelector_TestPatternPipelineStart,    /*!< */
-    UserSetFeatureSelector_TestPatternSensor,    /*!< */
-    UserSetFeatureSelector_TransferBlockCount,    /*!< */
-    UserSetFeatureSelector_TransferControlMode,    /*!< */
-    UserSetFeatureSelector_TransferOperationMode,    /*!< */
-    UserSetFeatureSelector_TriggerActivationAcquisitionStart,    /*!< */
-    UserSetFeatureSelector_TriggerActivationFrameBurstStart,    /*!< */
-    UserSetFeatureSelector_TriggerActivationFrameStart,    /*!< */
-    UserSetFeatureSelector_TriggerDelayAcquisitionStart,    /*!< */
-    UserSetFeatureSelector_TriggerDelayFrameBurstStart,    /*!< */
-    UserSetFeatureSelector_TriggerDelayFrameStart,    /*!< */
-    UserSetFeatureSelector_TriggerModeAcquisitionStart,    /*!< */
-    UserSetFeatureSelector_TriggerModeFrameBurstStart,    /*!< */
-    UserSetFeatureSelector_TriggerModeFrameStart,    /*!< */
-    UserSetFeatureSelector_TriggerOverlapAcquisitionStart,    /*!< */
-    UserSetFeatureSelector_TriggerOverlapFrameBurstStart,    /*!< */
-    UserSetFeatureSelector_TriggerOverlapFrameStart,    /*!< */
-    UserSetFeatureSelector_TriggerSourceAcquisitionStart,    /*!< */
-    UserSetFeatureSelector_TriggerSourceFrameBurstStart,    /*!< */
-    UserSetFeatureSelector_TriggerSourceFrameStart,    /*!< */
-    UserSetFeatureSelector_UserOutputValueAll,    /*!< */
-    UserSetFeatureSelector_V3_3EnableLine0,    /*!< */
-    UserSetFeatureSelector_V3_3EnableLine1,    /*!< */
-    UserSetFeatureSelector_V3_3EnableLine2,    /*!< */
-    UserSetFeatureSelector_V3_3EnableLine3,    /*!< */
-    UserSetFeatureSelector_Width,    /*!< */
-    NUM_USERSETFEATURESELECTOR
-} spinUserSetFeatureSelectorEnums;
-
-typedef enum _spinSerialPortStopBitsEnums    /*!< This feature controls the number of stop bits used by the selected serial port.*/
-{
-    SerialPortStopBits_Bits1,    /*!< */
-    SerialPortStopBits_Bits1AndAHalf,    /*!< */
-    SerialPortStopBits_Bits2,    /*!< */
-    NUM_SERIALPORTSTOPBITS
-} spinSerialPortStopBitsEnums;
 
 typedef enum _spinSerialPortBaudRateEnums    /*!< This feature controls the baud rate used by the selected serial port.*/
 {
@@ -975,6 +613,14 @@ typedef enum _spinSerialPortSelectorEnums    /*!< Selects which serial port of t
     NUM_SERIALPORTSELECTOR
 } spinSerialPortSelectorEnums;
 
+typedef enum _spinSerialPortStopBitsEnums    /*!< This feature controls the number of stop bits used by the selected serial port.*/
+{
+    SerialPortStopBits_Bits1,    /*!< */
+    SerialPortStopBits_Bits1AndAHalf,    /*!< */
+    SerialPortStopBits_Bits2,    /*!< */
+    NUM_SERIALPORTSTOPBITS
+} spinSerialPortStopBitsEnums;
+
 typedef enum _spinSerialPortSourceEnums    /*!< Specifies the physical input Line on which to receive serial data.*/
 {
     SerialPortSource_Line0,    /*!< */
@@ -985,7 +631,35 @@ typedef enum _spinSerialPortSourceEnums    /*!< Specifies the physical input Lin
     NUM_SERIALPORTSOURCE
 } spinSerialPortSourceEnums;
 
-typedef enum _spinSequencerTriggerActivationEnums    /*!< Specifies the activation mode of the sequencer trigger.*/
+typedef enum _spinSequencerModeEnums    /*!< Controls whether or not a sequencer is active.*/
+{
+    SequencerMode_Off,    /*!< */
+    SequencerMode_On,    /*!< */
+    NUM_SEQUENCERMODE
+} spinSequencerModeEnums;
+
+typedef enum _spinSequencerConfigurationValidEnums    /*!< 
+      Display whether the current sequencer configuration is valid to run.
+    */
+{
+    SequencerConfigurationValid_No,    /*!< */
+    SequencerConfigurationValid_Yes,    /*!< */
+    NUM_SEQUENCERCONFIGURATIONVALID
+} spinSequencerConfigurationValidEnums;
+
+typedef enum _spinSequencerSetValidEnums    /*!< 
+      Displays whether the currently selected sequencer set's register contents 
+      are valid to use.
+    */
+{
+    SequencerSetValid_No,    /*!< */
+    SequencerSetValid_Yes,    /*!< */
+    NUM_SEQUENCERSETVALID
+} spinSequencerSetValidEnums;
+
+typedef enum _spinSequencerTriggerActivationEnums    /*!< 
+      Specifies the activation mode of the sequencer trigger.
+    */
 {
     SequencerTriggerActivation_RisingEdge,    /*!< */
     SequencerTriggerActivation_FallingEdge,    /*!< */
@@ -995,68 +669,168 @@ typedef enum _spinSequencerTriggerActivationEnums    /*!< Specifies the activati
     NUM_SEQUENCERTRIGGERACTIVATION
 } spinSequencerTriggerActivationEnums;
 
-typedef enum _spinSequencerConfigurationModeEnums    /*!< Controls whether or not a sequencer is in configuration mode.*/
+typedef enum _spinSequencerConfigurationModeEnums    /*!< 
+      Controls whether or not a sequencer is in configuration mode.
+    */
 {
     SequencerConfigurationMode_Off,    /*!< */
     SequencerConfigurationMode_On,    /*!< */
     NUM_SEQUENCERCONFIGURATIONMODE
 } spinSequencerConfigurationModeEnums;
 
-typedef enum _spinSequencerSetValidEnums    /*!< Displays whether the currently selected sequencer set's register contents are valid to use.*/
-{
-    SequencerSetValid_No,    /*!< */
-    SequencerSetValid_Yes,    /*!< */
-    NUM_SEQUENCERSETVALID
-} spinSequencerSetValidEnums;
-
-typedef enum _spinSequencerModeEnums    /*!< Controls whether or not a sequencer is active.*/
-{
-    SequencerMode_Off,    /*!< */
-    SequencerMode_On,    /*!< */
-    NUM_SEQUENCERMODE
-} spinSequencerModeEnums;
-
-typedef enum _spinSequencerConfigurationValidEnums    /*!< Display whether the current sequencer configuration is valid to run.*/
-{
-    SequencerConfigurationValid_No,    /*!< */
-    SequencerConfigurationValid_Yes,    /*!< */
-    NUM_SEQUENCERCONFIGURATIONVALID
-} spinSequencerConfigurationValidEnums;
-
-typedef enum _spinSequencerFeatureSelectorEnums    /*!< Selects which sequencer features to control.*/
-{
-    SequencerFeatureSelector_ExposureTime,    /*!< */
-    SequencerFeatureSelector_Gain,    /*!< */
-    SequencerFeatureSelector_OffsetX,    /*!< */
-    SequencerFeatureSelector_OffsetY,    /*!< */
-    SequencerFeatureSelector_Width,    /*!< */
-    SequencerFeatureSelector_Height,    /*!< */
-    NUM_SEQUENCERFEATURESELECTOR
-} spinSequencerFeatureSelectorEnums;
-
-typedef enum _spinSequencerTriggerSourceEnums    /*!< Specifies the internal signal or physical input line to use as the sequencer trigger source.*/
+typedef enum _spinSequencerTriggerSourceEnums    /*!< 
+      Specifies the internal signal or physical input line to use as the 
+      sequencer trigger source.
+    */
 {
     SequencerTriggerSource_Off,    /*!< */
     SequencerTriggerSource_FrameStart,    /*!< */
     NUM_SEQUENCERTRIGGERSOURCE
 } spinSequencerTriggerSourceEnums;
 
-typedef enum _spinBinningSelectorEnums    /*!< Selects which binning engine is controlled by the BinningHorizontal and BinningVertical features.*/
+typedef enum _spinTransferQueueModeEnums    /*!< Specifies the operation mode of the transfer queue.*/
 {
-    BinningSelector_All,    /*!< The total amount of binning to be performed on the captured sensor data.*/
-    BinningSelector_Sensor,    /*!< The portion of binning to be performed on the sensor directly.*/
-    BinningSelector_ISP,    /*!< The portion of binning to be performed by the image signal processing engine (ISP) outside of the sensor. Note: the ISP can be disabled.*/
+    TransferQueueMode_FirstInFirstOut,    /*!< Blocks first In are transferred Out first.*/
+    NUM_TRANSFERQUEUEMODE
+} spinTransferQueueModeEnums;
+
+typedef enum _spinTransferOperationModeEnums    /*!< Selects the operation mode of the transfer. Continuous is similar to Basic/Automatic but you can start/stop the transfer while acquisition runs independently. Multi Block transmits a specified number of blocks and then stops.*/
+{
+    TransferOperationMode_Continuous,    /*!< Continuous*/
+    TransferOperationMode_MultiBlock,    /*!< Multi Block*/
+    NUM_TRANSFEROPERATIONMODE
+} spinTransferOperationModeEnums;
+
+typedef enum _spinTransferControlModeEnums    /*!< Selects the control method for the transfers. Basic and Automatic start transmitting data as soon as there is enough data to fill a link layer packet. User Controlled allows you to directly control the transfer of blocks.*/
+{
+    TransferControlMode_Basic,    /*!< Basic*/
+    TransferControlMode_Automatic,    /*!< Automatic*/
+    TransferControlMode_UserControlled,    /*!< User Controlled*/
+    NUM_TRANSFERCONTROLMODE
+} spinTransferControlModeEnums;
+
+typedef enum _spinChunkGainSelectorEnums    /*!< Selects which gain to retrieve*/
+{
+    ChunkGainSelector_All,    /*!< */
+    ChunkGainSelector_Red,    /*!< */
+    ChunkGainSelector_Green,    /*!< */
+    ChunkGainSelector_Blue,    /*!< */
+    NUM_CHUNKGAINSELECTOR
+} spinChunkGainSelectorEnums;
+
+typedef enum _spinChunkSelectorEnums    /*!< Selects which chunk data to enable or disable.*/
+{
+    ChunkSelector_Image,    /*!< */
+    ChunkSelector_CRC,    /*!< */
+    ChunkSelector_FrameID,    /*!< */
+    ChunkSelector_OffsetX,    /*!< */
+    ChunkSelector_OffsetY,    /*!< */
+    ChunkSelector_Width,    /*!< */
+    ChunkSelector_Height,    /*!< */
+    ChunkSelector_ExposureTime,    /*!< */
+    ChunkSelector_Gain,    /*!< */
+    ChunkSelector_BlackLevel,    /*!< */
+    ChunkSelector_PixelFormat,    /*!< */
+    ChunkSelector_Timestamp,    /*!< */
+    ChunkSelector_SequencerSetActive,    /*!< */
+    ChunkSelector_SerialData,    /*!< */
+    ChunkSelector_ExposureEndLineStatusAll,    /*!< */
+    NUM_CHUNKSELECTOR
+} spinChunkSelectorEnums;
+
+typedef enum _spinChunkBlackLevelSelectorEnums    /*!< Selects which black level to retrieve*/
+{
+    ChunkBlackLevelSelector_All,    /*!< */
+    NUM_CHUNKBLACKLEVELSELECTOR
+} spinChunkBlackLevelSelectorEnums;
+
+typedef enum _spinChunkPixelFormatEnums    /*!< Format of the pixel provided by the camera*/
+{
+    ChunkPixelFormat_Mono8,    /*!< */
+    ChunkPixelFormat_Mono12Packed,    /*!< */
+    ChunkPixelFormat_Mono16,    /*!< */
+    ChunkPixelFormat_RGB8Packed,    /*!< */
+    ChunkPixelFormat_YUV422Packed,    /*!< */
+    ChunkPixelFormat_BayerGR8,    /*!< */
+    ChunkPixelFormat_BayerRG8,    /*!< */
+    ChunkPixelFormat_BayerGB8,    /*!< */
+    ChunkPixelFormat_BayerBG8,    /*!< */
+    ChunkPixelFormat_YCbCr601_422_8_CbYCrY,    /*!< */
+    NUM_CHUNKPIXELFORMAT
+} spinChunkPixelFormatEnums;
+
+typedef enum _spinFileOperationStatusEnums    /*!< Represents the file operation execution status.*/
+{
+    FileOperationStatus_Success,    /*!< File Operation was sucessful.*/
+    FileOperationStatus_Failure,    /*!< File Operation failed.*/
+    FileOperationStatus_Overflow,    /*!< An overflow occurred while executing the File Operation.*/
+    NUM_FILEOPERATIONSTATUS
+} spinFileOperationStatusEnums;
+
+typedef enum _spinFileOpenModeEnums    /*!< 
+      The mode of the file when it is opened. The file can be opened for reading, writting or both. This must be set before opening the file.
+    */
+{
+    FileOpenMode_Read,    /*!< */
+    FileOpenMode_Write,    /*!< */
+    FileOpenMode_ReadWrite,    /*!< */
+    NUM_FILEOPENMODE
+} spinFileOpenModeEnums;
+
+typedef enum _spinFileOperationSelectorEnums    /*!< 
+      Sets operation to execute on the selected file when the execute command is given.
+    */
+{
+    FileOperationSelector_Open,    /*!< */
+    FileOperationSelector_Close,    /*!< */
+    FileOperationSelector_Read,    /*!< */
+    FileOperationSelector_Write,    /*!< */
+    FileOperationSelector_Delete,    /*!< */
+    NUM_FILEOPERATIONSELECTOR
+} spinFileOperationSelectorEnums;
+
+typedef enum _spinFileSelectorEnums    /*!< 
+      Selects which file is being operated on. This must be set before performing any file operations.
+	*/
+{
+    FileSelector_UserSetDefault,    /*!< */
+    FileSelector_UserSet0,    /*!< */
+    FileSelector_UserSet1,    /*!< */
+    FileSelector_UserFile1,    /*!< */
+    FileSelector_SerialPort0,    /*!< */
+    NUM_FILESELECTOR
+} spinFileSelectorEnums;
+
+typedef enum _spinBinningSelectorEnums    /*!< 
+      Selects which binning engine is controlled by the BinningHorizontal and 
+      BinningVertical features.
+    */
+{
+    BinningSelector_All,    /*!< 
+        The total amount of binning to be performed on the captured sensor data.
+      */
+    BinningSelector_Sensor,    /*!< 
+        The portion of binning to be performed on the sensor directly.
+      */
+    BinningSelector_ISP,    /*!< 
+        The portion of binning to be performed by the image signal processing
+        engine (ISP) outside of the sensor. Note: the ISP can be disabled.
+      */
     NUM_BINNINGSELECTOR
 } spinBinningSelectorEnums;
 
-typedef enum _spinTestPatternGeneratorSelectorEnums    /*!< Selects which test pattern generator is controlled by the TestPattern feature.*/
+typedef enum _spinTestPatternGeneratorSelectorEnums    /*!< 
+      Selects which test pattern generator is controlled by the TestPattern feature.
+    */
 {
     TestPatternGeneratorSelector_Sensor,    /*!< TestPattern feature controls the sensor`s test pattern generator.*/
     TestPatternGeneratorSelector_PipelineStart,    /*!< TestPattern feature controls the test pattern inserted at the start of the image pipeline.*/
     NUM_TESTPATTERNGENERATORSELECTOR
 } spinTestPatternGeneratorSelectorEnums;
 
-typedef enum _spinTestPatternEnums    /*!< Selects the type of test pattern that is generated by the device as image source.*/
+typedef enum _spinTestPatternEnums    /*!< 
+      Selects the type of test pattern that is generated by the device as image source.
+    */
 {
     TestPattern_Off,    /*!< Test pattern is disabled.*/
     TestPattern_Increment,    /*!< Pixel value increments by 1 for each pixel.*/
@@ -1064,7 +838,9 @@ typedef enum _spinTestPatternEnums    /*!< Selects the type of test pattern that
     NUM_TESTPATTERN
 } spinTestPatternEnums;
 
-typedef enum _spinPixelColorFilterEnums    /*!< Type of color filter that is applied to the image. Only applies to Bayer pixel formats. All others have no color filter.*/
+typedef enum _spinPixelColorFilterEnums    /*!< 
+	Type of color filter that is applied to the image. Only applies to Bayer pixel formats. All others have no color filter.
+	*/
 {
     PixelColorFilter_None,    /*!< No color filter.*/
     PixelColorFilter_BayerRG,    /*!< Bayer Red Green filter.*/
@@ -1074,7 +850,9 @@ typedef enum _spinPixelColorFilterEnums    /*!< Type of color filter that is app
     NUM_PIXELCOLORFILTER
 } spinPixelColorFilterEnums;
 
-typedef enum _spinAdcBitDepthEnums    /*!< Selects which ADC bit depth to use. A higher ADC bit depth results in better image quality but slower maximum frame rate.*/
+typedef enum _spinAdcBitDepthEnums    /*!< 
+      Selects which ADC bit depth to use. A higher ADC bit depth results in better image quality but slower maximum frame rate.
+    */
 {
     AdcBitDepth_Bit8,    /*!< */
     AdcBitDepth_Bit10,    /*!< */
@@ -1083,7 +861,10 @@ typedef enum _spinAdcBitDepthEnums    /*!< Selects which ADC bit depth to use. A
     NUM_ADCBITDEPTH
 } spinAdcBitDepthEnums;
 
-typedef enum _spinDecimationHorizontalModeEnums    /*!< The mode used to reduce the horizontal resolution when DecimationHorizontal is used. The current implementation only supports a single decimation mode: Discard.  Average should be achieved via Binning.*/
+typedef enum _spinDecimationHorizontalModeEnums    /*!< 
+      The mode used to reduce the horizontal resolution when DecimationHorizontal is used.
+      The current implementation only supports a single decimation mode: Discard.  Average should be achieved via Binning.
+    */
 {
     DecimationHorizontalMode_Discard,    /*!< The value of every Nth pixel is kept, others are discarded.*/
     NUM_DECIMATIONHORIZONTALMODE
@@ -1091,12 +872,20 @@ typedef enum _spinDecimationHorizontalModeEnums    /*!< The mode used to reduce 
 
 typedef enum _spinBinningVerticalModeEnums    /*!< */
 {
-    BinningVerticalMode_Sum,    /*!< The response from the combined vertical cells is added, resulting in increased sensitivity (a brighter image).*/
-    BinningVerticalMode_Average,    /*!< The response from the combined vertical cells is averaged, resulting in increased signal/noise ratio. Not all sensors support average binning.*/
+    BinningVerticalMode_Sum,    /*!< 
+        The response from the combined vertical cells is added, resulting
+        in increased sensitivity (a brighter image).
+      */
+    BinningVerticalMode_Average,    /*!< 
+        The response from the combined vertical cells is averaged,
+        resulting in increased signal/noise ratio. Not all sensors support average binning.
+      */
     NUM_BINNINGVERTICALMODE
 } spinBinningVerticalModeEnums;
 
-typedef enum _spinPixelSizeEnums    /*!< Total size in bits of a pixel of the image.*/
+typedef enum _spinPixelSizeEnums    /*!< 
+	Total size in bits of a pixel of the image.
+	*/
 {
     PixelSize_Bpp1,    /*!< 1 bit per pixel.*/
     PixelSize_Bpp2,    /*!< 2 bits per pixel.*/
@@ -1120,18 +909,34 @@ typedef enum _spinPixelSizeEnums    /*!< Total size in bits of a pixel of the im
 typedef enum _spinDecimationSelectorEnums    /*!< Selects which decimation layer is controlled by the DecimationHorizontal and DecimationVertical features.*/
 {
     DecimationSelector_All,    /*!< The total amount of decimation to be performed on the captured image data.*/
-    DecimationSelector_Sensor,    /*!< The portion of decimation to be performed on the sensor directly. Currently this is the only decimation layer available and hence is identical to the "All" layer.  All decimation modification should therefore be done via the "All" layer only.*/
+    DecimationSelector_Sensor,    /*!< The portion of decimation to be performed on the sensor directly. Currently this is the only decimation layer available and hence is identical to the "All" layer.  All decimation modification should therefore be done via the "All" layer only.
+      */
     NUM_DECIMATIONSELECTOR
 } spinDecimationSelectorEnums;
 
+typedef enum _spinImageCompressionModeEnums    /*!< */
+{
+    ImageCompressionMode_Off,    /*!< */
+    ImageCompressionMode_Lossless,    /*!< */
+    NUM_IMAGECOMPRESSIONMODE
+} spinImageCompressionModeEnums;
+
 typedef enum _spinBinningHorizontalModeEnums    /*!< */
 {
-    BinningHorizontalMode_Sum,    /*!< The response from the combined horizontal cells is added, resulting in increased sensitivity (a brighter image).*/
-    BinningHorizontalMode_Average,    /*!< The response from the combined horizontal cells is averaged, resulting in increased signal/noise ratio. Not all sensors support average binning.*/
+    BinningHorizontalMode_Sum,    /*!< 
+        The response from the combined horizontal cells is added, 
+        resulting in increased sensitivity (a brighter image).
+      */
+    BinningHorizontalMode_Average,    /*!< 
+        The response from the combined horizontal cells is averaged,
+        resulting in increased signal/noise ratio. Not all sensors support average binning.
+      */
     NUM_BINNINGHORIZONTALMODE
 } spinBinningHorizontalModeEnums;
 
-typedef enum _spinPixelFormatEnums    /*!< Format of the pixel provided by the camera.*/
+typedef enum _spinPixelFormatEnums    /*!< 
+	Format of the pixel provided by the camera.
+	*/
 {
     PixelFormat_Mono8,    /*!< */
     PixelFormat_Mono16,    /*!< */
@@ -1144,11 +949,6 @@ typedef enum _spinPixelFormatEnums    /*!< Format of the pixel provided by the c
     PixelFormat_BayerRG16,    /*!< */
     PixelFormat_BayerGB16,    /*!< */
     PixelFormat_BayerBG16,    /*!< */
-    PixelFormat_Mono10Packed,    /*!< */
-    PixelFormat_BayerGR10Packed,    /*!< */
-    PixelFormat_BayerRG10Packed,    /*!< */
-    PixelFormat_BayerGB10Packed,    /*!< */
-    PixelFormat_BayerBG10Packed,    /*!< */
     PixelFormat_Mono12Packed,    /*!< */
     PixelFormat_BayerGR12Packed,    /*!< */
     PixelFormat_BayerRG12Packed,    /*!< */
@@ -1157,11 +957,6 @@ typedef enum _spinPixelFormatEnums    /*!< Format of the pixel provided by the c
     PixelFormat_YUV411Packed,    /*!< */
     PixelFormat_YUV422Packed,    /*!< */
     PixelFormat_YUV444Packed,    /*!< */
-    PixelFormat_Mono10p,    /*!< */
-    PixelFormat_BayerGR10p,    /*!< */
-    PixelFormat_BayerRG10p,    /*!< */
-    PixelFormat_BayerGB10p,    /*!< */
-    PixelFormat_BayerBG10p,    /*!< */
     PixelFormat_Mono12p,    /*!< */
     PixelFormat_BayerGR12p,    /*!< */
     PixelFormat_BayerRG12p,    /*!< */
@@ -1172,6 +967,16 @@ typedef enum _spinPixelFormatEnums    /*!< Format of the pixel provided by the c
     PixelFormat_YCbCr411_8,    /*!< */
     PixelFormat_BGR8,    /*!< */
     PixelFormat_BGRa8,    /*!< */
+    PixelFormat_Mono10Packed,    /*!< */
+    PixelFormat_BayerGR10Packed,    /*!< */
+    PixelFormat_BayerRG10Packed,    /*!< */
+    PixelFormat_BayerGB10Packed,    /*!< */
+    PixelFormat_BayerBG10Packed,    /*!< */
+    PixelFormat_Mono10p,    /*!< */
+    PixelFormat_BayerGR10p,    /*!< */
+    PixelFormat_BayerRG10p,    /*!< */
+    PixelFormat_BayerGB10p,    /*!< */
+    PixelFormat_BayerBG10p,    /*!< */
     PixelFormat_Mono1p,    /*!< Monochrome 1-bit packed*/
     PixelFormat_Mono2p,    /*!< Monochrome 2-bit packed*/
     PixelFormat_Mono4p,    /*!< Monochrome 4-bit packed*/
@@ -1371,11 +1176,207 @@ typedef enum _spinPixelFormatEnums    /*!< Format of the pixel provided by the c
     NUM_PIXELFORMAT
 } spinPixelFormatEnums;
 
-typedef enum _spinDecimationVerticalModeEnums    /*!< The mode used to reduce the vertical resolution when DecimationVertical is used. The current implementation only supports a single decimation mode: Discard.  Average should be achieved via Binning.*/
+typedef enum _spinDecimationVerticalModeEnums    /*!< 
+      The mode used to reduce the vertical resolution when DecimationVertical is used.
+      The current implementation only supports a single decimation mode: Discard.  Average should be achieved via Binning.
+    */
 {
     DecimationVerticalMode_Discard,    /*!< The value of every Nth pixel is kept, others are discarded.*/
     NUM_DECIMATIONVERTICALMODE
 } spinDecimationVerticalModeEnums;
+
+typedef enum _spinLineModeEnums    /*!< Controls if the physical Line is used to Input or Output a signal.*/
+{
+    LineMode_Input,    /*!< */
+    LineMode_Output,    /*!< */
+    NUM_LINEMODE
+} spinLineModeEnums;
+
+typedef enum _spinLineSourceEnums    /*!< Selects which internal acquisition or I/O source signal to output on the selected line. LineMode must be Output.*/
+{
+    LineSource_Off,    /*!< */
+    LineSource_Line0,    /*!< */
+    LineSource_Line1,    /*!< */
+    LineSource_Line2,    /*!< */
+    LineSource_Line3,    /*!< */
+    LineSource_UserOutput0,    /*!< */
+    LineSource_UserOutput1,    /*!< */
+    LineSource_UserOutput2,    /*!< */
+    LineSource_UserOutput3,    /*!< */
+    LineSource_Counter0Active,    /*!< */
+    LineSource_Counter1Active,    /*!< */
+    LineSource_LogicBlock0,    /*!< */
+    LineSource_LogicBlock1,    /*!< */
+    LineSource_ExposureActive,    /*!< */
+    LineSource_FrameTriggerWait,    /*!< */
+    LineSource_SerialPort0,    /*!< */
+    LineSource_PPSSignal,    /*!< */
+    LineSource_AllPixel,    /*!< */
+    LineSource_AnyPixel,    /*!< */
+    NUM_LINESOURCE
+} spinLineSourceEnums;
+
+typedef enum _spinLineInputFilterSelectorEnums    /*!< Selects the kind of input filter to configure: Deglitch or Debounce.*/
+{
+    LineInputFilterSelector_Deglitch,    /*!< */
+    LineInputFilterSelector_Debounce,    /*!< */
+    NUM_LINEINPUTFILTERSELECTOR
+} spinLineInputFilterSelectorEnums;
+
+typedef enum _spinUserOutputSelectorEnums    /*!< Selects which bit of the User Output register is set by UserOutputValue.*/
+{
+    UserOutputSelector_UserOutput0,    /*!< */
+    UserOutputSelector_UserOutput1,    /*!< */
+    UserOutputSelector_UserOutput2,    /*!< */
+    UserOutputSelector_UserOutput3,    /*!< */
+    NUM_USEROUTPUTSELECTOR
+} spinUserOutputSelectorEnums;
+
+typedef enum _spinLineFormatEnums    /*!< Displays the current electrical format of the selected physical input or output Line.*/
+{
+    LineFormat_NoConnect,    /*!< */
+    LineFormat_TriState,    /*!< */
+    LineFormat_TTL,    /*!< */
+    LineFormat_LVDS,    /*!< */
+    LineFormat_RS422,    /*!< */
+    LineFormat_OptoCoupled,    /*!< */
+    LineFormat_OpenDrain,    /*!< */
+    NUM_LINEFORMAT
+} spinLineFormatEnums;
+
+typedef enum _spinLineSelectorEnums    /*!< Selects the physical line (or pin) of the external device connector to configure*/
+{
+    LineSelector_Line0,    /*!< */
+    LineSelector_Line1,    /*!< */
+    LineSelector_Line2,    /*!< */
+    LineSelector_Line3,    /*!< */
+    NUM_LINESELECTOR
+} spinLineSelectorEnums;
+
+typedef enum _spinExposureActiveModeEnums    /*!< Control sensor active exposure mode.*/
+{
+    ExposureActiveMode_Line1,    /*!< */
+    ExposureActiveMode_AnyPixels,    /*!< */
+    ExposureActiveMode_AllPixels,    /*!< */
+    NUM_EXPOSUREACTIVEMODE
+} spinExposureActiveModeEnums;
+
+typedef enum _spinCounterTriggerActivationEnums    /*!< Selects the activation mode of the trigger to start the Counter.*/
+{
+    CounterTriggerActivation_LevelLow,    /*!< */
+    CounterTriggerActivation_LevelHigh,    /*!< */
+    CounterTriggerActivation_FallingEdge,    /*!< */
+    CounterTriggerActivation_RisingEdge,    /*!< */
+    CounterTriggerActivation_AnyEdge,    /*!< */
+    NUM_COUNTERTRIGGERACTIVATION
+} spinCounterTriggerActivationEnums;
+
+typedef enum _spinCounterSelectorEnums    /*!< Selects which counter to configure*/
+{
+    CounterSelector_Counter0,    /*!< */
+    CounterSelector_Counter1,    /*!< */
+    NUM_COUNTERSELECTOR
+} spinCounterSelectorEnums;
+
+typedef enum _spinCounterStatusEnums    /*!< Returns the current status of the Counter.*/
+{
+    CounterStatus_CounterIdle,    /*!< The counter is idle.*/
+    CounterStatus_CounterTriggerWait,    /*!< The counter is waiting for a start trigger.*/
+    CounterStatus_CounterActive,    /*!< The counter is counting for the specified duration.*/
+    CounterStatus_CounterCompleted,    /*!< The counter reached the CounterDuration count.*/
+    CounterStatus_CounterOverflow,    /*!< The counter reached its maximum possible count.*/
+    NUM_COUNTERSTATUS
+} spinCounterStatusEnums;
+
+typedef enum _spinCounterTriggerSourceEnums    /*!< Selects the source of the trigger to start the counter*/
+{
+    CounterTriggerSource_Off,    /*!< Off*/
+    CounterTriggerSource_Line0,    /*!< Line0*/
+    CounterTriggerSource_Line1,    /*!< Line1*/
+    CounterTriggerSource_Line2,    /*!< Line2*/
+    CounterTriggerSource_Line3,    /*!< Line3*/
+    CounterTriggerSource_UserOutput0,    /*!< UserOutput0*/
+    CounterTriggerSource_UserOutput1,    /*!< UserOutput1*/
+    CounterTriggerSource_UserOutput2,    /*!< UserOutput2*/
+    CounterTriggerSource_UserOutput3,    /*!< UserOutput3*/
+    CounterTriggerSource_Counter0Start,    /*!< Counter0Start*/
+    CounterTriggerSource_Counter1Start,    /*!< Counter1Start*/
+    CounterTriggerSource_Counter0End,    /*!< Counter0End*/
+    CounterTriggerSource_Counter1End,    /*!< Counter1End*/
+    CounterTriggerSource_LogicBlock0,    /*!< LogicBlock0*/
+    CounterTriggerSource_LogicBlock1,    /*!< LogicBlock1*/
+    CounterTriggerSource_ExposureStart,    /*!< ExposureStart*/
+    CounterTriggerSource_ExposureEnd,    /*!< ExposureEnd*/
+    CounterTriggerSource_FrameTriggerWait,    /*!< FrameTriggerWait*/
+    NUM_COUNTERTRIGGERSOURCE
+} spinCounterTriggerSourceEnums;
+
+typedef enum _spinCounterResetSourceEnums    /*!< Selects the signal that will be the source to reset the Counter.*/
+{
+    CounterResetSource_Off,    /*!< Off*/
+    CounterResetSource_Line0,    /*!< Line0*/
+    CounterResetSource_Line1,    /*!< Line1*/
+    CounterResetSource_Line2,    /*!< Line2*/
+    CounterResetSource_Line3,    /*!< Line3*/
+    CounterResetSource_UserOutput0,    /*!< UserOutput0*/
+    CounterResetSource_UserOutput1,    /*!< UserOutput1*/
+    CounterResetSource_UserOutput2,    /*!< UserOutput2*/
+    CounterResetSource_UserOutput3,    /*!< UserOutput3*/
+    CounterResetSource_Counter0Start,    /*!< Counter0Start*/
+    CounterResetSource_Counter1Start,    /*!< Counter1Start*/
+    CounterResetSource_Counter0End,    /*!< Counter0End*/
+    CounterResetSource_Counter1End,    /*!< Counter1End*/
+    CounterResetSource_LogicBlock0,    /*!< LogicBlock0*/
+    CounterResetSource_LogicBlock1,    /*!< LogicBlock1*/
+    CounterResetSource_ExposureStart,    /*!< ExposureStart*/
+    CounterResetSource_ExposureEnd,    /*!< ExposureEnd*/
+    CounterResetSource_FrameTriggerWait,    /*!< FrameTriggerWait*/
+    NUM_COUNTERRESETSOURCE
+} spinCounterResetSourceEnums;
+
+typedef enum _spinCounterEventSourceEnums    /*!< Selects the event that will increment the counter*/
+{
+    CounterEventSource_Off,    /*!< Off*/
+    CounterEventSource_MHzTick,    /*!< MHzTick*/
+    CounterEventSource_Line0,    /*!< Line0*/
+    CounterEventSource_Line1,    /*!< Line1*/
+    CounterEventSource_Line2,    /*!< Line2*/
+    CounterEventSource_Line3,    /*!< Line3*/
+    CounterEventSource_UserOutput0,    /*!< UserOutput0*/
+    CounterEventSource_UserOutput1,    /*!< UserOutput1*/
+    CounterEventSource_UserOutput2,    /*!< UserOutput2*/
+    CounterEventSource_UserOutput3,    /*!< UserOutput3*/
+    CounterEventSource_Counter0Start,    /*!< Counter0Start*/
+    CounterEventSource_Counter1Start,    /*!< Counter1Start*/
+    CounterEventSource_Counter0End,    /*!< Counter0End*/
+    CounterEventSource_Counter1End,    /*!< Counter1End*/
+    CounterEventSource_LogicBlock0,    /*!< LogicBlock0*/
+    CounterEventSource_LogicBlock1,    /*!< LogicBlock1*/
+    CounterEventSource_ExposureStart,    /*!< ExposureStart*/
+    CounterEventSource_ExposureEnd,    /*!< ExposureEnd*/
+    CounterEventSource_FrameTriggerWait,    /*!< FrameTriggerWait*/
+    NUM_COUNTEREVENTSOURCE
+} spinCounterEventSourceEnums;
+
+typedef enum _spinCounterEventActivationEnums    /*!< Selects the activation mode of the event to increment the Counter.*/
+{
+    CounterEventActivation_LevelLow,    /*!< */
+    CounterEventActivation_LevelHigh,    /*!< */
+    CounterEventActivation_FallingEdge,    /*!< */
+    CounterEventActivation_RisingEdge,    /*!< */
+    CounterEventActivation_AnyEdge,    /*!< */
+    NUM_COUNTEREVENTACTIVATION
+} spinCounterEventActivationEnums;
+
+typedef enum _spinCounterResetActivationEnums    /*!< Selects the Activation mode of the Counter Reset Source signal.*/
+{
+    CounterResetActivation_LevelLow,    /*!< */
+    CounterResetActivation_LevelHigh,    /*!< */
+    CounterResetActivation_FallingEdge,    /*!< */
+    CounterResetActivation_RisingEdge,    /*!< */
+    CounterResetActivation_AnyEdge,    /*!< */
+    NUM_COUNTERRESETACTIVATION
+} spinCounterResetActivationEnums;
 
 typedef enum _spinDeviceTypeEnums    /*!< Returns the device type.*/
 {
@@ -1734,15 +1735,6 @@ typedef enum _spinDeinterlacingEnums    /*!< Controls how the device performs de
     NUM_DEINTERLACING
 } spinDeinterlacingEnums;
 
-typedef enum _spinImageCompressionModeEnums    /*!< Enable a specific image compression mode as the base mode for image transfer. Optionally, chunk data can be appended to the compressed image (See chunk section).*/
-{
-    ImageCompressionMode_Off,    /*!< Default value. Image compression is disabled. Images are transmitted uncompressed.*/
-    ImageCompressionMode_JPEG,    /*!< JPEG compression is selected.*/
-    ImageCompressionMode_JPEG2000,    /*!< JPEG 2000 compression is selected.*/
-    ImageCompressionMode_H264,    /*!< H.264 compression is selected.*/
-    NUM_IMAGECOMPRESSIONMODE
-} spinImageCompressionModeEnums;
-
 typedef enum _spinImageCompressionRateOptionEnums    /*!< Two rate controlling options are offered: fixed bit rate or fixed quality. The exact implementation to achieve one or the other is vendor-specific.*/
 {
     ImageCompressionRateOption_FixBitrate,    /*!< Output stream follows a constant bit rate. Allows easy bandwidth management on the link.*/
@@ -2043,21 +2035,6 @@ typedef enum _spinTransferSelectorEnums    /*!< Selects which stream transfers a
     TransferSelector_All,    /*!< The transfer features control all the data streams simulateneously.*/
     NUM_TRANSFERSELECTOR
 } spinTransferSelectorEnums;
-
-typedef enum _spinTransferControlModeEnums    /*!< Selects the control method for the transfers.*/
-{
-    TransferControlMode_Basic,    /*!< Basic*/
-    TransferControlMode_Automatic,    /*!< Automatic*/
-    TransferControlMode_UserControlled,    /*!< User Controlled*/
-    NUM_TRANSFERCONTROLMODE
-} spinTransferControlModeEnums;
-
-typedef enum _spinTransferOperationModeEnums    /*!< Selects the operation mode of the transfer.*/
-{
-    TransferOperationMode_Continuous,    /*!< Continuous*/
-    TransferOperationMode_MultiBlock,    /*!< Multi Block*/
-    NUM_TRANSFEROPERATIONMODE
-} spinTransferOperationModeEnums;
 
 typedef enum _spinTransferTriggerSelectorEnums    /*!< Selects the type of transfer trigger to configure.*/
 {

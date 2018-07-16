@@ -19,8 +19,8 @@
 
 #include "QuickSpinC.h"
 
-#ifndef PGR_SPINNAKERC_TLINTERFACE_H
-#define PGR_SPINNAKERC_TLINTERFACE_H
+#ifndef FLIR_SPINNAKERC_TLINTERFACE_H
+#define FLIR_SPINNAKERC_TLINTERFACE_H
 
 /**	
 * @defgroup TLInterfaceC_h TLInterface Structures
@@ -64,4 +64,4 @@ typedef struct _quickSpinTLInterface
 
 /*@}*/
 
-#endif // PGR_SPINNAKERC_TLINTERFACE_H
+#endif // FLIR_SPINNAKERC_TLINTERFACE_H

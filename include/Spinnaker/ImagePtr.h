@@ -15,59 +15,59 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_IMAGE_PTR_H
-#define PGR_SPINNAKER_IMAGE_PTR_H
+#ifndef FLIR_SPINNAKER_IMAGE_PTR_H
+#define FLIR_SPINNAKER_IMAGE_PTR_H
 
 #include "SpinnakerPlatform.h"
 #include "BasePtr.h"
-#include "Image.h"
-
+#include "Interface/IImage.h"
+ 
 namespace Spinnaker
 {
-	/**
-	*  @defgroup SpinnakerClasses Spinnaker Classes
-	*/
+    /**
+    *  @defgroup SpinnakerClasses Spinnaker Classes
+    */
 
-	/*@{*/
+    /*@{*/
 
-	/**
-	*  @defgroup ImagePtr_h ImagePtr Class
-	*
-	*/
+    /**
+    *  @defgroup ImagePtr_h ImagePtr Class
+    *
+    */
 
-	/*@{*/
+    /*@{*/
 
     /**
     * @brief A reference tracked pointer to an image object.  When the ImagePtr goes out of scope, 
     *        it will trigger an auto release of the image from the stream.
     */
 
-	class SPINNAKER_API ImagePtr : public BasePtr<Image>
-	{	
-	public:    
-		/**
-		* Default constructor.
-		*/
+    class SPINNAKER_API ImagePtr : public BasePtr<IImage>
+    {	
+    public:    
+        /**
+        * Default constructor.
+        */
         ImagePtr();
 
-		/**
-		* Default constructor.
-		*/
+        /**
+        * Default constructor.
+        */
         ImagePtr(const int /*nMustBeNull*/);
 
-		/**
-		* Virtual destructor.
-		*/
+        /**
+        * Virtual destructor.
+        */
         virtual ~ImagePtr(void);
 
-		/**
-		* Assignment operator.
-		*/
+        /**
+        * Assignment operator.
+        */
         virtual ImagePtr& operator=(const ImagePtr&);
 
-		/**
-		* Assignment operator.
-		*/
+        /**
+        * Assignment operator.
+        */
         virtual ImagePtr& operator=(const int nMustBeNull);
     };
 
@@ -76,4 +76,4 @@ namespace Spinnaker
     /*@}*/
 }
 
-#endif // PGR_SPINNAKER_IMAGE_PTR_H
+#endif // FLIR_SPINNAKER_IMAGE_PTR_H

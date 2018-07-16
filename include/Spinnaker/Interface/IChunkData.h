@@ -21,7 +21,7 @@
 #define PGR_SPINNAKER_ICHUNKDATA_H
 
 #include "SpinGenApi/GCTypes.h"
-#include "SpinGenApi/SpinnakerGenApi.h"
+#include "SpinGenApi/INodeMap.h"
 #include "CameraDefs.h"
 
 namespace Spinnaker

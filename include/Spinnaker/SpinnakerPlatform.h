@@ -15,8 +15,8 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_PLATFORM_H
-#define PGR_SPINNAKER_PLATFORM_H
+#ifndef FLIR_SPINNAKER_PLATFORM_H
+#define FLIR_SPINNAKER_PLATFORM_H
 
 /**
 *  @defgroup SpinnakerHeaders Spinnaker Headers
@@ -25,7 +25,7 @@
 /*@{*/
 
 /**
-* @defgroup SpinnakerPlatform Spinnaker Platform 
+* @defgroup SpinnakerPlatform Spinnaker Platform
 *
 * Platform-specific header file for Spinnaker.
 * All the platform-specific code that is required by individual compilers
@@ -63,7 +63,27 @@
 
 #endif
 
-#endif // PGR_SPINNAKER_PLATFORM_H
+// Helper to deprecate functions and methods
+// For C++14
+#if __cplusplus >= 201402L
+    #if defined(__has_cpp_attribute)
+        #if __has_cpp_attribute(deprecated)
+            #define DEPRECATED_CLASS(msg) [[deprecated(msg)]]
+            #define DEPRECATED_FUNC(msg, func) [[deprecated(msg)]] func
+        #endif
+    #endif
+// For other C++ versions
+#else
+    #ifdef __GNUC__
+        #define DEPRECATED_CLASS(msg) __attribute__ ((deprecated(msg)))
+        #define DEPRECATED_FUNC(msg, func) func __attribute__ ((deprecated(msg)))
+    #elif defined(_MSC_VER)
+        #define DEPRECATED_CLASS(msg) __declspec(deprecated(msg))
+        #define DEPRECATED_FUNC(msg, func) __declspec(deprecated(msg)) func
+    #endif
+#endif
+
+#endif // FLIR_SPINNAKER_PLATFORM_H
 
 /*@}*/
 

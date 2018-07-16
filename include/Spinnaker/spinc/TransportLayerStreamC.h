@@ -19,8 +19,8 @@
 
 #include "QuickSpinC.h"
 
-#ifndef PGR_SPINNAKERC_TLSTREAM_H
-#define PGR_SPINNAKERC_TLSTREAM_H
+#ifndef FLIR_SPINNAKERC_TLSTREAM_H
+#define FLIR_SPINNAKERC_TLSTREAM_H
 
 /**	
 * @defgroup TLStreamC_h TLStream Structures
@@ -36,6 +36,10 @@ typedef struct _quickSpinTLStream
 	quickSpinIntegerNode StreamDefaultBufferCount;
 	quickSpinIntegerNode StreamDefaultBufferCountMax;
 	quickSpinEnumerationNode StreamDefaultBufferCountMode;
+	quickSpinIntegerNode StreamBufferCountManual;
+	quickSpinIntegerNode StreamBufferCountResult;
+	quickSpinIntegerNode StreamBufferCountMax;
+	quickSpinEnumerationNode StreamBufferCountMode;
 	quickSpinEnumerationNode StreamBufferHandlingMode;
 	quickSpinBooleanNode StreamCRCCheckEnable;
 	quickSpinBooleanNode GevPacketResendMode;
@@ -53,4 +57,4 @@ typedef struct _quickSpinTLStream
 
 /*@}*/
 
-#endif // PGR_SPINNAKERC_TLSTREAM_H
+#endif // FLIR_SPINNAKERC_TLSTREAM_H

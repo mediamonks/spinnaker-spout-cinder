@@ -15,8 +15,8 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_SYSTEM_PTR_H
-#define PGR_SPINNAKER_SYSTEM_PTR_H
+#ifndef FLIR_SPINNAKER_SYSTEM_PTR_H
+#define FLIR_SPINNAKER_SYSTEM_PTR_H
 
 #include "SpinnakerPlatform.h"
 #include "BasePtr.h"
@@ -24,7 +24,7 @@
 
 namespace Spinnaker
 {
-	class System;
+    class ISystem;
 
     /**
     *  @defgroup SpinnakerClasses Spinnaker Classes
@@ -40,9 +40,10 @@ namespace Spinnaker
     * @brief A reference tracked pointer to a system object.
     */
 
-	class SPINNAKER_API SystemPtr : public BasePtr<System>
-	{	
-	public:    
+    class SPINNAKER_API SystemPtr : public BasePtr<ISystem>
+    {	
+    public:
+
         //! Default constructor 
         SystemPtr();
 
@@ -51,7 +52,6 @@ namespace Spinnaker
 
         //! Virtual destructor 
         virtual ~SystemPtr(void);
-
     };
 
     /*@}*/
@@ -59,4 +59,4 @@ namespace Spinnaker
     /*@}*/
 }
 
-#endif // PGR_SPINNAKER_SYSTEM_PTR_H
+#endif //FLIR_SPINNAKER_SYSTEM_PTR_H

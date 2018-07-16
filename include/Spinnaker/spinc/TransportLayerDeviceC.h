@@ -19,8 +19,8 @@
 
 #include "QuickSpinC.h"
 
-#ifndef PGR_SPINNAKERC_TLDEVICE_H
-#define PGR_SPINNAKERC_TLDEVICE_H
+#ifndef FLIR_SPINNAKERC_TLDEVICE_H
+#define FLIR_SPINNAKERC_TLDEVICE_H
 
 /**	
 * @defgroup TLDeviceC_h TLDevice Structures
@@ -66,4 +66,4 @@ typedef struct _quickSpinTLDevice
 
 /*@}*/
 
-#endif // PGR_SPINNAKERC_TLDEVICE_H
+#endif // FLIR_SPINNAKERC_TLDEVICE_H

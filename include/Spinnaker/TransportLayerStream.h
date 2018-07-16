@@ -17,8 +17,8 @@
    
 /* Auto-generated file. Do not modify. */
 
-#ifndef PGR_SPINNAKER_TRANSPORTLAYERSTREAM_H
-#define PGR_SPINNAKER_TRANSPORTLAYERSTREAM_H
+#ifndef FLIR_SPINNAKER_TRANSPORTLAYERSTREAM_H
+#define FLIR_SPINNAKER_TRANSPORTLAYERSTREAM_H
 
 #include "SpinnakerPlatform.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
@@ -75,22 +75,46 @@ namespace Spinnaker
 		GenApi::IInteger &StreamTotalBufferCount;
 
 		/**
-		 * Description: Controls the number of buffers that should be used by default on this stream.
-		 * Visibility: Expert
+		 * Description: DEPRECATED; Replaced by StreamBufferCountManual. Controls the number of buffers to be used on this stream upon acquisition start when in manual mode.
+		 * Visibility: Invisible
 		 */
 		GenApi::IInteger &StreamDefaultBufferCount;
+
+		/**
+		 * Description: DEPRECATED; Replaced by StreamBufferCountMax. Controls the maximum number of buffers that should be used on this stream. This value is calculated based on the available system memory.
+		 * Visibility: Invisible
+		 */
+		GenApi::IInteger &StreamDefaultBufferCountMax;
+
+		/**
+		 * Description: DEPRECATED; Replaced by StreamBufferCountMode. Controls access to setting the number of buffers used for the stream. Locked to Manual mode on 32-bit Windows due to memory constraints.
+		 * Visibility: Invisible
+		 */
+		GenApi::IEnumerationT<StreamDefaultBufferCountModeEnum> &StreamDefaultBufferCountMode;
+
+		/**
+		 * Description: Controls the number of buffers to be used on this stream upon acquisition start when in manual mode.
+		 * Visibility: Expert
+		 */
+		GenApi::IInteger &StreamBufferCountManual;
+
+		/**
+		 * Description: Displays the number of buffers to be used on this stream upon acquisition start. Recalculated on acquisition start if in auto mode.
+		 * Visibility: Expert
+		 */
+		GenApi::IInteger &StreamBufferCountResult;
 
 		/**
 		 * Description: Controls the maximum number of buffers that should be used on this stream. This value is calculated based on the available system memory.
 		 * Visibility: Expert
 		 */
-		GenApi::IInteger &StreamDefaultBufferCountMax;
+		GenApi::IInteger &StreamBufferCountMax;
 
 		/**
-		 * Description: Controls the number of buffers used for the stream.
+		 * Description: Controls access to setting the number of buffers used for the stream. Locked to Manual mode on 32-bit Windows due to memory constraints.
 		 * Visibility: Expert
 		 */
-		GenApi::IEnumerationT<StreamDefaultBufferCountModeEnum> &StreamDefaultBufferCountMode;
+		GenApi::IEnumerationT<StreamBufferCountModeEnum> &StreamBufferCountMode;
 
 		/**
 		 * Description: Available buffer handling modes of this data stream:
@@ -111,20 +135,20 @@ namespace Spinnaker
 		GenApi::IBoolean &GevPacketResendMode;
 
 		/**
-		 * Description: Maximum number of resend requests per image.
+		 * Description: Maximum number of resend requests per image. Each resend request consists of a span of consecutive packet IDs.
 		 * Visibility: Expert
 		 */
 		GenApi::IInteger &GevMaximumNumberResendRequests;
 
 		/**
-		 * Description: Time in milliseconds to wait until a resend request is issued.
+		 * Description: Time in milliseconds to wait after the image trailer is received and before the image is completed by the driver.
 		 * Visibility: Expert
 		 */
 		GenApi::IInteger &GevPacketResendTimeout;
 
 		/**
-		 * Description: The maximum number of buffers that can be resend simultaneously.
-		 * Visibility: Expert
+		 * Description: This node is not used and has been deprecated.
+		 * Visibility: Invisible
 		 */
 		GenApi::IInteger &GevMaximumNumberResendBuffers;
 
@@ -173,6 +197,7 @@ namespace Spinnaker
 
 	protected:
 		friend class CameraBase;
+		friend class ICameraBase;
 		friend class CameraInternal;
 
 	};
@@ -181,4 +206,4 @@ namespace Spinnaker
 	/*@}*/
 
 }
-#endif // PGR_SPINNAKER_TRANSPORTLAYERSTREAM_H
+#endif // FLIR_SPINNAKER_TRANSPORTLAYERSTREAM_H

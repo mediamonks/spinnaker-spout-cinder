@@ -15,66 +15,68 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_INTERFACE_PTR_H
-#define PGR_SPINNAKER_INTERFACE_PTR_H
+#ifndef FLIR_SPINNAKER_INTERFACE_PTR_H
+#define FLIR_SPINNAKER_INTERFACE_PTR_H
 
 #include "SpinnakerPlatform.h"
 #include "BasePtr.h"
 #include "Interface.h"
 
-
 namespace Spinnaker
 {
-	/**
-	*  @defgroup SpinnakerClasses Spinnaker Classes
-	*/
+    /**
+    *  @defgroup SpinnakerClasses Spinnaker Classes
+    */
 
-	/*@{*/
+    /*@{*/
 
-	/**
-	*  @defgroup InterfacePtr_h InterfacePtr Class
-	*/
+    /**
+    *  @defgroup InterfacePtr_h InterfacePtr Class
+    */
 
-	/*@{*/
+    /*@{*/
 
-	/**
-	* @brief A reference tracked pointer to the interface object.
-	*/
+    /**
+    * @brief A reference tracked pointer to the interface object.
+    */
 
-	class SPINNAKER_API InterfacePtr : public BasePtr<Interface>
-	{
-	public:
-		/**
-		* Default Constructor
-		*/
-		InterfacePtr() throw()
-			: BasePtr<Interface>()
-		{
-		}
+    class SPINNAKER_API InterfacePtr : public BasePtr<IInterface>
+    {
+    public:
+        /**
+        * Default Constructor
+        */
+        InterfacePtr() throw()
+            : BasePtr<IInterface>()
+        {
+        }
 
-		/**
-		* Default Constructor
-		*/
-		InterfacePtr(const int /*nMustBeNull*/) throw()
-			: BasePtr<Interface>()
-		{
-		}
+        /**
+        * Default Constructor
+        */
+        InterfacePtr(const int /*nMustBeNull*/) throw()
+            : BasePtr<IInterface>()
+        {
+        }
 
-		/**
-		* Virtual Destructor
-		*/
-		virtual ~InterfacePtr(void){};
+        /**
+        * Virtual Destructor
+        */
+        virtual ~InterfacePtr(void){};
 
-		/**
-		* Copy Constructor
-		*/
-		virtual InterfacePtr& operator=(const int nMustBeNull){ return dynamic_cast<InterfacePtr&>(BasePtr<Interface>::operator=(nMustBeNull)); };
-		
-	};
+        /**
+        * Copy Constructor
+        */
+        virtual InterfacePtr& operator=(const int nMustBeNull)
+        {
+            return dynamic_cast<InterfacePtr&>(BasePtr<IInterface>::operator=(nMustBeNull));
+        };
+        
+    };
 
-	/*@}*/
+    /*@}*/
 
-	/*@}*/
+    /*@}*/
 }
 
-#endif //PGR_SPINNAKER_INTERFACE_PTR_H
+#endif //FLIR_SPINNAKER_INTERFACE_PTR_H

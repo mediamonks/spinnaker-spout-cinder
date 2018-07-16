@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright © 2018 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -15,8 +15,8 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_GENAPIDEFS_C_H
-#define PGR_SPINNAKER_GENAPIDEFS_C_H
+#ifndef FLIR_SPINNAKER_GENAPIDEFS_C_H
+#define FLIR_SPINNAKER_GENAPIDEFS_C_H
 
 /**
 * @defgroup SpinnakerCGenApi Spinnaker C GenICam API
@@ -257,4 +257,4 @@ typedef enum _spinInputDirection
 
 /*@}*/
 
-#endif //PGR_SPINNAKER_GENAPIDEFS_C_H
+#endif // FLIR_SPINNAKER_GENAPIDEFS_C_H
