@@ -27,7 +27,7 @@ You will need to have the VC++ v140 toolset installed. This can be done for inst
 * Make sure that this repository's bin64 folder is in your PATH environment variable (don't forget to restart Visual Studio after modifying the PATH).
 * If you have the Spinnaker SDK installed while developing, make sure you don't have a different version installed than the dlls in this repo's bin64 folder (currently 1.13.0.33) as this may cause conflicts trying to access the camera
 * If you have the Spinnaker SDK installed, make sure the bin64 folder of this repo is *above* the folders of the SDK in the PATH variable, otherwise you may get a procedure entry point location error.
-![path-config](.\path-config.png)
+![path-config](./path-config.png)
 
 
 ### Distributing the binary
