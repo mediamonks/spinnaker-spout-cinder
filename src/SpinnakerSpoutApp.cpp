@@ -54,7 +54,7 @@ class SpinnakerSpoutApp : public App {
 	params::InterfaceGlRef	params = NULL;
 	int binning = 1; // 1 is no binning (1x scale), 2 = factor 2 binning (0.5x scale)
 	int binningEnumIndex = 0; // used for binning param interface
-	string pixelFormat = "BayerRG8"; //Color mode of camera aquisition. Will be converted to RGB8 software-side, note that apturing at RGB8Packed uses a lot of bandwidth.
+	string pixelFormat = "BayerRG8"; //Color mode of camera aquisition. Will be converted to RGB8 software-side, note that capturing at RGB8Packed would use a lot of bandwidth.
 	int pixelFormatEnumIndex = 0;
 	void initParamInterface();
 	void applyParamsIfNeeded();
@@ -258,7 +258,7 @@ void SpinnakerSpoutApp::checkCameraAvailable() {
 	else {
 		camera = camList.GetByIndex(0);
 		try {
-			console() << "Initializing camera 0..." << endl;
+			console() << "Initializing camera 0 (" << camList.GetSize() << " available)..." << endl;
 			camera->Init();
 			//SpinnakerDeviceCommunication::printDeviceInfo(camera);
 			cameraFound = true;
@@ -274,7 +274,7 @@ void SpinnakerSpoutApp::checkCameraStarted() {
 
 	try
 	{
-		console() << "Starting camera..." << endl;
+		console() << "Starting camera with access mode " << SpinnakerDeviceCommunication::accessModeToString(camera->GetAccessMode()) << "..." << endl;
 		SpinnakerDeviceCommunication::setParameterEnum(camera, "AcquisitionMode", "Continuous");
 		camera->BeginAcquisition();
 		prevCaptureWidth = 0;
@@ -303,7 +303,7 @@ gl::TextureRef SpinnakerSpoutApp::getCameraTexture() {
 	}
 
 	try {
-		ImagePtr capturedImage = camera->GetNextImage(1000); // blocks until a new frame is available, limiting the frame rate of 
+		ImagePtr capturedImage = camera->GetNextImage(1000); // Note: blocks until a new frame is available, limiting the frame rate of the entire app
 		if (capturedImage->IsIncomplete())
 		{
 			console() << "Image incomplete with image status " << capturedImage->GetImageStatus() << "..." << endl;

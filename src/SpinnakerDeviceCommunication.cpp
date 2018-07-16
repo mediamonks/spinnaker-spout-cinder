@@ -595,6 +595,18 @@ int SpinnakerDeviceCommunication::printCategoryNodeAndAllFeatures(CNodePtr node,
 	return result;
 }
 
+std::string SpinnakerDeviceCommunication::accessModeToString(GenApi::EAccessMode mode){
+	switch (mode) {
+		case GenApi::EAccessMode::NI: return "Not implemented";
+		case GenApi::EAccessMode::NA: return "Not available";
+		case GenApi::EAccessMode::WO: return "Write Only";
+		case GenApi::EAccessMode::RO: return "Read Only";
+		case GenApi::EAccessMode::RW: return "Read and Write";
+		case GenApi::EAccessMode::_UndefinedAccesMode: return "Object is not yet initialized";
+		case GenApi::EAccessMode::_CycleDetectAccesMode: return "used internally for AccessMode cycle detection";
+	}
+}
+
 // This helper function deals with output indentation, of which there is a lot.
 void SpinnakerDeviceCommunication::indent(unsigned int level)
 {

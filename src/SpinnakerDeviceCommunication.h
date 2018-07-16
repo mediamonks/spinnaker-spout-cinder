@@ -48,4 +48,5 @@ public:
 	static int printEnumerationNodeAndCurrentEntry(CNodePtr node, unsigned int level);
 	static int printCategoryNodeAndAllFeatures(CNodePtr node, unsigned int level);
 	static void indent(unsigned int level);
+	static std::string accessModeToString(GenApi::EAccessMode mode);
 };
