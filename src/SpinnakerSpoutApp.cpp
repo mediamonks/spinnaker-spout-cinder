@@ -81,7 +81,8 @@ void SpinnakerSpoutApp::draw()
 					}
 					else {
 						gl::setMatricesWindow(getWindowSize());
-						gl::draw(cameraTexture, Rectf(0, 0, getWindowWidth(), getWindowHeight()));
+						bool flip = true;
+						gl::draw(cameraTexture, Rectf(0, flip ? getWindowHeight() : 0, getWindowWidth(), flip ? 0 : getWindowHeight()));
 
 						info << "Capturing from " << camera->DeviceModelName.GetValue() << " at " << cameraTexture->getWidth() << " x " << cameraTexture->getHeight() << ", sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight;
 
