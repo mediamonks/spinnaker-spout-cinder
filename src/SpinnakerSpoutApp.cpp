@@ -42,78 +42,91 @@ void SpinnakerSpoutApp::draw()
 	int infoLeft = toPixels(20);
 	int infoTop = getWindowHeight() - toPixels(20) - fontSize;
 
-	if (firstDrawDone) {
+	stringstream info;
+	int fps = 0;
+
+	if (needsInitText) {
+		info << "Initializing...";
+		needsInitText = false;
+	}
+	else {
 		checkCameraAvailable(); // blocks while initializing
-		if (cameraFound) {
+		if (!cameraFound) {
+			info << "No camera found...";
+		}
+		else {
 			if (!paramInterfaceInited) {
 				initParamInterface();
 				paramInterfaceInited = true;
 			}
 
-			applyParamsIfNeeded(); // potentially stops camera acquisition to apply changed settings
-			checkCameraStarted();
-			gl::TextureRef cameraTexture = getCameraTexture(); // if a valid camera exists, blocks until a new frame is available, otherwise skips
+			bool cameraWasStopped = applyParamsIfNeeded(); // potentially stops camera acquisition to apply changed settings
+			cameraRunning = cameraRunning && !cameraWasStopped;
+			if (!cameraRunning) cameraRunning = startCamera();
 
-			gl::color(ColorA(0, 0, 0, 0.5));
-			gl::drawSolidRect(Rectf(0, infoTop - 10, getWindowWidth(), infoTop + fontSize + 10));
-			gl::color(ColorA(1, 1, 1, 1));
-
-			if (!cameraTexture) {
-				gl::drawString("Waiting for camera input...", vec2(infoLeft, infoTop), Color(1, 1, 1), Font("Verdana", fontSize));
+			if (!cameraRunning) {
+				info << "Unable to start camera...";
 			}
 			else {
-				gl::setMatricesWindow(getWindowSize());
-				gl::draw(cameraTexture, Rectf(0, 0, getWindowWidth(), getWindowHeight()));
-
-				gl::setMatricesWindow(getWindowSize());
-				gl::enableAlphaBlending();
-
-				if (cameraStarted) {
-					stringstream ss;
-					ss << "Capturing from " << camera->DeviceModelName.GetValue() << " at " << cameraTexture->getWidth() << " x " << cameraTexture->getHeight() << ", sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight;
-					gl::drawString(ss.str(), vec2(infoLeft, infoTop), Color(1, 1, 1), Font("Verdana", fontSize));
-
-					gl::color(ColorA(0, 0, 0, 0.5));
-					gl::drawSolidRect(Rectf(fpsLeft - 10, fpsTop - 10, getWindowWidth(), fpsTop + fontSize + 10));
-					gl::color(ColorA(1, 1, 1, 1));
-
-					stringstream ss2;
-					ss2 << "fps: " << (int)getAverageFps() << ", dropped " << geLatestDroppedFrames();
-					gl::drawString(ss2.str(), vec2(fpsLeft, fpsTop), Color(1, 1, 1), Font("Verdana", fontSize));
+				if (!camera->IsValid()) {
+					cameraRunning = false;
+					cameraFound = false;	
+					info << "Camera status invalid. Attempting to restart.";
+					console() << "Camera status invalid." << endl;
 				}
 				else {
-					gl::drawString("No camera found...", vec2(infoLeft, infoTop), Color(1, 1, 1), Font("Verdana", fontSize));
-				}
+					gl::TextureRef cameraTexture = getCameraTexture(); // block until a new frame is available or a frame is reported incomplete
+					if (!cameraTexture) {
+						info << "Dropped frame.";
+					}
+					else {
+						gl::setMatricesWindow(getWindowSize());
+						gl::draw(cameraTexture, Rectf(0, 0, getWindowWidth(), getWindowHeight()));
 
-				// -------- SPOUT --------
-				if (spoutInitialized) {
-					gl::ScopedFramebuffer frameBufferScope(sendFbo);
-					gl::ScopedViewport viewPortScope(sendFbo->getSize());
-					gl::ScopedMatrices matrixScope();
-					gl::setMatricesWindow(sendFbo->getSize(), false);
+						info << "Capturing from " << camera->DeviceModelName.GetValue() << " at " << cameraTexture->getWidth() << " x " << cameraTexture->getHeight() << ", sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight;
 
-					gl::draw(cameraTexture, Rectf(0, 0, sendFbo->getWidth(), sendFbo->getHeight()));
+						fps = (int)getAverageFps();
 
-					// Send the texture for all receivers to use
-					// NOTE : if SendTexture is called with a framebuffer object bound,
-					// include the FBO id as an argument so that the binding is restored afterwards
-					// because Spout uses an fbo for intermediate rendering
-					auto tex = sendFbo->getColorTexture();
-					spoutSender.SendTexture(tex->getId(), tex->getTarget(), tex->getWidth(), tex->getHeight());
+						// -------- SPOUT --------
+						if (spoutInitialized) {
+							gl::ScopedFramebuffer frameBufferScope(sendFbo);
+							gl::ScopedViewport viewPortScope(sendFbo->getSize());
+							gl::ScopedMatrices matrixScope();
+							gl::setMatricesWindow(sendFbo->getSize(), false);
+
+							gl::draw(cameraTexture, Rectf(0, 0, sendFbo->getWidth(), sendFbo->getHeight()));
+
+							// Send the texture for all receivers to use
+							// NOTE : if SendTexture is called with a framebuffer object bound,
+							// include the FBO id as an argument so that the binding is restored afterwards
+							// because Spout uses an fbo for intermediate rendering
+							auto tex = sendFbo->getColorTexture();
+							spoutSender.SendTexture(tex->getId(), tex->getTarget(), tex->getWidth(), tex->getHeight());
+						}
+					}
 				}
 			}
 		}
 	}
-	else {
-		gl::enableAlphaBlending();
-		gl::drawString("Initializing...", vec2(infoLeft, infoTop), Color(1, 1, 1), Font("Verdana", fontSize));
-		gl::disableAlphaBlending();
-	}
+
+	// draw info
+
+	gl::setMatricesWindow(getWindowSize());
+	gl::enableAlphaBlending();
+
+	gl::color(ColorA(0, 0, 0, 0.5));
+	gl::drawSolidRect(Rectf(fpsLeft - 10, fpsTop - 10, getWindowWidth(), fpsTop + fontSize + 10));
+	gl::drawSolidRect(Rectf(0, infoTop - 10, getWindowWidth(), infoTop + fontSize + 10));
+
+	stringstream fpsSS;
+	fpsSS << "Fps: " << fps << ", dropped " << geLatestDroppedFrames();
+	gl::drawString(fpsSS.str(), vec2(fpsLeft, fpsTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
+	gl::drawString(info.str(), vec2(infoLeft, infoTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
+
+	gl::disableAlphaBlending();
 
 	// -------- CINDER --------
 	if (params != NULL) params->draw();
-
-	firstDrawDone = true;
 }
 
 void SpinnakerSpoutApp::initParamInterface() {
@@ -145,7 +158,10 @@ void SpinnakerSpoutApp::initParamInterface() {
 }
 
 // Stops camera if necessary. Make sure to check whether it is started after calling this method.
-void SpinnakerSpoutApp::applyParamsIfNeeded() {
+// returns true if camera was stopped, false otherwise
+bool SpinnakerSpoutApp::applyParamsIfNeeded() {
+	bool cameraWasStopped = false;
+
 	if (sendFbo == NULL || sendFbo->getWidth() != sendWidth || sendFbo->getHeight() != sendHeight || !spoutInitialized) {
 		initSpout();
 	}
@@ -153,17 +169,18 @@ void SpinnakerSpoutApp::applyParamsIfNeeded() {
 	if (camera != NULL) {
 		int currentBinning = SpinnakerDeviceCommunication::getParameterIntValue(camera, "BinningHorizontal");
 		if (currentBinning != binning) {
-			checkCameraStopped();
+			cameraWasStopped = stopCamera();
 			SpinnakerDeviceCommunication::setParameterInt(camera, "BinningHorizontal", binning);
 			SpinnakerDeviceCommunication::setParameterInt(camera, "BinningVertical", binning);
 		}
 
 		string currentPixelFormat = SpinnakerDeviceCommunication::getParameterEnumValue(camera, "PixelFormat");
 		if (currentPixelFormat != pixelFormat) {
-			checkCameraStopped();
+			cameraWasStopped = stopCamera();
 			SpinnakerDeviceCommunication::setParameterEnum(camera, "PixelFormat", pixelFormat);
 		}
 	}
+	return cameraWasStopped;
 }
 
 void SpinnakerSpoutApp::initSpout() {
@@ -207,9 +224,7 @@ void SpinnakerSpoutApp::checkCameraAvailable() {
 	}
 }
 
-void SpinnakerSpoutApp::checkCameraStarted() {
-	if (cameraStarted) return;
-
+bool SpinnakerSpoutApp::startCamera() {
 	try
 	{
 		console() << "Starting camera with access mode " << SpinnakerDeviceCommunication::accessModeToString(camera->GetAccessMode()) << "..." << endl;
@@ -217,29 +232,26 @@ void SpinnakerSpoutApp::checkCameraStarted() {
 		camera->BeginAcquisition();
 		prevCaptureWidth = 0;
 		prevCaptureHeight = 0;
-		cameraStarted = true;
+		return true;
 	}
-	catch (Spinnaker::Exception &e)
-	{
+	catch (Spinnaker::Exception &e)	{
 		console() << "Error starting camera aquisition: " << e.what() << endl;
+		return false;
 	}
 }
 
-void SpinnakerSpoutApp::checkCameraStopped() {
-	if (cameraStarted) {
+bool SpinnakerSpoutApp::stopCamera() {
+	try {
 		camera->EndAcquisition();
-		cameraStarted = false;
+		return true;
+	}
+	catch (Spinnaker::Exception &e) {
+		console() << "Error stopping camera aquisition: " << e.what() << endl;
+		return false;
 	}
 }
 
 gl::TextureRef SpinnakerSpoutApp::getCameraTexture() {
-	if (!camera->IsValid()) {
-		console() << "Camera status invalid." << endl;
-		cameraStarted = false;
-		cameraFound = false;
-		return NULL;
-	}
-
 	try {
 		ImagePtr capturedImage = camera->GetNextImage(1000); // Note: blocks until a new frame is available, limiting the frame rate of the entire app
 		if (capturedImage->IsIncomplete())
@@ -288,7 +300,7 @@ int SpinnakerSpoutApp::geLatestDroppedFrames() {
 
 void SpinnakerSpoutApp::cleanup()
 {
-	if (camera != NULL && cameraStarted) {
+	if (camera != NULL && cameraRunning) {
 		camera->EndAcquisition();
 		camera->DeInit();
 		camera = NULL;

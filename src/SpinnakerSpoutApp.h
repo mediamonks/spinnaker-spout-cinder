@@ -19,11 +19,11 @@ class SpinnakerSpoutApp : public App {
 	SystemPtr system = NULL;
 	CameraPtr camera = NULL;
 	bool cameraFound = false;
-	bool cameraStarted = false;
+	bool cameraRunning = false;
 
 	void checkCameraAvailable();
-	void checkCameraStarted();
-	void checkCameraStopped();
+	bool startCamera();
+	bool stopCamera();
 	float lastCameraStartCheckTime = -100;
 
 	int prevCaptureWidth = 0;
@@ -38,7 +38,7 @@ class SpinnakerSpoutApp : public App {
 	string pixelFormat = "BayerRG8"; //Color mode of camera aquisition. Will be converted to RGB8 software-side, note that capturing at RGB8Packed would use a lot of bandwidth.
 	int pixelFormatEnumIndex = 0;
 	void initParamInterface();
-	void applyParamsIfNeeded();
+	bool applyParamsIfNeeded();
 	bool paramInterfaceInited = false;
 
 	// -------- SPOUT --------
@@ -51,7 +51,7 @@ class SpinnakerSpoutApp : public App {
 	void initSpout();
 
 	// -------- MISC --------
-	bool firstDrawDone = false;
+	bool needsInitText = true;
 
 	int droppedFrames = 0;
 	float lastDroppedFramesTime = 0;
