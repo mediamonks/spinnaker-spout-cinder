@@ -116,6 +116,7 @@
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\include\SpoutLibrary.h" />
     <ClInclude Include="..\src\SpinnakerDeviceCommunication.h" />
+    <ClInclude Include="..\src\SpinnakerSpoutApp.h" />
     <ClInclude Include="..\src\UserSettings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
