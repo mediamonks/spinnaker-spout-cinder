@@ -33,8 +33,11 @@ class SpinnakerSpoutApp : public App {
 
 	// -------- CINDER PARAM UI --------
 	params::InterfaceGlRef	params = NULL;
-	int binning = 1; // 1 is no binning (1x scale), 2 = factor 2 binning (0.5x scale)
-	int binningEnumIndex = 0; // used for binning param interface
+	int binning = 0; // 0 is no binning (1x scale), 1 = factor 2 binning (0.5x scale)
+	string gainAuto = "Off"; // 0 is Off, 1 = Once, 2 = Continuous
+	int gainAutoEnumIndex = 0;
+	string exposureAuto = "Off"; // 0 is Off, 1 = Once, 2 = Continuous
+	int exposureAutoEnumIndex = 0;
 	string pixelFormat = "BayerRG8"; //Color mode of camera aquisition. Will be converted to RGB8 software-side, note that capturing at RGB8Packed would use a lot of bandwidth.
 	int pixelFormatEnumIndex = 0;
 	void initParamInterface();
