@@ -17,7 +17,7 @@ int SpinnakerDeviceCommunication::getParameterIntValue(CameraPtr camera, string 
 		return node->GetValue();
 	}
 	else {
-		console() << paramName << " setting not available for reading..." << endl;
+		console() << paramName << " setting not available for reading as Integer..." << endl;
 		return 0;
 	}
 }
@@ -32,7 +32,7 @@ string SpinnakerDeviceCommunication::getParameterEnumValue(CameraPtr camera, str
 		return entry->GetSymbolic();
 	}
 	else {
-		console() << paramName << " setting not available for reading..." << endl;
+		console() << paramName << " setting not available for reading as Enumeration..." << endl;
 		return "";
 	}
 }
@@ -52,7 +52,7 @@ vector<string> SpinnakerDeviceCommunication::getParameterEnumOptions(CameraPtr c
 		return entryStrings;
 	}
 	else {
-		console() << paramName << " setting not available for reading..." << endl;
+		console() << paramName << " setting not available for reading as Enumeration..." << endl;
 		return entryStrings;
 	}
 }
@@ -72,7 +72,7 @@ void SpinnakerDeviceCommunication::setParameterEnum(CameraPtr camera, string par
 		}
 		else console() << paramName << " value " << enumValueName << " not available..." << endl;
 	}
-	else console() << paramName << " setting not available..." << endl;
+	else console() << paramName << " setting not available for writing as Enumeration..." << endl;
 }
 
 void SpinnakerDeviceCommunication::setParameterFloat(CameraPtr camera, string paramName, float newValue) {
@@ -89,7 +89,7 @@ void SpinnakerDeviceCommunication::setParameterFloat(CameraPtr camera, string pa
 		}
 		else console() << paramName << " value " << newValue << " not applicable..." << endl;
 	}
-	else console() << paramName << " setting not available..." << endl;
+	else console() << paramName << " setting not available for writing as Float..." << endl;
 }
 
 void SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string paramName, int newValue) {
@@ -106,7 +106,7 @@ void SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string para
 		}
 		else console() << paramName << " value " << newValue << " not applicable..." << endl;
 	}
-	else console() << paramName << " setting not available..." << endl;
+	else console() << paramName << " setting not available for writing as Integer..." << endl;
 }
 
 // assumes camera is initialized
@@ -203,7 +203,10 @@ int SpinnakerDeviceCommunication::printValueNode(CNodePtr node, unsigned int lev
 		// serial number is 'DeviceSerialNumber' while its display name is
 		// 'Device Serial Number'.
 		//
-		gcstring displayName = ptrValueNode->GetDisplayName();
+		gcstring displayName = node->GetDisplayName();
+		gcstring nodeName = node->GetName();
+		EInterfaceType interfaceType = node->GetPrincipalInterfaceType();
+		string interfaceTypeString = paramTypeToString(interfaceType);
 
 		//
 		// Retrieve value of any node type as string
@@ -223,7 +226,29 @@ int SpinnakerDeviceCommunication::printValueNode(CNodePtr node, unsigned int lev
 
 		// Print value
 		indent(level);
-		console() << displayName << ": " << value << endl;
+		if (interfaceType == intfIEnumeration) {
+			vector<string> entryStrings;
+
+			NodeList_t entries;
+			CEnumerationPtr ptrEnumValueNode = static_cast<CEnumerationPtr>(ptrValueNode);
+			ptrEnumValueNode->GetEntries(entries);
+
+			for (CEnumEntryPtr entry : entries) {
+				entryStrings.push_back((string)entry->GetSymbolic());
+			}
+
+			stringstream ss;
+			int i = 0;
+			for (string entryString : entryStrings) {
+				ss << entryString << (i < entryStrings.size() - 1 ? ", " : "");
+				i++;
+			}
+
+			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " (" << ss.str() << ")" << endl;
+		}
+		else {
+			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << endl;
+		}
 	}
 	catch (Spinnaker::Exception &e)
 	{
@@ -593,6 +618,17 @@ int SpinnakerDeviceCommunication::printCategoryNodeAndAllFeatures(CNodePtr node,
 	}
 
 	return result;
+}
+
+std::string SpinnakerDeviceCommunication::paramTypeToString(EInterfaceType interfaceType) {
+	switch (interfaceType) {
+		case intfIString: return "String";
+		case intfIInteger: return "Integer";
+		case intfIFloat: return "Float";
+		case intfIBoolean: return "Boolean";
+		case intfICommand: return "Command";
+		case intfIEnumeration: return "Enumeration";
+	}
 }
 
 std::string SpinnakerDeviceCommunication::accessModeToString(GenApi::EAccessMode mode){
