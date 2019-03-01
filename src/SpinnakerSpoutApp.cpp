@@ -25,9 +25,10 @@ void SpinnakerSpoutApp::setup()
 	sendWidth = UserSettings::getSetting<int>("sendWidth", 640);
 	sendHeight = UserSettings::getSetting<int>("sendHeight", 480);
 	binning = UserSettings::getSetting<int>("binning", 0);
-	gainAuto = UserSettings::getSetting<string>("gainAuto", "Off");
-	exposureAuto = UserSettings::getSetting<string>("exposureAuto", "Off");
-	pixelFormat = UserSettings::getSetting<string>("pixelFormat", "BayerRG8");
+	gainAutoIndex = UserSettings::getSetting<int>("gainAuto", 0); // enum, but index stored as int
+	exposureAutoIndex = UserSettings::getSetting<int>("exposureAuto", 0); // enum, but index stored as int
+	exposure = UserSettings::getSetting<double>("exposureTimeAbs", 10000);
+	pixelFormatIndex = UserSettings::getSetting<int>("pixelFormat", 4); // enum, but index stored as int
 }
 
 void SpinnakerSpoutApp::draw()
@@ -135,6 +136,7 @@ void SpinnakerSpoutApp::draw()
 void SpinnakerSpoutApp::initParamInterface() {
 	params = params::InterfaceGl::create(getWindow(), "Camera parameters", toPixels(ivec2(200, 300)));
 
+	// -------- SPOUT --------
 	params->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
 		UserSettings::writeSetting<int>("sendWidth", sendWidth);
 	});
@@ -143,6 +145,7 @@ void SpinnakerSpoutApp::initParamInterface() {
 		UserSettings::writeSetting<int>("sendHeight", sendHeight);
 	});
 
+	// -------- SPINNAKER --------
 	std::vector<string> binningEnums;
 	binningEnums.push_back("No binning");
 	binningEnums.push_back("Binning 2x");
@@ -150,58 +153,77 @@ void SpinnakerSpoutApp::initParamInterface() {
 		UserSettings::writeSetting<int>("binning", binning);
 	});
 
-	vector<string> availableGainAutoOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "GainAuto");
-	gainAutoEnumIndex = find(availableGainAutoOptions.begin(), availableGainAutoOptions.end(), gainAuto) - availableGainAutoOptions.begin();
-	params->addParam("Gain Auto", availableGainAutoOptions, &gainAutoEnumIndex).updateFn([this, availableGainAutoOptions] {
-		gainAuto = availableGainAutoOptions[gainAutoEnumIndex];
-		UserSettings::writeSetting<string>("gainAuto", gainAuto);
+	params->addParam("Gain Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "GainAuto"), &gainAutoIndex).updateFn([this] {
+		UserSettings::writeSetting<int>("gainAuto", gainAutoIndex);
 	});
 
-	vector<string> availableExposureAutoOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "ExposureAuto");
-	exposureAutoEnumIndex = find(availableExposureAutoOptions.begin(), availableExposureAutoOptions.end(), exposureAuto) - availableExposureAutoOptions.begin();
-	params->addParam("Exposure Auto", availableExposureAutoOptions, &exposureAutoEnumIndex).updateFn([this, availableExposureAutoOptions] {
-		exposureAuto = availableExposureAutoOptions[exposureAutoEnumIndex];
-		UserSettings::writeSetting<string>("exposureAuto", exposureAuto);
+	params->addParam("Exposure Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "ExposureAuto"), &exposureAutoIndex).updateFn([this] {
+		UserSettings::writeSetting<int>("exposureAuto", exposureAutoIndex);
 	});
 
-	vector<string> availablePixelFormats = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat");
-	pixelFormatEnumIndex = find(availablePixelFormats.begin(), availablePixelFormats.end(), pixelFormat) - availablePixelFormats.begin();
-	params->addParam("Pixel Format", availablePixelFormats, &pixelFormatEnumIndex).updateFn([this, availablePixelFormats] {
-		pixelFormat = availablePixelFormats[pixelFormatEnumIndex];
-		UserSettings::writeSetting<string>("pixelFormat", pixelFormat);
+	params->addParam("Exposure", &exposure).updateFn([this] {
+		UserSettings::writeSetting<double>("exposureTimeAbs", exposure);
+	});
+
+	params->addParam("Pixel Format", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat"), &pixelFormatIndex).updateFn([this] {
+		UserSettings::writeSetting<int>("pixelFormat", pixelFormatIndex);
 	});
 }
 
 // Stops camera if necessary. Make sure to check whether it is started after calling this method.
 // returns true if camera was stopped, false otherwise
 bool SpinnakerSpoutApp::applyParamsIfNeeded() {
-	bool cameraWasStopped = false;
-
 	if (sendFbo == NULL || sendFbo->getWidth() != sendWidth || sendFbo->getHeight() != sendHeight || !spoutInitialized) {
 		initSpout();
 	}
 
-	if (camera != NULL) {
-		// API is weird here since you can only read binning from Horizontal but need to write to Horizontal and Vertical
-		if (SpinnakerDeviceCommunication::getParameterIntValue(camera, "BinningHorizontal") - 1 != binning) {
-			cameraWasStopped = stopCamera();
-			SpinnakerDeviceCommunication::setParameterInt(camera, "BinningHorizontal", binning + 1); // binning param values are set as int starting from 1
-			SpinnakerDeviceCommunication::setParameterInt(camera, "BinningVertical", binning + 1);
-		}
+	if (camera == NULL) return true;
 
-		if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "ExposureAuto") != exposureAuto) {
-			cameraWasStopped = stopCamera();
-			SpinnakerDeviceCommunication::setParameterEnum(camera, "ExposureAuto", exposureAuto);
-		}
+	bool cameraWasStopped = false;
+	// API is weird here since you can only read binning from Horizontal but need to write to Horizontal and Vertical
+	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, "BinningHorizontal") - 1 != binning) {
+		cameraWasStopped = stopCamera();
+		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningHorizontal", binning + 1); // binning param values are set as int starting from 1
+		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningVertical", binning + 1);
+	}
 
-		if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "GainAuto") != gainAuto) {
-			cameraWasStopped = stopCamera();
-			SpinnakerDeviceCommunication::setParameterEnum(camera, "GainAuto", gainAuto);
-		}
 
-		if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "PixelFormat") != pixelFormat) {
-			cameraWasStopped = stopCamera();
-			SpinnakerDeviceCommunication::setParameterEnum(camera, "PixelFormat", pixelFormat);
+	vector<string> gainAutoOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "GainAuto");
+	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "GainAuto") != gainAutoOptions[gainAutoIndex]) {
+		string newGainAuto = SpinnakerDeviceCommunication::setParameterEnum(camera, "GainAuto", gainAutoOptions[gainAutoIndex]);
+		int newGainAutoIndex = find(gainAutoOptions.begin(), gainAutoOptions.end(), newGainAuto) - gainAutoOptions.begin();
+		if (newGainAutoIndex != gainAutoIndex) {
+			gainAutoIndex = newGainAutoIndex;
+			UserSettings::writeSetting<int>("gainAuto", gainAutoIndex);
+		}
+	}
+
+	vector<string> exposureAutoOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "ExposureAuto");
+	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "ExposureAuto") != exposureAutoOptions[exposureAutoIndex]) {
+		string newExposureAuto = SpinnakerDeviceCommunication::setParameterEnum(camera, "ExposureAuto", exposureAutoOptions[exposureAutoIndex]);
+		int newExposureAutoIndex = find(exposureAutoOptions.begin(), exposureAutoOptions.end(), newExposureAuto) - exposureAutoOptions.begin();
+		if (newExposureAutoIndex != exposureAutoIndex) {
+			exposureAutoIndex = newExposureAutoIndex;
+			UserSettings::writeSetting<int>("exposureAuto", exposureAutoIndex);
+		}
+	}
+
+	if (SpinnakerDeviceCommunication::getParameterFloatValue(camera, "ExposureTimeAbs") != exposure) {
+		double newExposure = SpinnakerDeviceCommunication::setParameterFloat(camera, "ExposureTimeAbs", exposure);
+		if (newExposure != exposure) {
+			exposure = newExposure;
+			UserSettings::writeSetting<double>("exposureTimeAbs", exposure);
+		}
+	}
+
+	vector<string> pixelFormatOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat");
+	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "PixelFormat") != pixelFormatOptions[pixelFormatIndex]) {
+		cameraWasStopped = stopCamera();
+		string pixelFormat = SpinnakerDeviceCommunication::setParameterEnum(camera, "PixelFormat", pixelFormatOptions[pixelFormatIndex]);
+		int newPixelFormatIndex = find(pixelFormatOptions.begin(), pixelFormatOptions.end(), pixelFormat) - pixelFormatOptions.begin();
+		if (newPixelFormatIndex != pixelFormatIndex) {
+			pixelFormatIndex = newPixelFormatIndex;
+			UserSettings::writeSetting<int>("pixelFormat", pixelFormatIndex);
 		}
 	}
 	return cameraWasStopped;
@@ -247,7 +269,7 @@ void SpinnakerSpoutApp::checkCameraAvailable() {
 			try {
 				console() << "Initializing camera 0 (" << camList.GetSize() << " available)..." << endl;
 				camera->Init();
-			//SpinnakerDeviceCommunication::printDeviceInfo(camera);
+				// SpinnakerDeviceCommunication::printDeviceInfo(camera);
 				cameraFound = true;
 			}
 			catch (Spinnaker::Exception &e) {
@@ -272,6 +294,7 @@ bool SpinnakerSpoutApp::startCamera() {
 	}
 	catch (Spinnaker::Exception &e)	{
 		console() << "Error starting camera aquisition: " << e.what() << endl;
+		camera->DeInit();
 		return false;
 	}
 }

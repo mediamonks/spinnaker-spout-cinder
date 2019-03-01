@@ -2,7 +2,10 @@
 <spinnakerSpoutCinder>
 	<sendHeight>480</sendHeight>
 	<sendWidth>640</sendWidth>
-	<binning>2</binning>
-	<pixelFormat>BayerRG8</pixelFormat>
+	<binning>1</binning>
+	<pixelFormat>4</pixelFormat>
+	<exposureAuto>0</exposureAuto>
+	<gainAuto>0</gainAuto>
+	<exposureTimeAbs>1000.64</exposureTimeAbs>
 </spinnakerSpoutCinder>
 

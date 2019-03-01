@@ -22,6 +22,19 @@ int SpinnakerDeviceCommunication::getParameterIntValue(CameraPtr camera, string 
 	}
 }
 
+double SpinnakerDeviceCommunication::getParameterFloatValue(CameraPtr camera, string paramName) {
+	INodeMap& nodeMap = camera->GetNodeMap();
+	CFloatPtr node = nodeMap.GetNode(paramName.c_str());
+	if (IsAvailable(node) && IsReadable(node))
+	{
+		return node->GetValue();
+	}
+	else {
+		console() << paramName << " setting not available for reading as Float..." << endl;
+		return 0;
+	}
+}
+
 string SpinnakerDeviceCommunication::getParameterEnumValue(CameraPtr camera, string paramName) {
 	INodeMap& nodeMap = camera->GetNodeMap();
 	CEnumerationPtr node = nodeMap.GetNode(paramName.c_str());
@@ -87,28 +100,30 @@ string SpinnakerDeviceCommunication::setParameterEnum(CameraPtr camera, string p
 	return "error";
 }
 
-double SpinnakerDeviceCommunication::setParameterFloat(CameraPtr camera, string paramName, float newValue) {
+double SpinnakerDeviceCommunication::setParameterFloat(CameraPtr camera, string paramName, double newValue) {
 	INodeMap& nodeMap = camera->GetNodeMap();
 	CFloatPtr node = nodeMap.GetNode(paramName.c_str());
 	if (IsAvailable(node) && IsWritable(node))
 	{
 		double valueMax = node->GetMax();
 		double valueMin = node->GetMin();
-		if (newValue >= valueMin && newValue <= valueMax)
+		double newValueInRange = newValue;
+		if (newValueInRange < valueMin || newValueInRange > valueMax)
 		{
-			node->SetValue(newValue);
-			double currentValue = node->GetValue();
-			if (newValue != currentValue) {
-				console() << paramName << " set to " << newValue << " and is now " << currentValue << endl;
-			}
-			else {
-				console() << paramName << " set to " << currentValue << endl;
-			}
-			return currentValue;
+			if (newValueInRange < valueMin) newValueInRange = valueMin;
+			if (newValueInRange > valueMax) newValueInRange = valueMax;
+			console() << "Value " << newValue << " out of range for Float parameter " << paramName << ". Clipped to " << newValueInRange << endl;
+		}
+
+		node->SetValue(newValueInRange);
+		double currentValue = node->GetValue();
+		if (newValueInRange != currentValue) {
+			console() << paramName << " set to " << newValueInRange << " and is now " << currentValue << endl;
 		}
 		else {
-			console() << "Value " << newValue << " out of range for Float parameter " << paramName << endl;
+			console() << paramName << " set to " << currentValue << endl;
 		}
+		return currentValue;
 	}
 	else {
 		console() << paramName << " parameter not available for writing as Float..." << endl;
@@ -123,21 +138,23 @@ int SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string param
 	{
 		int valueMax = node->GetMax();
 		int valueMin = node->GetMin();
-		if (newValue >= valueMin && newValue <= valueMax)
+		int newValueInRange = newValue;
+		if (newValueInRange < valueMin || newValueInRange > valueMax)
 		{
-			node->SetValue(newValue);
-			int currentValue = node->GetValue();
-			if (newValue != currentValue) {
-				console() << paramName << " set to " << newValue << " and is now " << currentValue << endl;
-			}
-			else {
-				console() << paramName << " set to " << currentValue << endl;
-			}
-			return currentValue;
+			if (newValueInRange < valueMin) newValueInRange = valueMin;
+			if (newValueInRange > valueMax) newValueInRange = valueMax;
+			console() << "Value " << newValue << " out of range for Int parameter " << paramName << ". Clipped to " << newValueInRange << endl;
+		}
+
+		node->SetValue(newValue);
+		int currentValue = node->GetValue();
+		if (newValueInRange != currentValue) {
+			console() << paramName << " set to " << newValue << " and is now " << currentValue << endl;
 		}
 		else {
-			console() << "Value " << newValue << " out of range for Integer parameter " << paramName << endl;
+			console() << paramName << " set to " << currentValue << endl;
 		}
+		return currentValue;
 	}
 	else {
 		console() << paramName << " parameter not available for writing as Integer..." << endl;
@@ -281,6 +298,16 @@ int SpinnakerDeviceCommunication::printValueNode(CNodePtr node, unsigned int lev
 			}
 
 			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " (" << ss.str() << ")" << endl;
+		}
+		else if (interfaceType == intfIFloat || interfaceType == intfIInteger) {
+			gcstring unit;
+			gcstring attribute;
+			node->GetProperty("Unit", unit, attribute);
+
+			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " " << unit << endl;
+		}
+		else if (interfaceType == intfIBoolean) {
+			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << (std::stoi(value.c_str()) == 0 ? "Off" : "On") << endl;
 		}
 		else {
 			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << endl;
