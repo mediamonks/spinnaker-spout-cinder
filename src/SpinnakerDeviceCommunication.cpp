@@ -628,6 +628,7 @@ std::string SpinnakerDeviceCommunication::paramTypeToString(EInterfaceType inter
 		case intfIBoolean: return "Boolean";
 		case intfICommand: return "Command";
 		case intfIEnumeration: return "Enumeration";
+		default: return "Unknown";
 	}
 }
 
