@@ -30,6 +30,9 @@ You will need to have the VC++ v140 toolset installed. This can be done for inst
 * If you have the Spinnaker SDK installed, make sure the bin64 folder of this repo is *above* the folders of the SDK in the PATH variable, otherwise you may get a procedure entry point location error.
   ![path-config](./path-config.png)
 
+### Setting logging properties
+
+The only way to get rid of a logging configuration error message on every launch seems to be to configure an environment path variable `GENICAM_LOG_CONFIG_V3_0`. You can point it to <reporoot>\logconfig\Logging.properties
 
 ### Distributing the binary
 When distributing the exe, make sure the dlls in the bin64 folder are next to your exe, and there is an `assets` folder containing a `settings.xml` next to the exe.
