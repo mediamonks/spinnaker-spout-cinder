@@ -70,31 +70,31 @@ namespace Spinnaker
          * Enable all channels.
          *
          */
-        virtual void EnableAll() override;
+        virtual void EnableAll();
 
         /**
          * Disable all channels.
          *
          */
-        virtual void DisableAll() override;
+        virtual void DisableAll();
 
         /**
          * Enable only the grey channel.
          *
          */
-        virtual void EnableGreyOnly() override;
+        virtual void EnableGreyOnly();
 
         /**
          * Enable only the RGB channels.
          *
          */
-        virtual void EnableRGBOnly() override;
+        virtual void EnableRGBOnly();
 
         /**
          * Enable only the HSL channels.
          *
          */
-        virtual void EnableHSLOnly() override;
+        virtual void EnableHSLOnly();
 
         /**
          * Gets the status of a statistics channel.
@@ -107,7 +107,7 @@ namespace Spinnaker
          */
         virtual void GetChannelStatus(
             StatisticsChannel channel,
-            bool* pEnabled ) const override;
+            bool* pEnabled ) const;
 
         /**
          * Sets the status of a statistics channel.
@@ -120,7 +120,7 @@ namespace Spinnaker
          */
         virtual void SetChannelStatus(
             StatisticsChannel channel,
-            bool enabled ) override;
+            bool enabled );
 
         /**
          * Gets the range of a statistics channel. The values returned
@@ -136,7 +136,7 @@ namespace Spinnaker
         virtual void GetRange(
             StatisticsChannel channel,
             unsigned int* pMin,
-            unsigned int* pMax ) const override;
+            unsigned int* pMax ) const;
 
         /**
          * Gets the range of a statistics channel. The values returned
@@ -150,7 +150,7 @@ namespace Spinnaker
         virtual void GetPixelValueRange(
             StatisticsChannel channel,
             unsigned int* pPixelValueMin,
-            unsigned int* pPixelValueMax ) const override;
+            unsigned int* pPixelValueMax ) const;
 
         /**
          * Gets the number of unique pixel values in the image.
@@ -161,7 +161,7 @@ namespace Spinnaker
          */
         virtual void GetNumPixelValues(
             StatisticsChannel channel,
-            unsigned int* pNumPixelValues ) const override;
+            unsigned int* pNumPixelValues ) const;
 
         /**
          * Gets the mean of the image.
@@ -172,7 +172,7 @@ namespace Spinnaker
          */
         virtual void GetMean(
             StatisticsChannel channel,
-            float* pPixelValueMean ) const override;
+            float* pPixelValueMean ) const;
 
         /**
          * Gets the histogram for the image.
@@ -183,7 +183,7 @@ namespace Spinnaker
          */
         virtual void GetHistogram(
             StatisticsChannel channel,
-            int** ppHistogram ) const override;
+            int** ppHistogram ) const;
 
         /**
          * Gets all statistics for the image.
@@ -206,7 +206,7 @@ namespace Spinnaker
             unsigned int* pPixelValueMax = NULL,
             unsigned int* pNumPixelValues = NULL,
             float* pPixelValueMean = NULL,
-            int** ppHistogram = NULL ) const override;
+            int** ppHistogram = NULL ) const;
 
     private:
         friend class ImageStatsCalculator;

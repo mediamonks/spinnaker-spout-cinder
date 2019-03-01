@@ -60,7 +60,7 @@ namespace Spinnaker
         /**
          * Assignment operator.
          */
-        CameraList&	operator=( const CameraList& iface );
+        CameraList& operator=( const CameraList& iface );
 
         /**
          * Array subscription operators.
@@ -76,7 +76,9 @@ namespace Spinnaker
         unsigned int GetSize() const;
 
         /**
-         * Returns a pointer to a camera object at the "index".
+         * Returns a pointer to a camera object at the "index". This function will throw
+         * a Spinnaker exception with SPINNAKER_ERR_INVALID_PARAMETER error if the input
+         * index is out of range.
          *
          * @param index The index at which to retrieve the camera object
          *
@@ -85,9 +87,10 @@ namespace Spinnaker
         CameraPtr GetByIndex(unsigned int index) const;
 
         /**
-        * Returns a pointer to a camera object with the specified serial number.
+        * Returns a pointer to a camera object with the specified serial number. This
+        * function will return a NULL CameraPtr if no matching camera serial is found.
         *
-        * @param serialNumber The serial number of the camera object to retrieve 
+        * @param serialNumber The serial number of the camera object to retrieve
         *
         * @return A pointer to an camera object.
         */
@@ -97,8 +100,8 @@ namespace Spinnaker
          * Clears the list of cameras and destroys their corresponding reference counted
          * objects. This is necessary in order to clean up the parent interface.
          * It is important that the camera list is destroyed or is cleared before calling
-         * system->ReleaseInstance() or else the call to system->ReleaseInstance() 
-         * will result in an error message thrown that a reference to the camera 
+         * system->ReleaseInstance() or else the call to system->ReleaseInstance()
+         * will result in an error message thrown that a reference to the camera
          * is still held.
          *
          * @see System:ReleaseInstance()
@@ -107,7 +110,8 @@ namespace Spinnaker
 
         /**
          * Removes a camera at "index" and destroys its corresponding reference counted
-         * object.
+         * object. This function will throw a Spinnaker exception with
+         * SPINNAKER_ERR_INVALID_PARAMETER error if the input index is out of range.
          *
          * @param index The index at which to remove the Camera object
          */
@@ -115,7 +119,8 @@ namespace Spinnaker
 
         /**
         * Removes a camera using its serial number and destroys its corresponding reference counted
-        * object.
+        * object. This function will throw a Spinnaker exception with SPINNAKER_ERR_NOT_AVAILABLE
+        * error if no matching camera serial is found.
         *
         * @param serialNumber The serial number of the Camera object to remove
         */

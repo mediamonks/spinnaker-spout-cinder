@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2018 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -18,7 +18,6 @@
 #ifndef FLIR_SPINNAKER_IINTERFACELIST_H
 #define FLIR_SPINNAKER_IINTERFACELIST_H
 
-#include "Interface.h"
 #include "InterfacePtr.h"
 
 namespace Spinnaker

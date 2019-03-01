@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -38,71 +38,71 @@ namespace Spinnaker
     /**
     * Timeout values for getting next image, device, or interface event
     */
-    const uint64_t EVENT_TIMEOUT_NONE		= 0;					// Do not wait.  GetNextImage will return immediately. 
+    const uint64_t EVENT_TIMEOUT_NONE = 0;					// Do not wait.  GetNextImage will return immediately. 
     const uint64_t EVENT_TIMEOUT_INFINITE = 0xFFFFFFFFFFFFFFFF;	// Never timeout.  GetNextImage will wait indefinitely.
 
     /*@{*/
-    
+
     /**
     * @brief Spinnaker enum definitions.
     */
 
     /**
     * The error codes used in Spinnaker.  These codes are returned as part of
-    * Spinnaker::Exception.  The error codes in the range of -1000 to -1999 
+    * Spinnaker::Exception.  The error codes in the range of -1000 to -1999
     * are reserved for exceptions that map directly to GenTL values.
-    * The error codes in the range of -2000 to -2999 are reserved 
+    * The error codes in the range of -2000 to -2999 are reserved
     * for GenICam related errors.  The error codes in the range of -3000 to -3999
     * are reserved for image processing related errors.
     */
     enum Error
     {
-        SPINNAKER_ERR_SUCCESS             = 0,
-        SPINNAKER_ERR_ERROR               = -1001,
-        SPINNAKER_ERR_NOT_INITIALIZED     = -1002,
-        SPINNAKER_ERR_NOT_IMPLEMENTED     = -1003,
-        SPINNAKER_ERR_RESOURCE_IN_USE     = -1004,
-        SPINNAKER_ERR_ACCESS_DENIED       = -1005,
-        SPINNAKER_ERR_INVALID_HANDLE      = -1006,
-        SPINNAKER_ERR_INVALID_ID          = -1007,
-        SPINNAKER_ERR_NO_DATA             = -1008,
-        SPINNAKER_ERR_INVALID_PARAMETER   = -1009,
-        SPINNAKER_ERR_IO                  = -1010,
-        SPINNAKER_ERR_TIMEOUT             = -1011,
-        SPINNAKER_ERR_ABORT               = -1012,
-        SPINNAKER_ERR_INVALID_BUFFER      = -1013,
-        SPINNAKER_ERR_NOT_AVAILABLE       = -1014,
-        SPINNAKER_ERR_INVALID_ADDRESS     = -1015,
-        SPINNAKER_ERR_BUFFER_TOO_SMALL	  = -1016, 
-        SPINNAKER_ERR_INVALID_INDEX       = -1017, 
-        SPINNAKER_ERR_PARSING_CHUNK_DATA  = -1018, 
-        SPINNAKER_ERR_INVALID_VALUE       = -1019, 
-        SPINNAKER_ERR_RESOURCE_EXHAUSTED  = -1020, 
-        SPINNAKER_ERR_OUT_OF_MEMORY       = -1021, 
-        SPINNAKER_ERR_BUSY                = -1022, 
+        SPINNAKER_ERR_SUCCESS = 0,
+        SPINNAKER_ERR_ERROR = -1001,
+        SPINNAKER_ERR_NOT_INITIALIZED = -1002,
+        SPINNAKER_ERR_NOT_IMPLEMENTED = -1003,
+        SPINNAKER_ERR_RESOURCE_IN_USE = -1004,
+        SPINNAKER_ERR_ACCESS_DENIED = -1005,
+        SPINNAKER_ERR_INVALID_HANDLE = -1006,
+        SPINNAKER_ERR_INVALID_ID = -1007,
+        SPINNAKER_ERR_NO_DATA = -1008,
+        SPINNAKER_ERR_INVALID_PARAMETER = -1009,
+        SPINNAKER_ERR_IO = -1010,
+        SPINNAKER_ERR_TIMEOUT = -1011,
+        SPINNAKER_ERR_ABORT = -1012,
+        SPINNAKER_ERR_INVALID_BUFFER = -1013,
+        SPINNAKER_ERR_NOT_AVAILABLE = -1014,
+        SPINNAKER_ERR_INVALID_ADDRESS = -1015,
+        SPINNAKER_ERR_BUFFER_TOO_SMALL = -1016,
+        SPINNAKER_ERR_INVALID_INDEX = -1017,
+        SPINNAKER_ERR_PARSING_CHUNK_DATA = -1018,
+        SPINNAKER_ERR_INVALID_VALUE = -1019,
+        SPINNAKER_ERR_RESOURCE_EXHAUSTED = -1020,
+        SPINNAKER_ERR_OUT_OF_MEMORY = -1021,
+        SPINNAKER_ERR_BUSY = -1022,
 
-        GENICAM_ERR_INVALID_ARGUMENT      = -2001,
-        GENICAM_ERR_OUT_OF_RANGE          = -2002,
-        GENICAM_ERR_PROPERTY              = -2003,
-        GENICAM_ERR_RUN_TIME              = -2004,
-        GENICAM_ERR_LOGICAL               = -2005,
-        GENICAM_ERR_ACCESS                = -2006,
-        GENICAM_ERR_TIMEOUT               = -2007,
-        GENICAM_ERR_DYNAMIC_CAST          = -2008,
-        GENICAM_ERR_GENERIC               = -2009,
-        GENICAM_ERR_BAD_ALLOCATION        = -2010,
+        GENICAM_ERR_INVALID_ARGUMENT = -2001,
+        GENICAM_ERR_OUT_OF_RANGE = -2002,
+        GENICAM_ERR_PROPERTY = -2003,
+        GENICAM_ERR_RUN_TIME = -2004,
+        GENICAM_ERR_LOGICAL = -2005,
+        GENICAM_ERR_ACCESS = -2006,
+        GENICAM_ERR_TIMEOUT = -2007,
+        GENICAM_ERR_DYNAMIC_CAST = -2008,
+        GENICAM_ERR_GENERIC = -2009,
+        GENICAM_ERR_BAD_ALLOCATION = -2010,
 
-        SPINNAKER_ERR_IM_CONVERT		  = -3001,
-        SPINNAKER_ERR_IM_COPY			  = -3002,
-        SPINNAKER_ERR_IM_MALLOC			  = -3003,
-        SPINNAKER_ERR_IM_NOT_SUPPORTED	  = -3004,
-        SPINNAKER_ERR_IM_HISTOGRAM_RANGE  = -3005,
-        SPINNAKER_ERR_IM_HISTOGRAM_MEAN   = -3006,
-        SPINNAKER_ERR_IM_MIN_MAX		  = -3007,
+        SPINNAKER_ERR_IM_CONVERT = -3001,
+        SPINNAKER_ERR_IM_COPY = -3002,
+        SPINNAKER_ERR_IM_MALLOC = -3003,
+        SPINNAKER_ERR_IM_NOT_SUPPORTED = -3004,
+        SPINNAKER_ERR_IM_HISTOGRAM_RANGE = -3005,
+        SPINNAKER_ERR_IM_HISTOGRAM_MEAN = -3006,
+        SPINNAKER_ERR_IM_MIN_MAX = -3007,
         SPINNAKER_ERR_IM_COLOR_CONVERSION = -3008,
         SPINNAKER_ERR_IM_DECOMPRESSION = -3009,
 
-        SPINNAKER_ERR_CUSTOM_ID           = -10000
+        SPINNAKER_ERR_CUSTOM_ID = -10000
     };
 
     /**
@@ -132,13 +132,13 @@ namespace Spinnaker
     */
     enum PixelFormatNamespaceID
     {
-        SPINNAKER_PIXELFORMAT_NAMESPACE_UNKNOWN    = 0,   /* GenTL v1.2 */
-        SPINNAKER_PIXELFORMAT_NAMESPACE_GEV        = 1,   /* GenTL v1.2 */
-        SPINNAKER_PIXELFORMAT_NAMESPACE_IIDC       = 2,   /* GenTL v1.2 */
+        SPINNAKER_PIXELFORMAT_NAMESPACE_UNKNOWN = 0,   /* GenTL v1.2 */
+        SPINNAKER_PIXELFORMAT_NAMESPACE_GEV = 1,   /* GenTL v1.2 */
+        SPINNAKER_PIXELFORMAT_NAMESPACE_IIDC = 2,   /* GenTL v1.2 */
         SPINNAKER_PIXELFORMAT_NAMESPACE_PFNC_16BIT = 3,   /* GenTL v1.4 */
         SPINNAKER_PIXELFORMAT_NAMESPACE_PFNC_32BIT = 4,   /* GenTL v1.4 */
 
-        SPINNAKER_PIXELFORMAT_NAMESPACE_CUSTOM_ID  = 1000
+        SPINNAKER_PIXELFORMAT_NAMESPACE_CUSTOM_ID = 1000
     };
 
     /**
@@ -169,6 +169,65 @@ namespace Spinnaker
         DIRECTIONAL_FILTER,
         /** Weighted pixel average from different directions*/
         WEIGHTED_DIRECTIONAL_FILTER
+    };
+
+    enum PolarizationAlgorithm
+    {
+        /** No polarization. */
+        NO_POLARIZATION,
+        /** Extracts a Mono8 pixel format image of the 0 degree of polarization.
+        * Polarization value pointer will be null. */
+        QUADRANT_I0_GRAYSCALE,
+        /** Extracts a Mono8 pixel format image of the 45 degree of polarization.
+        * Polarization value pointer will be null. */
+        QUADRANT_I45_GRAYSCALE,
+        /** Extracts a Mono8 pixel format image of the 90 degree of polarization.
+        * Polarization value pointer will be null. */
+        QUADRANT_I90_GRAYSCALE,
+        /** Extracts a Mono8 pixel format image of the 135 degree of polarization.
+        * Polarization value pointer will be null. */
+        QUADRANT_I135_GRAYSCALE,
+        /** Extracts a Mono8 pixel format Stokes' parameter image S0. */
+        STOKES_S0_GRAYSCALE,
+        /** Extracts a BGRa8 pixel format HeatMap representation of the Stokes' parameter image S0. */
+        STOKES_S0_HEATMAP,
+        /** Extracts a Mono8 pixel format Stokes' parameter image S1. */
+        STOKES_S1_GRAYSCALE,
+        /** Extracts a BGRa8 pixel format HeatMap representation of the Stokes' parameter image S1. */
+        STOKES_S1_HEATMAP,
+        /** Extracts a Mono8 pixel format Stokes' parameter image S2. */
+        STOKES_S2_GRAYSCALE,
+        /** Extracts a BGRa8 pixel format HeatMap representation of the Stokes' parameter image S2. */
+        STOKES_S2_HEATMAP,
+        /** Extracts a Mono8 pixel format image representation of the DoLP (Degree of Linear Polarization). */
+        DOLP_GRAYSCALE,
+        /** Extracts a BGRa8 pixel format HeatMap representation of the DoLP (Degree of Linear Polarization).
+        * Resulting polarization values are normalized between 0 and 1. */
+        DOLP_HEATMAP,
+        /** Extracts a Mono8 pixel format image representation of the AoP (Angle of Polarization). */
+        AOP_GRAYSCALE,
+        /** Extracts a BGRa8 pixel format HeatMap representation of the AoP (Angle of Polarization).
+        * Resulting polarization values are normalized between 0 and 1. */
+        AOP_HEATMAP
+    };
+
+    enum PolarizationResolution
+    {
+        /** Quarter Resolution. */
+        QUARTER_RESOLUTION,
+        /** Full Resolution. */
+        FULL_RESOLUTION
+    };
+
+    enum HeatMapColor
+    {
+        HEATMAP_BLACK = 1,
+        HEATMAP_BLUE = 2,
+        HEATMAP_CYAN = 3,
+        HEATMAP_GREEN = 4,
+        HEATMAP_YELLOW = 5,
+        HEATMAP_RED = 6,
+        HEATMAP_WHITE = 7
     };
 
     /** File formats to be used for saving images to disk. */
@@ -202,12 +261,12 @@ namespace Spinnaker
         IMAGE_MISSING_TRAILER = 8, /**< Image trailer is missing. */
         IMAGE_DATA_INCOMPLETE = 9, /**< Image data is incomplete. */
         IMAGE_INFO_INCONSISTENT = 10, /**< Image info is corrupted. */
-        IMAGE_CHUNK_DATA_INVALID = 11, /**< Image chunk data is invalid */    
+        IMAGE_CHUNK_DATA_INVALID = 11, /**< Image chunk data is invalid */
         IMAGE_NO_SYSTEM_RESOURCES = 12 /**< Image cannot be processed due to lack of system
                                        resources. */
     };
 
-     /** Options for saving PNG images. */
+    /** Options for saving PNG images. */
     struct PNGOption
     {
         /** Whether to save the PNG as interlaced. */
@@ -221,7 +280,7 @@ namespace Spinnaker
         {
             interlaced = false;
             compressionLevel = 6;
-            memset(reserved, 0, sizeof (reserved));
+            memset(reserved, 0, sizeof(reserved));
         }
     };
 
@@ -236,7 +295,7 @@ namespace Spinnaker
         PPMOption()
         {
             binaryFile = true;
-            memset(reserved, 0, sizeof (reserved));
+            memset(reserved, 0, sizeof(reserved));
         }
     };
 
@@ -251,7 +310,7 @@ namespace Spinnaker
         PGMOption()
         {
             binaryFile = true;
-            memset(reserved, 0, sizeof (reserved));
+            memset(reserved, 0, sizeof(reserved));
         }
     };
 
@@ -290,7 +349,7 @@ namespace Spinnaker
         TIFFOption()
         {
             compression = LZW;
-            memset(reserved, 0, sizeof (reserved));
+            memset(reserved, 0, sizeof(reserved));
         }
     };
 
@@ -314,7 +373,7 @@ namespace Spinnaker
         {
             progressive = false;
             quality = 75;
-            memset(reserved, 0, sizeof (reserved));
+            memset(reserved, 0, sizeof(reserved));
         }
     };
 
@@ -329,7 +388,7 @@ namespace Spinnaker
         JPG2Option()
         {
             quality = 16;
-            memset(reserved, 0, sizeof (reserved));
+            memset(reserved, 0, sizeof(reserved));
         }
     };
 
@@ -346,69 +405,6 @@ namespace Spinnaker
             memset(reserved, 0, sizeof(reserved));
         }
     };
-
-    /** Options for saving MJPG files. */
-    struct MJPGOption
-    {
-        /** Frame rate of the stream */
-        float frameRate;
-
-        /** Image quality (1-100) */
-        unsigned int quality;
-
-        unsigned int reserved[256];
-
-        MJPGOption()
-        {
-            frameRate = 15.0;
-            quality = 75;
-            memset(reserved, 0, sizeof (reserved));
-        }
-    };
-
-    /** Options for saving H264 files. */
-    struct H264Option
-    {
-        /** Frame rate of the stream */
-        float frameRate;
-
-        /** Width of source image */
-        unsigned int width;
-
-        /** Height of source image */
-        unsigned int height;
-
-        /** Bit-rate to encode at */
-        unsigned int bitrate;
-
-        /** Reserved for future use */
-        unsigned int reserved[256];
-
-        H264Option()
-        {
-            frameRate = 15.0;
-            width = 0;
-            height = 0;
-            bitrate = 1000000;
-            memset(reserved, 0, sizeof (reserved));
-        }
-    };
-
-    /** Options for saving AVI files. */
-    struct AVIOption
-    {
-        /** Frame rate of the stream */
-        float frameRate;
-
-        /** Reserved for future use */
-        unsigned int reserved[256];
-
-        AVIOption()
-        {
-            frameRate = 15.0;
-            memset(reserved, 0, sizeof (reserved));
-        }
-    };	
 
     /** Provides easier access to the current version of Spinnaker. **/
     struct LibraryVersion
@@ -507,6 +503,12 @@ namespace Spinnaker
         IntType_UINT16,		/* Unsigned 16-bit integer (unpacked). */
         IntType_FLOAT32,	/* 32-bit float. */
         IntType_UNKNOWN
+    };
+
+    enum BufferOwnership
+    {
+        BUFFER_OWNERSHIP_SYSTEM,   /* Buffers are owned and managed by the library */
+        BUFFER_OWNERSHIP_USER      /* Buffers are owned and managed by the user */
     };
 
     /*@}*/

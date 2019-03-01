@@ -51,9 +51,19 @@ namespace Spinnaker
         ImagePtr();
 
         /**
-        * Default constructor.
+        * Default constructor with argument.
         */
         ImagePtr(const int /*nMustBeNull*/);
+
+        /**
+        * Default constructor with argument.
+        */
+        ImagePtr(const long /*nMustBeNull*/);
+
+        /**
+         * Default constructor with argument.
+         */
+        ImagePtr(const nullptr_t /*nullPtr*/);
 
         /**
         * Virtual destructor.
@@ -64,11 +74,6 @@ namespace Spinnaker
         * Assignment operator.
         */
         virtual ImagePtr& operator=(const ImagePtr&);
-
-        /**
-        * Assignment operator.
-        */
-        virtual ImagePtr& operator=(const int nMustBeNull);
     };
 
     /*@}*/

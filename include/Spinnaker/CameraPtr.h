@@ -57,11 +57,16 @@ namespace Spinnaker
         {
         }
 
-        //! Virtual destructor.
-        virtual ~CameraPtr(void){};
+        //! Default constructor with argument.
+        CameraPtr(const long /*nMustBeNull*/) throw()
+            : BasePtr<Camera, ICameraBase>()
+        {
+        }
 
-        //! Assignment operator.
-        virtual CameraPtr& operator=(const int nMustBeNull){ return dynamic_cast<CameraPtr&>(BasePtr<Camera, ICameraBase>::operator=(nMustBeNull)); };
+        CameraPtr(const nullptr_t /*nullPtr*/) throw()
+            : BasePtr<Camera, ICameraBase>()
+        {
+        }
         
     };
 }

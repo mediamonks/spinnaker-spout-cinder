@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -15,8 +15,8 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_IARRIVALEVENT_H
-#define PGR_SPINNAKER_IARRIVALEVENT_H
+#ifndef FLIR_SPINNAKER_IARRIVALEVENT_H
+#define FLIR_SPINNAKER_IARRIVALEVENT_H
 
 #include "Event.h"
 #include "SpinnakerPlatform.h"
@@ -36,4 +36,4 @@ namespace Spinnaker
     };
 }
 
-#endif /* PGR_SPINNAKER_IARRIVALEVENT_H */
+#endif /* FLIR_SPINNAKER_IARRIVALEVENT_H */

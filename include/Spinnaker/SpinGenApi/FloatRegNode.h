@@ -28,10 +28,12 @@
 #include "FloatNode.h"
 #include "RegisterNode.h"
 
+#ifdef _WIN32
 #pragma warning ( push )
 #pragma warning( disable : 4250 ) // C4250 - 'class1' : inherits 'class2::member' via dominance
 #pragma warning ( disable : 4251 ) // XXX needs to have dll-interface to be used by clients of class YYY
 #pragma warning( disable: 4275 ) // non dll-interface structXXX used as base
+#endif
 
 namespace Spinnaker
 {
@@ -71,5 +73,9 @@ namespace Spinnaker
         /*@}*/
     }
 }
+
+#ifdef _WIN32
+#pragma warning ( pop )
+#endif
 
 #endif // SPINNAKER_GENAPI_FLOATREGNODE_H

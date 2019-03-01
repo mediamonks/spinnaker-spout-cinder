@@ -41,7 +41,6 @@ namespace Spinnaker
     class SPINNAKER_API Interface: public IInterface
     {
     public:
-
         /**
         * Virtual Destructor
         */

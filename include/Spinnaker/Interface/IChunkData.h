@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -81,6 +81,8 @@ namespace Spinnaker
         virtual float64_t GetScan3dAxisMax() const = 0;
         virtual float64_t GetScan3dTransformValue() const = 0;
         virtual float64_t GetScan3dCoordinateReferenceValue() const = 0;
+        virtual int64_t GetInferenceResult() const = 0;
+        virtual float64_t GetInferenceConfidence() const = 0;
 
     protected:
         IChunkData() {};

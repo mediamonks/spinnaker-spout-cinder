@@ -22,8 +22,10 @@
 #include "INodeMap.h"
 #include "GCStringVector.h"
 
+#ifdef _WIN32
 #pragma warning ( push )
 #pragma warning ( disable : 4251 ) // XXX needs to have dll-interface to be used by clients of class YYY
+#endif
 
 namespace Spinnaker
 {
@@ -139,6 +141,8 @@ namespace Spinnaker
     }
 }
 
+#ifdef _WIN32
 #pragma warning ( pop )
+#endif
 
 #endif // ifndef SPINNAKER_GENAPI_INODEMAPDYN_H

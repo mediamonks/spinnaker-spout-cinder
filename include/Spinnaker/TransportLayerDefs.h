@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -101,6 +101,14 @@ namespace Spinnaker
 		NUMDEVICEACCESSSTATUS
 	};
 
+	enum GevCCPEnum	/*!< Controls the device access privilege of an application.*/
+	{
+		GevCCP_EnumEntry_GevCCP_OpenAccess,	/*!< Open access privilege.*/
+		GevCCP_EnumEntry_GevCCP_ExclusiveAccess,	/*!< Exclusive access privilege.*/
+		GevCCP_EnumEntry_GevCCP_ControlAccess,	/*!< Control access privilege.*/
+		NUMGEVCCP
+	};
+
 	enum GUIXMLLocationEnum	/*!< Sets the location to load GUI XML.*/
 	{
 		GUIXMLLocation_Device,	/*!< Load XML from device*/
@@ -113,14 +121,6 @@ namespace Spinnaker
 		GenICamXMLLocation_Device,	/*!< Load GenICam XML from device*/
 		GenICamXMLLocation_Host,	/*!< Load GenICam XML from host*/
 		NUMGENICAMXMLLOCATION
-	};
-
-	enum GevCCPEnum	/*!< Controls the device access privilege of an application.*/
-	{
-		GevCCP_EnumEntry_GevCCP_OpenAccess,	/*!< Open access privilege.*/
-		GevCCP_EnumEntry_GevCCP_ExclusiveAccess,	/*!< Exclusive access privilege.*/
-		GevCCP_EnumEntry_GevCCP_ControlAccess,	/*!< Control access privilege.*/
-		NUMGEVCCP
 	};
 
 	enum DeviceEndianessMechanismEnum	/*!< Identifies the endianness handling mode.*/
@@ -146,6 +146,14 @@ namespace Spinnaker
 		POEStatus_PowerOff,	/*!< Power is Off*/
 		POEStatus_PowerOn,	/*!< Power is On*/
 		NUMPOESTATUS
+	};
+
+	enum FilterDriverStatusEnum	/*!< Reports whether FLIR Light Weight Filter Driver is enabled or not.*/
+	{
+		FilterDriverStatus_NotSupported,	/*!< Not Supported*/
+		FilterDriverStatus_Disabled,	/*!< FLIR Light Weight Filter Driver is disabled*/
+		FilterDriverStatus_Enabled,	/*!< FLIR Light Weight Filter Driver is enabled*/
+		NUMFILTERDRIVERSTATUS
 	};
 
 	/*@}*/

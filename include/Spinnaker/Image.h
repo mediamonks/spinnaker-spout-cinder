@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -27,23 +27,23 @@ namespace Spinnaker
     enum PixelFormatEnums;
 
     /**
-     *  @defgroup SpinnakerClasses Spinnaker Classes
-     */
+    *  @defgroup SpinnakerClasses Spinnaker Classes
+    */
     /*@{*/
 
     /**
-     *  @defgroup Image_h Image Class
-     */
+    *  @defgroup Image_h Image Class
+    */
     /*@{*/
 
     /**
-     * @brief The image object class.
-     */
+    * @brief The image object class.
+    */
 
-    class SPINNAKER_API Image: public IImage
+    class SPINNAKER_API Image : public IImage
     {
-    friend class IDataStream;
-    friend class Stream;
+        friend class IDataStream;
+        friend class Stream;
 
     public:
 
@@ -83,12 +83,11 @@ namespace Spinnaker
          * recent execution of this function will take precedence. The default
          * setting is shared within the current process.
          *
-         * @param defaultMethod The color processing algorithm to set.
+         * @param colorAlgorithm The color processing algorithm to set.
          *
          * @see GetDefaultColorProcessing()
-         *
          */
-        static void SetDefaultColorProcessing(ColorProcessingAlgorithm defaultMethod);
+        static void SetDefaultColorProcessing(ColorProcessingAlgorithm colorAlgorithm);
 
         /**
          * Gets the default color processing algorithm.
@@ -100,7 +99,7 @@ namespace Spinnaker
         static ColorProcessingAlgorithm GetDefaultColorProcessing();
 
         /**
-         * Gets the algorithm used to produce the image.
+         * Gets the color algorithm used to produce the image.
          *
          * @see Convert()
          *
@@ -116,12 +115,10 @@ namespace Spinnaker
          * @see PixelFormatEnums
          *
          * @param format Output format of the converted image.
-         * @param algorithm processing algorithm for producing the converted image
+         * @param colorAlgorithm Optional color processing algorithm for producing the converted image
          * @return The converted image.
-         *
          */
-        ImagePtr Convert(
-            Spinnaker::PixelFormatEnums format, ColorProcessingAlgorithm algorithm = DEFAULT) const;
+        ImagePtr Convert(Spinnaker::PixelFormatEnums format, ColorProcessingAlgorithm colorAlgorithm = DEFAULT) const;
 
         /**
          * Sets new dimensions of the image object and allocates memory.
@@ -131,7 +128,6 @@ namespace Spinnaker
          * @param offsetX The x offset in pixels to set.
          * @param offsetY The y offset in pixels  to set.
          * @param pixelFormat Pixel format to set.
-         *
          */
         void ResetImage(size_t width, size_t height, size_t offsetX, size_t offsetY, Spinnaker::PixelFormatEnums pixelFormat);
 
@@ -144,7 +140,6 @@ namespace Spinnaker
          * @param offsetY The y offset in pixels to set.
          * @param pixelFormat Pixel format to set.
          * @param pData Pointer to the image buffer.
-         *
          */
         void ResetImage(size_t width, size_t height, size_t offsetX, size_t offsetY, Spinnaker::PixelFormatEnums pixelFormat, void* pData);
 
@@ -153,7 +148,6 @@ namespace Spinnaker
         *
         * @see Init()
         * @see CameraBase::GetNextImage( grabTimeout )
-        *
         */
         void Release();
 
@@ -202,7 +196,6 @@ namespace Spinnaker
          * share a buffer. The Image's current buffer will not be released.
          *
          * @param pSrcImage The Image to copy the data from.
-         *
          */
         void DeepCopy(const ImagePtr pSrcImage);
 
@@ -364,7 +357,7 @@ namespace Spinnaker
         Spinnaker::PixelFormatEnums GetPixelFormat() const;
 
         /**
-        * Returns an enum value that represents the integer type used in the 
+        * Returns an enum value that represents the integer type used in the
         * pixel format of this image.
         *
         * @return enum value representing the integer type used.
@@ -411,7 +404,6 @@ namespace Spinnaker
          *
          * @param pFilename Filename to save image with.
          * @param format File format to save in.
-         *
          */
         void Save(const char* pFilename, ImageFileFormat format = FROM_FILE_EXT);
 
@@ -420,7 +412,6 @@ namespace Spinnaker
          *
          * @param pFilename Filename to save image with.
          * @param pOption Options to use while saving image.
-         *
          */
         void Save(const char* pFilename, PNGOption & pOption);
 
@@ -429,7 +420,6 @@ namespace Spinnaker
          *
          * @param pFilename Filename to save image with.
          * @param pOption Options to use while saving image.
-         *
          */
         void Save(const char* pFilename, PPMOption & pOption);
 
@@ -438,7 +428,6 @@ namespace Spinnaker
          *
          * @param pFilename Filename to save image with.
          * @param pOption Options to use while saving image.
-         *
          */
         void Save(const char* pFilename, PGMOption & pOption);
 
@@ -447,7 +436,6 @@ namespace Spinnaker
          *
          * @param pFilename Filename to save image with.
          * @param pOption Options to use while saving image.
-         *
          */
         void Save(const char* pFilename, TIFFOption & pOption);
 
@@ -456,7 +444,6 @@ namespace Spinnaker
          *
          * @param pFilename Filename to save image with.
          * @param pOption Options to use while saving image.
-         *
          */
         void Save(const char* pFilename, JPEGOption & pOption);
 
@@ -465,7 +452,6 @@ namespace Spinnaker
          *
          * @param pFilename Filename to save image with.
          * @param pOption Options to use while saving image.
-         *
          */
         void Save(const char* pFilename, JPG2Option & pOption);
 
@@ -474,7 +460,6 @@ namespace Spinnaker
          *
          * @param pFilename Filename to save image with.
          * @param pOption Options to use while saving image.
-         *
          */
         void Save(const char* pFilename, BMPOption & pOption);
 
@@ -538,6 +523,71 @@ namespace Spinnaker
         */
         static const char * GetImageStatusDescription(ImageStatus status);
 
+        /**
+        * Extracts an image from a monochrome-polarized sensor.
+        * The extracted image will be returned as Mono8 or BGRa8 for heatmap images.
+        *
+        * @param polarizationAlgorithm Desired polarization algorithm to use.
+        * @param resolution Desired resolution of output image.
+        * @return The converted image.
+        */
+        ImagePtr ExtractPolarization(const PolarizationAlgorithm polarizationAlgorithm, const PolarizationResolution resolution) const;
+
+        /**
+        * Returns the polarization values associated with an extracted polarization image.
+        * Note that standard quadrants (QUADRANT_I0_GRAYSCALE - QUADRANT_I135_GRAYSCALE)
+        * do not provide polarization values.
+        *
+        * @return The polarization values associated with a polarization image.
+        */
+        float* GetPolarizationValues() const;
+
+        /**
+        * Returns the polarization algorithm used to extract a polarization image.
+        *
+        * @return The polarization algorithm used to extract the polarization image.
+        */
+        PolarizationAlgorithm GetPolarizationAlgorithm() const;
+
+        /**
+        * Sets the heatmap gradient color vector to the new desired range between HEATMAP_BLACK
+        * and HEATMAP_WHITE. Heatmap images are currently implemented for polarized cameras only.
+        *
+        * @param newLowColor New color at which to begin the gradient.
+        * @param newHighColor New color at which to end the gradient.
+        */
+        static void SetHeatMapColorGradient(const HeatMapColor newLowColor, const HeatMapColor newHighColor);
+
+        /**
+        * Returns the current heatmap gradient color range.
+        * Heatmap images are currently implemented for polarized cameras only.
+        *
+        * @param currentLowColor Current color at which the gradient begins.
+        * @param currentHighColor Current color at which the gradient ends.
+        */
+        static void GetHeatMapColorGradient(HeatMapColor& currentLowColor, HeatMapColor& currentHighColor);
+
+        /**
+        * Sets the high and low values used to determine which grayscale values are converted
+        * to a color 'heatmap' representation. Acceptable values range from 0 to 100.
+        * Heatmap images are currently implemented for polarized cameras only.
+        *
+        * @param newLowValue New value at which to begin color representation.
+        * @param newHighValue New value at which to end color representation.
+        */
+        static void SetHeatMapRange(const unsigned int newLowValue, const unsigned int newHighValue);
+
+        /**
+        * Returns the current high and low values used in heatmap representations.
+        * Heatmap images are currently implemented for polarized cameras only.
+        *
+        * @param currentLowValue Current value at which color representation begins.
+        * @param currentHighValue Current value at which color representation ends.
+        *
+        * @see SetHeatMapRange()
+        */
+        static void GetHeatMapRange(unsigned int& currentLowValue, unsigned int& currentHighValue);
+
     protected:
         friend class ImageConverter;
         friend class ImageFiler;
@@ -552,7 +602,7 @@ namespace Spinnaker
 
         ImagePtr CreateShared() const;
         void DeepCopy(const Image & pSrcImage);
-        void Convert(Spinnaker::PixelFormatEnums format, Image & pDestImage, ColorProcessingAlgorithm algorithm = DEFAULT) const;
+        void Convert(Spinnaker::PixelFormatEnums format, Image & pDestImage, ColorProcessingAlgorithm colorAlgorithm = DEFAULT) const;
     };
 
     /*@}*/

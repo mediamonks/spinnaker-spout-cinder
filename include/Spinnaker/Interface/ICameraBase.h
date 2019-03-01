@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2018 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -56,8 +56,15 @@ namespace Spinnaker
         virtual GenApi::INodeMap & GetTLDeviceNodeMap() const = 0;
         virtual GenApi::INodeMap & GetTLStreamNodeMap() const = 0;
         virtual GenApi::EAccessMode GetAccessMode() const = 0;
+        virtual void ReadPort(uint64_t iAddress, void *pBuffer, size_t iSize) = 0;
+        virtual void WritePort(uint64_t iAddress, const void *pBuffer, size_t iSize) = 0;
         virtual void BeginAcquisition() = 0;
         virtual void EndAcquisition() = 0;
+
+        virtual BufferOwnership GetBufferOwnership() = 0;
+        virtual void SetBufferOwnership(BufferOwnership mode) = 0;
+        virtual void SetUserBuffers(void* const pMemBuffers, uint64_t iSize) = 0;
+
         virtual ImagePtr GetNextImage(uint64_t grabTimeout = EVENT_TIMEOUT_INFINITE, uint64_t streamID = 0) = 0;
         virtual GenICam::gcstring GetUniqueID() = 0;
         virtual bool IsStreaming() const = 0;
@@ -68,6 +75,7 @@ namespace Spinnaker
         virtual unsigned int GetNumImagesInUse() = 0;
         virtual unsigned int GetNumDataStreams() = 0;
         virtual unsigned int DiscoverMaxPacketSize() = 0;
+        virtual void ForceIP() = 0;
 
         /**
         * Gets vital camera information by connecting to the camera's
@@ -95,12 +103,10 @@ namespace Spinnaker
         ICameraBase() {};
         ICameraBase(const ICameraBase&) {};
         ICameraBase& operator=(const ICameraBase&);
-
     };
 
     /*@}*/
 
     /*@}*/
 }
-
 #endif /* FLIR_SPINNAKER_ICAMERABASE_H */

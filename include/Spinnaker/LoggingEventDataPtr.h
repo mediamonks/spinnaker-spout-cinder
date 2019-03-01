@@ -23,53 +23,59 @@
 
 namespace Spinnaker
 {
-	class LoggingEventData;
-
-	/**
-	 *  @defgroup SpinnakerEventClasses Spinnaker Event Classes
-	 */
-	/*@{*/
-
-	/**
-	 *  @defgroup LoggingEventDataPtr_h LoggingEventDataPtr Class	 
-	 */
-	/*@{*/
+    class LoggingEventData;
 
     /**
-     * @brief A reference tracked pointer to the LoggingEvent object.
+     *  @defgroup SpinnakerEventClasses Spinnaker Event Classes
      */
+     /*@{*/
 
-	class SPINNAKER_API LoggingEventDataPtr : public BasePtr<LoggingEventData>
-	{
+     /**
+      *  @defgroup LoggingEventDataPtr_h LoggingEventDataPtr Class
+      */
+      /*@{*/
 
-	public:
-		/**
-		* Default Constructor
-		*/
-		LoggingEventDataPtr() throw()
-			: BasePtr<LoggingEventData>()
-		{
-		}
+      /**
+       * @brief A reference tracked pointer to the LoggingEvent object.
+       */
 
-		/**
-		* Default Constructor
-		*/
-		LoggingEventDataPtr(const int /*nMustBeNull*/) throw()
-			: BasePtr<LoggingEventData>()
-		{
-		}
+    class SPINNAKER_API LoggingEventDataPtr : public BasePtr<LoggingEventData>
+    {
 
-		/**
-		* Copy Constructor
-		*/
-		virtual LoggingEventDataPtr& operator=(const int nMustBeNull){ return dynamic_cast<LoggingEventDataPtr&>(BasePtr<LoggingEventData>::operator=(nMustBeNull)); };
+    public:
+        /**
+        * Default Constructor
+        */
+        LoggingEventDataPtr() throw()
+            : BasePtr<LoggingEventData>()
+        {
+        }
 
-		/**
-		* Virtual Destructor
-		*/
-		virtual ~LoggingEventDataPtr(void){};
-		
-	};
+        /**
+        * Default Constructor with argument
+        */
+        LoggingEventDataPtr(const int /*nMustBeNull*/) throw()
+            : BasePtr<LoggingEventData>()
+        {
+        }
+
+        /**
+        * Default Constructor with argument
+        */
+        LoggingEventDataPtr(const long /*nMustBeNull*/) throw()
+            : BasePtr<LoggingEventData>()
+        {
+        }
+
+        /**
+        * Default Constructor with argument
+        */
+        LoggingEventDataPtr(const nullptr_t /*nullPtr*/) throw()
+            : BasePtr<LoggingEventData>()
+        {
+        }
+
+    };
     /*@}*/
 
     /*@}*/

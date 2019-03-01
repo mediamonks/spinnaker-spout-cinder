@@ -59,18 +59,25 @@
 #include "GCStringVector.h"
 #include "GCTypes.h"
 
+#ifdef _WIN32
 #pragma warning( push )
 #pragma warning( disable: 4244 ) // conversion from 'std::streamsize' to 'size_t'
 #include "Filestream.h"
 #pragma warning( pop )
+#else
+#include "Filestream.h"
+#endif
 
 #include "IPort.h"
 #include "IDeviceInfo.h"
+
+#ifdef _WIN32
 //GenApi Warnings
 #pragma warning ( disable : 4068 ) // unknown pragma; refers to BullsEyeCoverage
 #pragma warning ( disable : 4251 ) // XXX needs to have dll-interface to be used by clients of class YYY
 #pragma warning( disable: 4702 ) // unreachable code in <list>,...
 #pragma warning( disable: 4275 ) // non dll-interface structXXX used as base
 #pragma warning( disable: 4312 ) // 'type cast' : conversion from 'uintptr_t' to 'void *' of greater size
+#endif
 
 #endif // SPINNAKER_GENAPI_H

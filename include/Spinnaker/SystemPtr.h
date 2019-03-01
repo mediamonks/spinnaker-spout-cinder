@@ -41,7 +41,7 @@ namespace Spinnaker
     */
 
     class SPINNAKER_API SystemPtr : public BasePtr<ISystem>
-    {	
+    {
     public:
 
         //! Default constructor 
@@ -49,6 +49,12 @@ namespace Spinnaker
 
         //! Copy constructor 
         SystemPtr(const int /*nMustBeNull*/);
+
+        //! Copy constructor 
+        SystemPtr(const long /*nMustBeNull*/);
+
+        //! Copy constructor
+        SystemPtr(const nullptr_t /*nullPtr*/);
 
         //! Virtual destructor 
         virtual ~SystemPtr(void);

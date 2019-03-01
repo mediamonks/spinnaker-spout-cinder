@@ -52,25 +52,22 @@ namespace Spinnaker
         }
 
         /**
-        * Default Constructor
+        * Default Constructor with argument
         */
         InterfacePtr(const int /*nMustBeNull*/) throw()
             : BasePtr<IInterface>()
         {
         }
 
-        /**
-        * Virtual Destructor
-        */
-        virtual ~InterfacePtr(void){};
-
-        /**
-        * Copy Constructor
-        */
-        virtual InterfacePtr& operator=(const int nMustBeNull)
+        InterfacePtr(const long /*nMustBeNull*/) throw()
+            : BasePtr<IInterface>()
         {
-            return dynamic_cast<InterfacePtr&>(BasePtr<IInterface>::operator=(nMustBeNull));
-        };
+        }
+
+        InterfacePtr(const nullptr_t /*nullPtr*/) throw()
+            : BasePtr<IInterface>()
+        {
+        }
         
     };
 

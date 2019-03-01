@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -37,19 +37,20 @@ typedef struct _quickSpinTLDevice
 	quickSpinEnumerationNode DeviceType;
 	quickSpinStringNode DeviceDisplayName;
 	quickSpinEnumerationNode DeviceAccessStatus;
+	quickSpinStringNode DeviceVersion;
+	quickSpinStringNode DeviceUserID;
+	quickSpinStringNode DeviceDriverVersion;
+	quickSpinBooleanNode DeviceIsUpdater;
+	quickSpinEnumerationNode GevCCP;
 	quickSpinEnumerationNode GUIXMLLocation;
 	quickSpinStringNode GUIXMLPath;
 	quickSpinEnumerationNode GenICamXMLLocation;
 	quickSpinStringNode GenICamXMLPath;
-	quickSpinEnumerationNode GevCCP;
 	quickSpinIntegerNode GevDeviceIPAddress;
 	quickSpinIntegerNode GevDeviceSubnetMask;
 	quickSpinIntegerNode GevDeviceMACAddress;
 	quickSpinIntegerNode GevDeviceGateway;
 	quickSpinIntegerNode DeviceLinkSpeed;
-	quickSpinStringNode DeviceVersion;
-	quickSpinStringNode DeviceDriverVersion;
-	quickSpinStringNode DeviceUserID;
 	quickSpinIntegerNode GevVersionMajor;
 	quickSpinIntegerNode GevVersionMinor;
 	quickSpinBooleanNode GevDeviceModeIsBigEndian;
@@ -58,10 +59,13 @@ typedef struct _quickSpinTLDevice
 	quickSpinIntegerNode GevDevicePort;
 	quickSpinCommandNode GevDeviceDiscoverMaximumPacketSize;
 	quickSpinIntegerNode GevDeviceMaximumPacketSize;
+	quickSpinBooleanNode GevDeviceIsWrongSubnet;
+	quickSpinCommandNode GevDeviceForceIP;
 	quickSpinBooleanNode DeviceMulticastMonitorMode;
 	quickSpinEnumerationNode DeviceEndianessMechanism;
 	quickSpinStringNode DeviceInstanceId;
 	quickSpinEnumerationNode DeviceCurrentSpeed;
+	quickSpinBooleanNode DeviceU3VProtocol;
 } quickSpinTLDevice;
 
 /*@}*/

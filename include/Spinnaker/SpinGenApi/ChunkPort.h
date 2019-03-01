@@ -23,9 +23,11 @@
 #include "IPortConstruct.h"
 #include "Pointer.h"
 
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable: 4251) // GenApi::CChunkPort::m_ptrPort' : class 'GenApi::CPointer<T>' needs to have dll-interface
 #pragma warning ( disable : 4068 ) // unknown pragma; refers to BullsEyeCoverage
+#endif
 
 namespace Spinnaker
 {
@@ -94,12 +96,16 @@ namespace Spinnaker
             /**
             * Determines if the port adapter must perform an endianness swap.
             */
+#ifdef _WIN32
 #pragma BullseyeCoverage off
+#endif
             virtual EYesNo GetSwapEndianess()
             {
                 return No;
             }
+#ifdef _WIN32
 #pragma BullseyeCoverage on
+#endif
 
             //---------------------------------------------------------------
             // Implementation
@@ -171,6 +177,8 @@ namespace Spinnaker
     }
 }
 
+#ifdef _WIN32
 #pragma warning(pop)
+#endif
 
 #endif // SPINNAKER_GENAPI_CHUNKPORT_H

@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -170,7 +170,7 @@ extern "C" {
 
     /**
     * Releases the system; make sure handle is cleaned up properly by setting it to NULL
-    * after system is released; the handle can only be used again after calling 
+    * after system is released; the handle can only be used again after calling
     * spinSystemGetInstance
     *
     * @see spinSystemGetInstance
@@ -388,6 +388,7 @@ extern "C" {
     * Broadcast an Action Command to all devices on system
     * @see spinError
     *
+    * @param hSystem The system on which to send the action command to all devices.
     * @param iDeviceKey The Action Command's device key
     * @param iGroupKey The Action Command's group key
     * @param iGroupMask The Action Command's group mask
@@ -398,13 +399,24 @@ extern "C" {
     * @return spinError The error code; returns SPINNAKER_ERR_SUCCESS (or 0) for no error
     */
     SPINNAKERC_API spinSystemSendActionCommand(spinSystem hSystem, size_t iDeviceKey, size_t iGroupKey, size_t iGroupMask, size_t iActionTime, size_t* piResultSize, actionCommandResult results[]);
-    
+
     /**
     * Get current library version of Spinnaker.
     *
     * @return A struct containing the current version of Spinnaker(major, minor, type, build).
     */
     SPINNAKERC_API spinSystemGetLibraryVersion(spinSystem hSystem, spinLibraryVersion* hLibraryVersion);
+
+    /**
+    * Retrieves the transport layer nodemap from the system.
+    * @see spinError
+    *
+    * @param hSystem The system handle.
+    * @param phNodeMap The nodemap handle pointer in which the transport layer system nodemap is returned.
+    *
+    * @return spinError The error code; returns SPINNAKER_ERR_SUCCESS (or 0) for no error
+    */
+    SPINNAKERC_API spinSystemGetTLNodeMap(spinSystem hSystem, spinNodeMapHandle* phNodeMap);
     /*@}*/
 
     /**
@@ -512,7 +524,8 @@ extern "C" {
     SPINNAKERC_API spinCameraListGetSize(spinCameraList hCameraList, size_t* pSize);
 
     /**
-    * Retrieves a camera from a camera list using an index
+    * Retrieves a camera from a camera list using an index. This function will return
+    * a SPINNAKER_ERR_INVALID_PARAMETER error if the input index is out of range.
     * @see spinError
     *
     * @param hCameraList The camera list of the camera to retrieve
@@ -556,7 +569,9 @@ extern "C" {
     SPINNAKERC_API spinCameraListAppend(spinCameraList hCameraListBase, spinCameraList hCameraListToAppend);
 
     /**
-    * Retrieves a camera from a camera list using its serial number
+    * Retrieves a camera from a camera list using its serial number. This
+    * function will return a NULL spinCamera pointer if no matching camera
+    * serial is found.
     * @see spinError
     *
     * @param hCameraList The camera list of the camera to retrieve
@@ -820,6 +835,43 @@ extern "C" {
     */
     SPINNAKERC_API spinCameraGetAccessMode(spinCamera hCamera, spinAccessMode* pAccessMode);
 
+
+    /*
+    * Reads a remote port on a physical Camera. This function can be used to read
+    * registers on Cameras.
+    *
+    * Caution: Only perform direct read/write to a register if the register isn't
+    *          supported in the device nodemap. Otherwise the camera and nodemap
+    *          may be left in an undefined state after the register read/write.
+    *
+    * @see WritePort()
+    *
+    * @param iAddress A 64 bit address to a register on the camera
+    * @param pBuffer A pointer to a data buffer that will store result
+    * @param iSize Number of bytes to read
+    *
+    * @return spinError The error code; returns SPINNAKER_ERR_SUCCESS (or 0) for no error
+    */
+    SPINNAKERC_API spinCameraReadPort(spinCamera hCamera, uint64_t iAddress, void *pBuffer, size_t iSize);
+
+    /*
+    * Writes a remote port on a physical Camera. This function can be used to write
+    * registers on Cameras.
+    *
+    * Caution: Only perform direct read/write to a register if the register isn't
+    *          supported in the device nodemap. Otherwise the camera and nodemap
+    *          may be left in an undefined state after the register read/write.
+    *
+    * @see ReadPort()
+    *
+    * @param iAddress A 64 bit address to a register on the camera
+    * @param pBuffer A pointer to a data buffer that will be written
+    * @param iSize Number of bytes to write
+    *
+    * @return spinError The error code; returns SPINNAKER_ERR_SUCCESS (or 0) for no error
+    */
+    SPINNAKERC_API spinCameraWritePort(spinCamera hCamera, uint64_t iAddress, void *pBuffer, size_t iSize);
+
     /**
     * Has a camera start acquiring images
     * @see spinError
@@ -997,6 +1049,14 @@ extern "C" {
     * @return spinError The error code; returns SPINNAKER_ERR_SUCCESS (or 0) for no error
     */
     SPINNAKERC_API spinCameraDiscoverMaxPacketSize(spinCamera hCamera, unsigned int* pMaxPacketSize);
+    /*@}*/
+
+    /**
+    * Forces the camera to be on the same subnet as its corresponding interface.
+    * 
+    * @return spinError The error code; returns SPINNAKER_ERR_SUCCESS (or 0) for no error
+    */
+    SPINNAKERC_API spinCameraForceIP();
     /*@}*/
 
     /**
@@ -2111,7 +2171,7 @@ extern "C" {
     *
     * @return spinError The error code; returns SPINNAKER_ERR_SUCCESS (or 0) for no error
     */
-    SPINNAKERC_API_DEPRECATED("spinAVIRecorderOpenUncompressed is deprecated, use spinVideoOpenUncompressed instead.", 
+    SPINNAKERC_API_DEPRECATED("spinAVIRecorderOpenUncompressed is deprecated, use spinVideoOpenUncompressed instead.",
         spinAVIRecorderOpenUncompressed(spinAVIRecorder* phRecorder, const char* pName, spinAVIOption option));
 
     /*

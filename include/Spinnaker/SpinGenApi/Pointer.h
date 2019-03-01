@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -98,7 +98,7 @@ namespace Spinnaker
             /**
             * Assign INode Pointer
             */
-            void operator=( B *pB )
+            void operator=(B *pB)
             {
                 m_pT = dynamic_cast<T*>(pB);
             }
@@ -107,7 +107,7 @@ namespace Spinnaker
             */
             operator T*(void) const
             {
-                if (NULL == m_pT)
+                if (nullptr == m_pT)
                 {
                     throw Spinnaker::Exception(__LINE__, __FILE__, __FUNCTION__, __DATE__, __TIME__, "LogicalErrorException NULL pointer dereferenced", GENICAM_ERR_LOGICAL);
                 }
@@ -119,7 +119,7 @@ namespace Spinnaker
             */
             T& operator*(void) const
             {
-                if (NULL == m_pT)
+                if (nullptr == m_pT)
                 {
                     throw Spinnaker::Exception(__LINE__, __FILE__, __FUNCTION__, __DATE__, __TIME__, "LogicalErrorException NULL pointer dereferenced", GENICAM_ERR_LOGICAL);
                 }
@@ -131,7 +131,7 @@ namespace Spinnaker
             */
             T& operator()(void) const
             {
-                if (NULL == m_pT)
+                if (nullptr == m_pT)
                 {
                     throw Spinnaker::Exception(__LINE__, __FILE__, __FUNCTION__, __DATE__, __TIME__, "LogicalErrorException NULL pointer dereferenced", GENICAM_ERR_LOGICAL);
                 }
@@ -143,7 +143,7 @@ namespace Spinnaker
             */
             T* operator->(void) const
             {
-                if (NULL == m_pT)
+                if (nullptr == m_pT)
                 {
                     throw Spinnaker::Exception(__LINE__, __FILE__, __FUNCTION__, __DATE__, __TIME__, "LogicalErrorException NULL pointer dereferenced", GENICAM_ERR_LOGICAL);
                 }
@@ -155,7 +155,7 @@ namespace Spinnaker
             */
             bool IsValid() const throw()
             {
-                return m_pT != NULL;
+                return m_pT != nullptr;
             }
 
             /**
@@ -163,7 +163,7 @@ namespace Spinnaker
             */
             operator bool(void) const throw()
             {
-                return m_pT != NULL;
+                return m_pT != nullptr;
             }
 
             /**
@@ -177,7 +177,7 @@ namespace Spinnaker
             /**
             * pointer equal
             */
-            bool operator==(const CPointer<T,B> &rT) const
+            bool operator==(const CPointer<T, B> &rT) const
             {
                 return m_pT == rT.m_pT;
             }
@@ -192,6 +192,58 @@ namespace Spinnaker
                     throw Spinnaker::Exception(__LINE__, __FILE__, __FUNCTION__, __DATE__, __TIME__, "LogicalErrorException argument must be NULL", GENICAM_ERR_LOGICAL);
                 }
                 return NULL == m_pT;
+            }
+
+            /**
+            * pointer inequal
+            */
+            bool operator!=(const CPointer<T, B> &rT) const
+            {
+                return m_pT != rT.m_pT;
+            }
+
+            /**
+            * pointer inequal
+            */
+            bool operator!=(T* pT) const
+            {
+                return m_pT != pT;
+            }
+
+            /**
+            * pointer inequal
+            */
+            bool operator!=(const long int nMustBeNull) const
+            {
+                if (0 != nMustBeNull)
+                {
+                    throw Spinnaker::Exception(__LINE__, __FILE__, __FUNCTION__, __DATE__, __TIME__, "LogicalErrorException argument must be NULL", GENICAM_ERR_LOGICAL);
+                }
+                return NULL != m_pT;
+            }
+
+            /**
+            * pointer inequal
+            */
+            bool operator!=(const int nMustBeNull) const
+            {
+                if (0 != nMustBeNull)
+                {
+                    throw Spinnaker::Exception(__LINE__, __FILE__, __FUNCTION__, __DATE__, __TIME__, "LogicalErrorException argument must be NULL", GENICAM_ERR_LOGICAL);
+                }
+                return NULL != m_pT;
+            }
+
+            /**
+             * pointer inequal
+             */
+            bool operator!=(const nullptr_t nullPtr) const
+            {
+                if (nullPtr != nullptr)
+                {
+                    throw Spinnaker::Exception(__LINE__, __FILE__, __FUNCTION__, __DATE__, __TIME__, "LogicalErrorException argument must be nullptr", GENICAM_ERR_LOGICAL);
+                }
+                return m_pT != nullptr;
             }
 
         protected:
@@ -331,9 +383,9 @@ namespace Spinnaker
         /**
         * SmartPointer for IFloat interface pointer
         */
-        #ifdef SWIG
-            %template(_SWIG_CFltPtr) CPointer<IFloat, IBase>; // definition for Python wrapper generation
-        #endif
+#ifdef SWIG
+        %template(_SWIG_CFltPtr)CPointer<IFloat, IBase>; // definition for Python wrapper generation
+#endif
         class CFloatPtr : public CPointer < IFloat, IBase >
         {
         public:
@@ -341,22 +393,22 @@ namespace Spinnaker
             * Default constructor.
             */
             CFloatPtr() throw()
-                : CPointer<IFloat, IBase>(  )
+                : CPointer<IFloat, IBase>()
             {
             }
 
             /**
             * Constructor from IBase pointer type.
             */
-            CFloatPtr( IBase *pB )
-                : CPointer<IFloat, IBase>( pB )
+            CFloatPtr(IBase *pB)
+                : CPointer<IFloat, IBase>(pB)
             {
             }
 
             /**
             * Assign IBase Pointer
             */
-            void operator=( IBase *pB )
+            void operator=(IBase *pB)
             {
                 CPointer<IFloat, IBase>::operator =(pB);
             }
@@ -431,38 +483,42 @@ namespace Spinnaker
         */
         inline GenICam::gcstring GetInterfaceName(IBase* pBase)
         {
+#ifdef _WIN32
 #pragma warning (push) // icc -W4 complains: controlling expression is constant
 #pragma warning (disable : 279)
             assert(pBase && "don't call this with a NULL pointer");
 #pragma warning (pop)
+#else
+            assert(pBase && "don't call this with a NULL pointer");
+#endif
             CNodePtr ptrNode(pBase);
             switch (ptrNode->GetPrincipalInterfaceType())
             {
-                case intfIValue:
-                    return GenICam::gcstring("IValue");
-                case intfIInteger:
-                    return GenICam::gcstring("IInteger");
-                case intfIBoolean:
-                    return GenICam::gcstring("IBoolean");
-                case intfICommand:
-                    return GenICam::gcstring("ICommand");
-                case intfIFloat:
-                    return GenICam::gcstring("IFloat");
-                case intfIString:
-                    return GenICam::gcstring("IString");
-                case intfIRegister:
-                    return GenICam::gcstring("IRegister");
-                case intfICategory:
-                    return GenICam::gcstring("ICategory");
-                case intfIEnumeration:
-                    return GenICam::gcstring("IEnumeration");
-                case intfIEnumEntry:
-                    return GenICam::gcstring("IEnumEntry");
-                case intfIPort:
-                    return GenICam::gcstring("IPort");
-                case intfIBase:
-                default:
-                    return GenICam::gcstring("IBase");
+            case intfIValue:
+                return GenICam::gcstring("IValue");
+            case intfIInteger:
+                return GenICam::gcstring("IInteger");
+            case intfIBoolean:
+                return GenICam::gcstring("IBoolean");
+            case intfICommand:
+                return GenICam::gcstring("ICommand");
+            case intfIFloat:
+                return GenICam::gcstring("IFloat");
+            case intfIString:
+                return GenICam::gcstring("IString");
+            case intfIRegister:
+                return GenICam::gcstring("IRegister");
+            case intfICategory:
+                return GenICam::gcstring("ICategory");
+            case intfIEnumeration:
+                return GenICam::gcstring("IEnumeration");
+            case intfIEnumEntry:
+                return GenICam::gcstring("IEnumEntry");
+            case intfIPort:
+                return GenICam::gcstring("IPort");
+            case intfIBase:
+            default:
+                return GenICam::gcstring("IBase");
             }
         }
 

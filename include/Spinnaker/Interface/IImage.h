@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -52,8 +52,8 @@ namespace Spinnaker
         virtual ~IImage() {};
 
         virtual ColorProcessingAlgorithm GetColorProcessing() const = 0;
-        virtual ImagePtr Convert(Spinnaker::PixelFormatEnums format, ColorProcessingAlgorithm algorithm = DEFAULT) const = 0;
-        
+        virtual ImagePtr Convert(Spinnaker::PixelFormatEnums format, ColorProcessingAlgorithm colorAlgorithm = DEFAULT) const = 0;
+        virtual ImagePtr ExtractPolarization(const PolarizationAlgorithm polarizationAlogrithm, const PolarizationResolution resolution) const = 0;
         virtual void ResetImage(size_t width, size_t height, size_t offsetX, size_t offsetY, Spinnaker::PixelFormatEnums pixelFormat) = 0;
         virtual void ResetImage(size_t width, size_t height, size_t offsetX, size_t offsetY, Spinnaker::PixelFormatEnums pixelFormat, void* pData) = 0;
         virtual void Release() = 0;
@@ -98,10 +98,11 @@ namespace Spinnaker
         virtual size_t GetImageSize() const = 0;
         virtual bool IsInUse() = 0;
         virtual ImageStatus GetImageStatus() const = 0;
-        
+        virtual float* GetPolarizationValues() const = 0;
+        virtual PolarizationAlgorithm GetPolarizationAlgorithm() const = 0;
+
     protected:
         IImage() {};
-
     };
 
     /*@}*/

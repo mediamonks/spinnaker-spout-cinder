@@ -18,8 +18,10 @@
 #ifndef SPINNAKER_GENAPI_EVENTPORT_H
 #define SPINNAKER_GENAPI_EVENTPORT_H
 
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning ( disable : 4068 ) // unknown pragma; refers to BullsEyeCoverage
+#endif
 
 #include "Types.h"
 #include "INodeMap.h"
@@ -93,12 +95,16 @@ namespace Spinnaker
             /**
             * Determines if the port adapter must perform an endianness swap
             */
+#ifdef _WIN32
 #pragma BullseyeCoverage off
+#endif
             virtual EYesNo GetSwapEndianess()
             {
                 return No;
             }
+#ifdef _WIN32
 #pragma BullseyeCoverage on
+#endif
 
             //---------------------------------------------------------------
             // Implementation
@@ -161,5 +167,9 @@ namespace Spinnaker
         /*@}*/
     }
 }
+
+#ifdef _WIN32
 #pragma warning(pop)
+#endif
+
 #endif // SPINNAKER_GENAPI_EVENTPORT_H

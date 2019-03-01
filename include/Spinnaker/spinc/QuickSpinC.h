@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -15,12 +15,13 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
 
-#ifndef PGR_SPINNAKER_QUICKSPIN_C_H
-#define PGR_SPINNAKER_QUICKSPIN_C_H
+#ifndef FLIR_SPINNAKER_QUICKSPIN_C_H
+#define FLIR_SPINNAKER_QUICKSPIN_C_H
 
 #include "SpinnakerDefsC.h"
 #include "QuickSpinDefsC.h"
 
+#include "TransportLayerSystemC.h"
 #include "TransportLayerDeviceC.h"
 #include "TransportLayerInterfaceC.h"
 #include "TransportLayerStreamC.h"
@@ -101,7 +102,18 @@ extern "C" {
 	*/
 	SPINNAKERC_API quickSpinTLInterfaceInit(spinInterface hInterface, quickSpinTLInterface* pQuickSpinTLInterface);
 
-	/*@}*/
+    /*
+    * Pre-fetches all nodes housed on the transport layer system nodemap
+    * @see spinError
+    *
+    * @param hSystem The system of the nodes to fetch
+    * @param pQuickSpinTLSystem The struct pointer in which the transport layer system nodes are returned
+    *
+    * @return spinError The error code; returns SPINNAKER_ERR_SUCCESS (or 0) for no error
+    */
+    SPINNAKERC_API quickSpinTLSystemInit(spinSystem hSystem, quickSpinTLSystem* pQuickSpinTLSystem);
+    
+    /*@}*/
 	
 #ifdef __cplusplus
 }

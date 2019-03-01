@@ -53,9 +53,11 @@
 
 #if defined (_WIN32) || (defined (__GNUC__) && (defined (__linux__) || defined (__APPLE__) || defined(VXWORKS)))
 
+#ifdef _WIN32
 // conversion from 'uintptr_t' to 'void *' of greater size
 // This is a portability warning
 #pragma warning( disable : 4312 )
+#endif // _WIN32
 
 // MacOS doesn't like us redefining standard namespace
 #if !defined ( __APPLE__ )

@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -1166,6 +1166,14 @@ typedef enum _spinPixelFormatEnums    /*!<
     PixelFormat_YUV411_8_UYYVYY,    /*!< YUV 4:1:1 8-bit*/
     PixelFormat_YUV422_8,    /*!< YUV 4:2:2 8-bit*/
     PixelFormat_YUV422_8_UYVY,    /*!< YUV 4:2:2 8-bit*/
+    PixelFormat_Polarized8,    /*!< Monochrome Polarized 8-bit*/
+    PixelFormat_Polarized10p,    /*!< Monochrome Polarized 10-bit packed*/
+    PixelFormat_Polarized12p,    /*!< Monochrome Polarized 12-bit packed*/
+    PixelFormat_Polarized16,    /*!< Monochrome Polarized 16-bit*/
+    PixelFormat_BayerRGPolarized8,    /*!< Polarized Bayer Red Green filter 8-bit*/
+    PixelFormat_BayerRGPolarized10p,    /*!< Polarized Bayer Red Green filter 10-bit packed*/
+    PixelFormat_BayerRGPolarized12p,    /*!< Polarized Bayer Red Green filter 12-bit packed*/
+    PixelFormat_BayerRGPolarized16,    /*!< Polarized Bayer Red Green filter 16-bit*/
     PixelFormat_Raw16,    /*!< Raw 16 bit.*/
     PixelFormat_Raw8,    /*!< Raw bit.*/
     PixelFormat_R12_Jpeg,    /*!< Red 12-bit JPEG.*/
@@ -1724,6 +1732,14 @@ typedef enum _spinPixelFormatInfoSelectorEnums    /*!< Select the pixel format f
     PixelFormatInfoSelector_YUV411_8_UYYVYY,    /*!< YUV 4:1:1 8-bit*/
     PixelFormatInfoSelector_YUV422_8,    /*!< YUV 4:2:2 8-bit*/
     PixelFormatInfoSelector_YUV422_8_UYVY,    /*!< YUV 4:2:2 8-bit*/
+    PixelFormatInfoSelector_Polarized8,    /*!< Monochrome Polarized 8-bit*/
+    PixelFormatInfoSelector_Polarized10p,    /*!< Monochrome Polarized 10-bit packed*/
+    PixelFormatInfoSelector_Polarized12p,    /*!< Monochrome Polarized 12-bit packed*/
+    PixelFormatInfoSelector_Polarized16,    /*!< Monochrome Polarized 16-bit*/
+    PixelFormatInfoSelector_BayerRGPolarized8,    /*!< Polarized Bayer Red Green filter 8-bit*/
+    PixelFormatInfoSelector_BayerRGPolarized10p,    /*!< Polarized Bayer Red Green filter 10-bit packed*/
+    PixelFormatInfoSelector_BayerRGPolarized12p,    /*!< Polarized Bayer Red Green filter 12-bit packed*/
+    PixelFormatInfoSelector_BayerRGPolarized16,    /*!< Polarized Bayer Red Green filter 16-bit*/
     NUM_PIXELFORMATINFOSELECTOR
 } spinPixelFormatInfoSelectorEnums;
 

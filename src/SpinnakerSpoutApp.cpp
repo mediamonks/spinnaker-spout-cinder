@@ -225,26 +225,38 @@ void SpinnakerSpoutApp::checkCameraAvailable() {
 	if (getElapsedSeconds() - lastCameraStartCheckTime < CAMERA_AVAILABLE_CHECK_INTERVAL) return;
 	lastCameraStartCheckTime = getElapsedSeconds();
 
-	if (system == NULL) system = System::GetInstance();
-	SetGenICamLogConfig("cameraLog.log");
-	CameraList camList = system->GetCameras();
+	try {
+		if (system == NULL) system = System::GetInstance();
 
-	unsigned int numCameras = camList.GetSize();
-	if (numCameras == 0)
-	{
-		console() << "No cameras found, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
-	}
-	else {
-		camera = camList.GetByIndex(0);
-		try {
-			console() << "Initializing camera 0 (" << camList.GetSize() << " available)..." << endl;
-			camera->Init();
+		const LibraryVersion spinnakerLibraryVersion = system->GetLibraryVersion();
+		console() << "Spinnaker library version: "
+			<< spinnakerLibraryVersion.major << "."
+			<< spinnakerLibraryVersion.minor << "."
+			<< spinnakerLibraryVersion.type << "."
+			<< spinnakerLibraryVersion.build << endl << endl;
+
+		CameraList camList = system->GetCameras();
+
+		unsigned int numCameras = camList.GetSize();
+		if (numCameras == 0)
+		{
+			console() << "No cameras found, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
+		}
+		else {
+			camera = camList.GetByIndex(0);
+			try {
+				console() << "Initializing camera 0 (" << camList.GetSize() << " available)..." << endl;
+				camera->Init();
 			//SpinnakerDeviceCommunication::printDeviceInfo(camera);
-			cameraFound = true;
+				cameraFound = true;
+			}
+			catch (Spinnaker::Exception &e) {
+				console() << "Error initializing camera: " << e.what() << endl;
+			}
 		}
-		catch (Spinnaker::Exception &e) {
-			console() << "Error initializing camera: " << e.what() << endl;
-		}
+	}
+	catch (exception e) {
+		console() << "Error initializing Spinnaker library: " << e.what() << ". Do the included Spinnaker header and lib files match the dll version?" << endl;
 	}
 }
 

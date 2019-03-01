@@ -26,17 +26,17 @@ namespace Spinnaker
      * @defgroup SpinnakerClasses Spinnaker Classes
      */
 
-    /*@{*/
+     /*@{*/
 
-    /**
-     * @defgroup InterfaceList_h InterfaceList Class
-     */
+     /**
+      * @defgroup InterfaceList_h InterfaceList Class
+      */
 
-    /*@{*/
+      /*@{*/
 
-    /**
-    * @brief A list of the available interfaces on the system.
-    */
+      /**
+      * @brief A list of the available interfaces on the system.
+      */
 
     class SPINNAKER_API InterfaceList : public IInterfaceList
     {
@@ -59,7 +59,7 @@ namespace Spinnaker
         /**
          * Assignment operator.
          */
-        InterfaceList&	operator=( const InterfaceList& iface );
+        InterfaceList&	operator=(const InterfaceList& iface);
 
         /**
          * Array subscription operators

@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -99,6 +99,14 @@ typedef enum _spinTLDeviceAccessStatusEnums	/*!< Gets the access status the tran
 	NUMDEVICEACCESSSTATUS
 } spinTLDeviceAccessStatusEnums;
 
+typedef enum _spinTLGevCCPEnums	/*!< Controls the device access privilege of an application.*/
+{
+	GevCCP_EnumEntry_GevCCP_OpenAccess,/*!< Open access privilege.*/
+	GevCCP_EnumEntry_GevCCP_ExclusiveAccess,/*!< Exclusive access privilege.*/
+	GevCCP_EnumEntry_GevCCP_ControlAccess,/*!< Control access privilege.*/
+	NUMGEVCCP
+} spinTLGevCCPEnums;
+
 typedef enum _spinTLGUIXMLLocationEnums	/*!< Sets the location to load GUI XML.*/
 {
 	GUIXMLLocation_Device,/*!< Load XML from device*/
@@ -112,14 +120,6 @@ typedef enum _spinTLGenICamXMLLocationEnums	/*!< Sets the location to load GenIC
 	GenICamXMLLocation_Host,/*!< Load GenICam XML from host*/
 	NUMGENICAMXMLLOCATION
 } spinTLGenICamXMLLocationEnums;
-
-typedef enum _spinTLGevCCPEnums	/*!< Controls the device access privilege of an application.*/
-{
-	GevCCP_EnumEntry_GevCCP_OpenAccess,/*!< Open access privilege.*/
-	GevCCP_EnumEntry_GevCCP_ExclusiveAccess,/*!< Exclusive access privilege.*/
-	GevCCP_EnumEntry_GevCCP_ControlAccess,/*!< Control access privilege.*/
-	NUMGEVCCP
-} spinTLGevCCPEnums;
 
 typedef enum _spinTLDeviceEndianessMechanismEnums	/*!< Identifies the endianness handling mode.*/
 {
@@ -145,6 +145,14 @@ typedef enum _spinTLPOEStatusEnums	/*!< Reports and controls the interface's pow
 	POEStatus_PowerOn,/*!< Power is On*/
 	NUMPOESTATUS
 } spinTLPOEStatusEnums;
+
+typedef enum _spinTLFilterDriverStatusEnums	/*!< Reports whether FLIR Light Weight Filter Driver is enabled or not.*/
+{
+	FilterDriverStatus_NotSupported,/*!< Not Supported*/
+	FilterDriverStatus_Disabled,/*!< FLIR Light Weight Filter Driver is disabled*/
+	FilterDriverStatus_Enabled,/*!< FLIR Light Weight Filter Driver is enabled*/
+	NUMFILTERDRIVERSTATUS
+} spinTLFilterDriverStatusEnums;
 
 /*@}*/
 

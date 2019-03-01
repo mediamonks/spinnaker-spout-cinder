@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -38,6 +38,7 @@ typedef struct _quickSpinTLInterface
 	quickSpinIntegerNode GevInterfaceIPAddress;
 	quickSpinIntegerNode GevInterfaceSubnetMask;
 	quickSpinEnumerationNode POEStatus;
+	quickSpinEnumerationNode FilterDriverStatus;
 	quickSpinIntegerNode GevActionDeviceKey;
 	quickSpinIntegerNode GevActionGroupKey;
 	quickSpinIntegerNode GevActionGroupMask;
@@ -60,6 +61,12 @@ typedef struct _quickSpinTLInterface
 	quickSpinStringNode IncompatibleDeviceID;
 	quickSpinStringNode IncompatibleDeviceVendorName;
 	quickSpinStringNode IncompatibleDeviceModelName;
+	quickSpinIntegerNode IncompatibleGevDeviceIPAddress;
+	quickSpinIntegerNode IncompatibleGevDeviceSubnetMask;
+	quickSpinIntegerNode IncompatibleGevDeviceMACAddress;
+	quickSpinStringNode HostAdapterName;
+	quickSpinStringNode HostAdapterVendor;
+	quickSpinStringNode HostAdapterDriverVersion;
 } quickSpinTLInterface;
 
 /*@}*/

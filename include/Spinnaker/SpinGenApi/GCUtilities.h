@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -59,7 +59,7 @@
 #      if defined (__linux__)
 #       define PLATFORM_NAME "Linux32_i86"
 #      elif defined (__APPLE__)
-#       error Unsupported Platform
+#       define PLATFORM_NAME "Maci64_x64"
 #      elif defined (VXWORKS)
 #       define PLATFORM_NAME "VxWorks_PPC"
 #      else

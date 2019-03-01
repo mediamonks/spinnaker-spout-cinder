@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © 2017 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+// Copyright (c) 2001-2018 FLIR Systems, Inc. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of FLIR
 // Integrated Imaging Solutions, Inc. ("Confidential Information"). You
@@ -22,13 +22,12 @@
 #include "SpinnakerDefs.h"
 #include "InterfaceList.h"
 #include "CameraList.h"
+#include "TransportLayerSystem.h"
 #include "LoggingEvent.h"
 
 namespace Spinnaker
 {
     // Forward declaration of implementation class
-    class SystemImpl;
-    class SystemPtr;
     class LoggingEvent;
     /**
     * @defgroup SpinnakerClasses Spinnaker Classes
@@ -54,6 +53,7 @@ namespace Spinnaker
         virtual InterfaceList GetInterfaces(bool updateInterface = true) = 0;
         virtual CameraList GetCameras(bool updateInterfaces = true, bool updateCameras = true) = 0;
         virtual bool UpdateCameras(bool updateInterfaces = true) = 0;
+        virtual void UpdateInterfaceList() = 0;
         virtual void RegisterInterfaceEvent(Event & evtToRegister, bool updateInterface = true) = 0;
         virtual void UnregisterInterfaceEvent(Event & evtToUnregister) = 0;
         virtual void RegisterLoggingEvent(LoggingEvent & handler) = 0;
@@ -64,8 +64,13 @@ namespace Spinnaker
         virtual bool IsInUse() = 0;
         virtual void SendActionCommand(unsigned int deviceKey, unsigned int groupKey, unsigned int groupMask, unsigned long long actionTime = 0, unsigned int* pResultSize = 0, ActionCommandResult results[] = NULL) = 0;
         virtual const LibraryVersion GetLibraryVersion() = 0;
+        virtual GenApi::INodeMap & GetTLNodeMap() const = 0;
+
+        // Gets vital system information without connecting to the XML through transport layer specific bootstrap registers.
+        TransportLayerSystem TLSystem;
 
     protected:
+        friend class SystemPtrInternal;
 
         ISystem() {};
         ISystem(const ISystem&) {};
