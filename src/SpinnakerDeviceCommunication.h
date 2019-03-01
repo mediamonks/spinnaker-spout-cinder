@@ -34,9 +34,9 @@ public:
 	static vector<string> getParameterEnumOptions(CameraPtr camera, string paramName);
 	static int getParameterIntValue(CameraPtr camera, string paramName);
 
-	static void setParameterEnum(CameraPtr camera, string paramName, string enumValueName);
-	static void setParameterInt(CameraPtr camera, string paramName, int newValue);
-	static void setParameterFloat(CameraPtr camera, string paramName, float newValue);
+	static string setParameterEnum(CameraPtr camera, string paramName, string enumValueName);
+	static int setParameterInt(CameraPtr camera, string paramName, int newValue);
+	static double setParameterFloat(CameraPtr camera, string paramName, float newValue);
 
 	static void printDeviceInfo(CameraPtr camera);
 	static int printValueNode(CNodePtr node, unsigned int level);

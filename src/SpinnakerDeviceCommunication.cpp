@@ -57,7 +57,7 @@ vector<string> SpinnakerDeviceCommunication::getParameterEnumOptions(CameraPtr c
 	}
 }
 
-void SpinnakerDeviceCommunication::setParameterEnum(CameraPtr camera, string paramName, string enumValueName) {
+string SpinnakerDeviceCommunication::setParameterEnum(CameraPtr camera, string paramName, string enumValueName) {
 	INodeMap& nodeMap = camera->GetNodeMap();
 
 	CEnumerationPtr node = nodeMap.GetNode(paramName.c_str());
@@ -68,14 +68,26 @@ void SpinnakerDeviceCommunication::setParameterEnum(CameraPtr camera, string par
 		{
 			int64_t value = entry->GetValue(); // Retrieve the integer value from the entry node
 			node->SetIntValue(value); // Set integer as new value for enumeration node
-			console() << paramName << " set to " << node->GetCurrentEntry()->GetSymbolic() << "..." << endl;
+			string currentValue = node->GetCurrentEntry()->GetSymbolic();
+			if (enumValueName != currentValue) {
+				console() << paramName << " set to " << enumValueName << " and is now " << currentValue << endl;
+			}
+			else {
+				console() << paramName << " set to " << currentValue << endl;
+			}
+			return currentValue;
 		}
-		else console() << paramName << " value " << enumValueName << " not available..." << endl;
+		else {
+			console() << "Value " << enumValueName << " not available in Enumerator parameter " << paramName << endl;
+		}
 	}
-	else console() << paramName << " setting not available for writing as Enumeration..." << endl;
+	else {
+		console() << paramName << " parameter not available for writing as Enumeration..." << endl;
+	}
+	return "error";
 }
 
-void SpinnakerDeviceCommunication::setParameterFloat(CameraPtr camera, string paramName, float newValue) {
+double SpinnakerDeviceCommunication::setParameterFloat(CameraPtr camera, string paramName, float newValue) {
 	INodeMap& nodeMap = camera->GetNodeMap();
 	CFloatPtr node = nodeMap.GetNode(paramName.c_str());
 	if (IsAvailable(node) && IsWritable(node))
@@ -85,14 +97,26 @@ void SpinnakerDeviceCommunication::setParameterFloat(CameraPtr camera, string pa
 		if (newValue >= valueMin && newValue <= valueMax)
 		{
 			node->SetValue(newValue);
-			console() << paramName << " set to " << newValue << "..." << endl;
+			double currentValue = node->GetValue();
+			if (newValue != currentValue) {
+				console() << paramName << " set to " << newValue << " and is now " << currentValue << endl;
+			}
+			else {
+				console() << paramName << " set to " << currentValue << endl;
+			}
+			return currentValue;
 		}
-		else console() << paramName << " value " << newValue << " not applicable..." << endl;
+		else {
+			console() << "Value " << newValue << " out of range for Float parameter " << paramName << endl;
+		}
 	}
-	else console() << paramName << " setting not available for writing as Float..." << endl;
+	else {
+		console() << paramName << " parameter not available for writing as Float..." << endl;
+	}
+	return -1;
 }
 
-void SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string paramName, int newValue) {
+int SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string paramName, int newValue) {
 	INodeMap& nodeMap = camera->GetNodeMap();
 	CIntegerPtr node = nodeMap.GetNode(paramName.c_str());
 	if (IsAvailable(node) && IsWritable(node))
@@ -102,11 +126,23 @@ void SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string para
 		if (newValue >= valueMin && newValue <= valueMax)
 		{
 			node->SetValue(newValue);
-			console() << paramName << " set to " << newValue << "..." << endl;
+			int currentValue = node->GetValue();
+			if (newValue != currentValue) {
+				console() << paramName << " set to " << newValue << " and is now " << currentValue << endl;
+			}
+			else {
+				console() << paramName << " set to " << currentValue << endl;
+			}
+			return currentValue;
 		}
-		else console() << paramName << " value " << newValue << " not applicable..." << endl;
+		else {
+			console() << "Value " << newValue << " out of range for Integer parameter " << paramName << endl;
+		}
 	}
-	else console() << paramName << " setting not available for writing as Integer..." << endl;
+	else {
+		console() << paramName << " parameter not available for writing as Integer..." << endl;
+	}
+	return -1;
 }
 
 // assumes camera is initialized
