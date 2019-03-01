@@ -155,6 +155,8 @@ void SpinnakerSpoutApp::initParamInterface() {
 		UserSettings::writeSetting<int>("logLevelIndex", logLevelIndex);
 	});
 
+	params->addSeparator();
+
 	std::vector<string> binningEnums;
 	binningEnums.push_back("No binning");
 	binningEnums.push_back("Binning 2x");
@@ -177,6 +179,8 @@ void SpinnakerSpoutApp::initParamInterface() {
 	params->addParam("Pixel Format", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat"), &pixelFormatIndex).updateFn([this] {
 		UserSettings::writeSetting<int>("pixelFormat", pixelFormatIndex);
 	});
+
+	params->addSeparator();
 
 	// -------- SPOUT --------
 	params->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
