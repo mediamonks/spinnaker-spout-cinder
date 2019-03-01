@@ -6,6 +6,7 @@
 	<pixelFormat>4</pixelFormat>
 	<exposureAuto>0</exposureAuto>
 	<gainAuto>0</gainAuto>
-	<exposureTimeAbs>1000.64</exposureTimeAbs>
+	<exposureTimeAbs>2553.34</exposureTimeAbs>
+	<logLevelIndex>4</logLevelIndex>
 </spinnakerSpoutCinder>
 

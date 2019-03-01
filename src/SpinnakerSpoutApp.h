@@ -14,6 +14,23 @@
 
 #include "UserSettings.h"
 
+
+// Although logging events are just as flexible and extensible as other events, 
+// they are generally only used for logging purposes, which is why a number of 
+// helpful functions that provide logging information have been added. Generally,
+// if the purpose is not logging, one of the other event types is probably more
+// appropriate.
+class LoggingEventHandler : public LoggingEvent
+{
+	// This function displays readily available logging information.
+	void OnLogEvent(LoggingEventDataPtr loggingEventDataPtr)
+	{
+		console() << "Camera Log (" << loggingEventDataPtr->GetTimestamp() << ")";
+		console() << " " << loggingEventDataPtr->GetCategoryName() << " | " << loggingEventDataPtr->GetPriorityName() << ": ";
+		console() << loggingEventDataPtr->GetLogMessage() << endl;
+	}
+};
+
 class SpinnakerSpoutApp : public App {
 	// -------- SPINNAKER --------
 	SystemPtr system = NULL;
@@ -58,8 +75,13 @@ class SpinnakerSpoutApp : public App {
 	float lastDroppedFramesTime = 0;
 	int geLatestDroppedFrames();
 
+	LoggingEventHandler loggingEventHandler;
+	int logLevelIndex = 4; // LOG_LEVEL_ERROR
+
 public:
 	void setup() override;
 	void draw() override;
 	void cleanup() override;
 };
+
+SpinnakerLogLevel indexToSpinnakerLogLevel(int index);

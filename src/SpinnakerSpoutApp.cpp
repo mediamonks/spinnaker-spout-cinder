@@ -22,13 +22,14 @@ void prepareSettings(App::Settings *settings)
 
 void SpinnakerSpoutApp::setup()
 {
-	sendWidth = UserSettings::getSetting<int>("sendWidth", 640);
-	sendHeight = UserSettings::getSetting<int>("sendHeight", 480);
-	binning = UserSettings::getSetting<int>("binning", 0);
-	gainAutoIndex = UserSettings::getSetting<int>("gainAuto", 0); // enum, but index stored as int
-	exposureAutoIndex = UserSettings::getSetting<int>("exposureAuto", 0); // enum, but index stored as int
-	exposure = UserSettings::getSetting<double>("exposureTimeAbs", 10000);
-	pixelFormatIndex = UserSettings::getSetting<int>("pixelFormat", 4); // enum, but index stored as int
+	sendWidth = UserSettings::getSetting<int>("sendWidth", sendWidth);
+	sendHeight = UserSettings::getSetting<int>("sendHeight", sendHeight);
+	binning = UserSettings::getSetting<int>("binning", binning);
+	gainAutoIndex = UserSettings::getSetting<int>("gainAuto", gainAutoIndex); // enum, but index stored as int
+	exposureAutoIndex = UserSettings::getSetting<int>("exposureAuto", exposureAutoIndex); // enum, but index stored as int
+	exposure = UserSettings::getSetting<double>("exposureTimeAbs", exposure);
+	pixelFormatIndex = UserSettings::getSetting<int>("pixelFormat", pixelFormatIndex); // enum, but index stored as int
+	logLevelIndex = UserSettings::getSetting<int>("logLevelIndex", logLevelIndex);
 }
 
 void SpinnakerSpoutApp::draw()
@@ -134,18 +135,26 @@ void SpinnakerSpoutApp::draw()
 }
 
 void SpinnakerSpoutApp::initParamInterface() {
-	params = params::InterfaceGl::create(getWindow(), "Camera parameters", toPixels(ivec2(200, 300)));
-
-	// -------- SPOUT --------
-	params->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
-		UserSettings::writeSetting<int>("sendWidth", sendWidth);
-	});
-
-	params->addParam("Send Height", &sendHeight).min(20).updateFn([this] {
-		UserSettings::writeSetting<int>("sendHeight", sendHeight);
-	});
+	params = params::InterfaceGl::create(getWindow(), "Parameters", toPixels(ivec2(200, 300)));
 
 	// -------- SPINNAKER --------
+	std::vector<string> logLevelEnums;
+	logLevelEnums.push_back("Off");
+	logLevelEnums.push_back("Fatal");
+	logLevelEnums.push_back("Alert");
+	logLevelEnums.push_back("Crit");
+	logLevelEnums.push_back("Error");
+	logLevelEnums.push_back("Warn");
+	logLevelEnums.push_back("Notice");
+	logLevelEnums.push_back("Info");
+	logLevelEnums.push_back("Debug");
+	logLevelEnums.push_back("All");
+
+	params->addParam("Camera Log Level", logLevelEnums, &logLevelIndex).min(20).updateFn([this] {		
+		system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
+		UserSettings::writeSetting<int>("logLevelIndex", logLevelIndex);
+	});
+
 	std::vector<string> binningEnums;
 	binningEnums.push_back("No binning");
 	binningEnums.push_back("Binning 2x");
@@ -167,6 +176,15 @@ void SpinnakerSpoutApp::initParamInterface() {
 
 	params->addParam("Pixel Format", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat"), &pixelFormatIndex).updateFn([this] {
 		UserSettings::writeSetting<int>("pixelFormat", pixelFormatIndex);
+	});
+
+	// -------- SPOUT --------
+	params->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
+		UserSettings::writeSetting<int>("sendWidth", sendWidth);
+	});
+
+	params->addParam("Send Height", &sendHeight).min(20).updateFn([this] {
+		UserSettings::writeSetting<int>("sendHeight", sendHeight);
 	});
 }
 
@@ -248,14 +266,19 @@ void SpinnakerSpoutApp::checkCameraAvailable() {
 	lastCameraStartCheckTime = getElapsedSeconds();
 
 	try {
-		if (system == NULL) system = System::GetInstance();
+		if (system == NULL) {
+			system = System::GetInstance();
 
-		const LibraryVersion spinnakerLibraryVersion = system->GetLibraryVersion();
-		console() << "Spinnaker library version: "
-			<< spinnakerLibraryVersion.major << "."
-			<< spinnakerLibraryVersion.minor << "."
-			<< spinnakerLibraryVersion.type << "."
-			<< spinnakerLibraryVersion.build << endl << endl;
+			const LibraryVersion spinnakerLibraryVersion = system->GetLibraryVersion();
+			console() << "Spinnaker library version: "
+				<< spinnakerLibraryVersion.major << "."
+				<< spinnakerLibraryVersion.minor << "."
+				<< spinnakerLibraryVersion.type << "."
+				<< spinnakerLibraryVersion.build << endl << endl;
+
+			system->RegisterLoggingEvent(loggingEventHandler);
+			system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
+		}
 
 		CameraList camList = system->GetCameras();
 
@@ -364,8 +387,24 @@ void SpinnakerSpoutApp::cleanup()
 		camera->DeInit();
 		camera = NULL;
 	}
+	system->UnregisterLoggingEvent(loggingEventHandler);
 	system->ReleaseInstance(); // Release system
 	spoutSender.ReleaseSender();
+}
+
+SpinnakerLogLevel indexToSpinnakerLogLevel(int index) {
+	switch (index) {
+	case 0: return LOG_LEVEL_OFF;
+	case 1: return LOG_LEVEL_FATAL;
+	case 2: return LOG_LEVEL_ALERT;
+	case 3: return LOG_LEVEL_CRIT;
+	case 4: return LOG_LEVEL_ERROR;
+	case 5: return LOG_LEVEL_WARN;
+	case 6: return LOG_LEVEL_NOTICE;
+	case 7: return LOG_LEVEL_INFO;
+	case 8: return LOG_LEVEL_DEBUG;
+	case 9: return LOG_LEVEL_NOTSET;
+	}
 }
 
 CINDER_APP(SpinnakerSpoutApp, RendererGl, prepareSettings)
