@@ -10,6 +10,16 @@ using namespace Spinnaker::GenICam;
 
 #define CAMERA_AVAILABLE_CHECK_INTERVAL 2
 
+/*
+Make sure to enable jumbo packets on your network interface and set them to 9014 bytes:
+https://www.ptgrey.com/KB/10899#Jumbo%20Packet (assuming you have a network interface that supports this)
+
+When working with multiple camera's on a network with limited bandwidth, make sure they distribute the bandwidth equally using the Device Link Throughput Limit setting.
+
+In general, keep these guidelines in mind:
+https://www.ptgrey.com/KB/11151
+*/
+
 void prepareSettings(App::Settings *settings)
 {
 	settings->setHighDensityDisplayEnabled();
