@@ -64,8 +64,16 @@ void SpinnakerSpoutApp::draw()
 				paramInterfaceInited = true;
 			}
 
-			bool cameraWasStopped = applyParamsIfNeeded(); // potentially stops camera acquisition to apply changed settings
-			cameraRunning = cameraRunning && !cameraWasStopped;
+			if (sendFbo == NULL || sendFbo->getWidth() != sendWidth || sendFbo->getHeight() != sendHeight || !spoutInitialized) {
+				initSpout();
+			}
+
+			if (cameraSettingsDirty) {
+				cameraSettingsDirty = false;
+				bool cameraWasStopped = applyCameraSettings(); // potentially stops camera acquisition to apply changed settings
+				cameraRunning = cameraRunning && !cameraWasStopped;
+			}
+
 			if (!cameraRunning) cameraRunning = startCamera();
 
 			if (!cameraRunning) {
@@ -99,7 +107,7 @@ void SpinnakerSpoutApp::draw()
 							gl::ScopedMatrices matrixScope();
 							gl::setMatricesWindow(sendFbo->getSize(), false);
 
-							gl::draw(cameraTexture, Rectf(0, 0, sendFbo->getWidth(), sendFbo->getHeight()));
+							gl::draw(cameraTexture, sendFbo->getBounds());
 
 							// Send the texture for all receivers to use
 							// NOTE : if SendTexture is called with a framebuffer object bound,
@@ -161,22 +169,27 @@ void SpinnakerSpoutApp::initParamInterface() {
 	binningEnums.push_back("No binning");
 	binningEnums.push_back("Binning 2x");
 	params->addParam("Binning", binningEnums, &binning).updateFn([this] {
+		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>("binning", binning);
 	});
 
 	params->addParam("Gain Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "GainAuto"), &gainAutoIndex).updateFn([this] {
+		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>("gainAuto", gainAutoIndex);
 	});
 
 	params->addParam("Exposure Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "ExposureAuto"), &exposureAutoIndex).updateFn([this] {
+		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>("exposureAuto", exposureAutoIndex);
 	});
 
 	params->addParam("Exposure", &exposure).updateFn([this] {
+		cameraSettingsDirty = true;
 		UserSettings::writeSetting<double>("exposureTimeAbs", exposure);
 	});
 
 	params->addParam("Pixel Format", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat"), &pixelFormatIndex).updateFn([this] {
+		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>("pixelFormat", pixelFormatIndex);
 	});
 
@@ -194,11 +207,7 @@ void SpinnakerSpoutApp::initParamInterface() {
 
 // Stops camera if necessary. Make sure to check whether it is started after calling this method.
 // returns true if camera was stopped, false otherwise
-bool SpinnakerSpoutApp::applyParamsIfNeeded() {
-	if (sendFbo == NULL || sendFbo->getWidth() != sendWidth || sendFbo->getHeight() != sendHeight || !spoutInitialized) {
-		initSpout();
-	}
-
+bool SpinnakerSpoutApp::applyCameraSettings() {
 	if (camera == NULL) return true;
 
 	bool cameraWasStopped = false;
@@ -208,7 +217,6 @@ bool SpinnakerSpoutApp::applyParamsIfNeeded() {
 		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningHorizontal", binning + 1); // binning param values are set as int starting from 1
 		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningVertical", binning + 1);
 	}
-
 
 	vector<string> gainAutoOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "GainAuto");
 	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "GainAuto") != gainAutoOptions[gainAutoIndex]) {
@@ -309,7 +317,10 @@ void SpinnakerSpoutApp::checkCameraAvailable() {
 	}
 }
 
+// returns true if camera is streaming after calling this method
 bool SpinnakerSpoutApp::startCamera() {
+	if (camera->IsStreaming()) return true;
+
 	try
 	{
 		console() << "Starting camera with access mode " << SpinnakerDeviceCommunication::accessModeToString(camera->GetAccessMode()) << "..." << endl;
@@ -326,7 +337,10 @@ bool SpinnakerSpoutApp::startCamera() {
 	}
 }
 
+// returns true if camera is not streaming after calling this method
 bool SpinnakerSpoutApp::stopCamera() {
+	if (!camera->IsStreaming()) return true;
+
 	try {
 		camera->EndAcquisition();
 		return true;

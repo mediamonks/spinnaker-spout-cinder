@@ -56,7 +56,7 @@ class SpinnakerSpoutApp : public App {
 	double exposure = 10000; // microseconds
 	int pixelFormatIndex = 4; //4 = BayerRG8. Color mode of camera aquisition. Will be converted to RGB8 software-side, note that capturing at RGB8Packed would use a lot of bandwidth.
 	void initParamInterface();
-	bool applyParamsIfNeeded();
+	bool applyCameraSettings();
 	bool paramInterfaceInited = false;
 
 	// -------- SPOUT --------
@@ -77,6 +77,8 @@ class SpinnakerSpoutApp : public App {
 
 	LoggingEventHandler loggingEventHandler;
 	int logLevelIndex = 4; // LOG_LEVEL_ERROR
+
+	bool cameraSettingsDirty = true;
 
 public:
 	void setup() override;
