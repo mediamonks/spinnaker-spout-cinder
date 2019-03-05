@@ -138,6 +138,8 @@ int SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string param
 	{
 		int valueMax = node->GetMax();
 		int valueMin = node->GetMin();
+		int increment = node->GetInc();
+
 		int newValueInRange = newValue;
 		if (newValueInRange < valueMin || newValueInRange > valueMax)
 		{
@@ -146,10 +148,14 @@ int SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string param
 			console() << "Value " << newValue << " out of range for Int parameter " << paramName << ". Clipped to " << newValueInRange << endl;
 		}
 
-		node->SetValue(newValue);
+		int valueFromMin = newValueInRange - valueMin;
+		valueFromMin = increment * (int)(valueFromMin / increment);
+		newValueInRange = valueMin + valueFromMin;
+
+		node->SetValue(newValueInRange);
 		int currentValue = node->GetValue();
 		if (newValueInRange != currentValue) {
-			console() << paramName << " set to " << newValue << " and is now " << currentValue << endl;
+			console() << paramName << " set to " << newValueInRange << " and is now " << currentValue << endl;
 		}
 		else {
 			console() << paramName << " set to " << currentValue << endl;
