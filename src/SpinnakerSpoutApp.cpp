@@ -65,9 +65,16 @@ void SpinnakerSpoutApp::draw()
 		needsInitText = false;
 	}
 	else {
-		checkCameraAvailable(); // blocks while initializing
 		if (!cameraFound) {
-			info << "No camera found...";
+			if (getElapsedSeconds() - lastCameraStartCheckTime > CAMERA_AVAILABLE_CHECK_INTERVAL) {
+				lastCameraStartCheckTime = getElapsedSeconds();
+				cameraFound = initializeCamera(); // blocks while initializing
+				console() << "No camera available, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
+			}
+		}
+
+		if (!cameraFound) {
+			info << "No camera found.";
 		}
 		else {
 			if (!paramInterfaceInited) {
@@ -93,7 +100,7 @@ void SpinnakerSpoutApp::draw()
 			else {
 				if (!camera->IsValid()) {
 					cameraRunning = false;
-					cameraFound = false;	
+					cameraFound = false;
 					info << "Camera status invalid. Attempting to restart.";
 					console() << "Camera status invalid." << endl;
 				}
@@ -297,12 +304,7 @@ void SpinnakerSpoutApp::initSpout() {
 	else console() << "Spout initialization failed" << endl;
 }
 
-void SpinnakerSpoutApp::checkCameraAvailable() {
-	if (cameraFound) return;
-
-	if (getElapsedSeconds() - lastCameraStartCheckTime < CAMERA_AVAILABLE_CHECK_INTERVAL) return;
-	lastCameraStartCheckTime = getElapsedSeconds();
-
+bool SpinnakerSpoutApp::initializeCamera() {
 	try {
 		if (system == NULL) {
 			system = System::GetInstance();
@@ -323,15 +325,15 @@ void SpinnakerSpoutApp::checkCameraAvailable() {
 		unsigned int numCameras = camList.GetSize();
 		if (numCameras == 0)
 		{
-			console() << "No cameras found, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
+			console() << "No cameras found" << endl;
 		}
 		else {
 			camera = camList.GetByIndex(0);
 			try {
 				console() << "Initializing camera 0 (" << camList.GetSize() << " available)..." << endl;
 				camera->Init();
-				// SpinnakerDeviceCommunication::printDeviceInfo(camera);
-				cameraFound = true;
+				SpinnakerDeviceCommunication::printDeviceInfo(camera);
+				return true;
 			}
 			catch (Spinnaker::Exception &e) {
 				console() << "Error initializing camera: " << e.what() << endl;
@@ -341,6 +343,7 @@ void SpinnakerSpoutApp::checkCameraAvailable() {
 	catch (exception e) {
 		console() << "Error initializing Spinnaker library: " << e.what() << ". Do the included Spinnaker header and lib files match the dll version?" << endl;
 	}
+	return false;
 }
 
 // returns true if camera is streaming after calling this method

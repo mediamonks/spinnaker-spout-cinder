@@ -38,7 +38,7 @@ class SpinnakerSpoutApp : public App {
 	bool cameraFound = false;
 	bool cameraRunning = false;
 
-	void checkCameraAvailable();
+	bool initializeCamera();
 	bool startCamera();
 	bool stopCamera();
 	float lastCameraStartCheckTime = -100;
