@@ -40,6 +40,7 @@ void SpinnakerSpoutApp::setup()
 	exposure = UserSettings::getSetting<double>("exposureTimeAbs", exposure);
 	pixelFormatIndex = UserSettings::getSetting<int>("pixelFormat", pixelFormatIndex); // enum, but index stored as int
 	logLevelIndex = UserSettings::getSetting<int>("logLevelIndex", logLevelIndex);
+	deviceLinkThroughputLimit = UserSettings::getSetting<int>("deviceLinkThroughputLimit", deviceLinkThroughputLimit);
 }
 
 void SpinnakerSpoutApp::draw()
@@ -203,7 +204,14 @@ void SpinnakerSpoutApp::initParamInterface() {
 		UserSettings::writeSetting<int>("pixelFormat", pixelFormatIndex);
 	});
 
-	params->addSeparator();
+	params->addSeparator("Stream");
+
+	params->addParam("Device Link Throughput Limit", &deviceLinkThroughputLimit).updateFn([this] {
+		cameraSettingsDirty = true;
+		UserSettings::writeSetting<int>("deviceLinkThroughputLimit", deviceLinkThroughputLimit);
+	});
+
+	params->addSeparator("Spout");
 
 	// -------- SPOUT --------
 	params->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
@@ -253,6 +261,14 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 		if (newExposure != exposure) {
 			exposure = newExposure;
 			UserSettings::writeSetting<double>("exposureTimeAbs", exposure);
+		}
+	}
+
+	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, "DeviceLinkThroughputLimit") != deviceLinkThroughputLimit) {
+		int newDeviceLinkThroughputLimit = SpinnakerDeviceCommunication::setParameterInt(camera, "DeviceLinkThroughputLimit", deviceLinkThroughputLimit);
+		if (newDeviceLinkThroughputLimit != deviceLinkThroughputLimit) {
+			deviceLinkThroughputLimit = newDeviceLinkThroughputLimit;
+			UserSettings::writeSetting<int>("deviceLinkThroughputLimit", newDeviceLinkThroughputLimit);
 		}
 	}
 
