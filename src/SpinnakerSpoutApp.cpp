@@ -64,6 +64,7 @@ void SpinnakerSpoutApp::draw()
 
 		if (cameraTexture != NULL) {
 			if (paramGUI == NULL) initParamInterface(); // requires an active camera
+			updateParamsFromCamera();
 
 			bool flip = true;
 			gl::draw(cameraTexture, Rectf(0, flip ? getWindowHeight() : 0, getWindowWidth(), flip ? 0 : getWindowHeight()));
@@ -271,11 +272,7 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 	}
 
 	if (SpinnakerDeviceCommunication::getParameterFloatValue(camera, "ExposureTimeAbs") != exposure) {
-		double newExposure = SpinnakerDeviceCommunication::setParameterFloat(camera, "ExposureTimeAbs", exposure);
-		if (newExposure != exposure) {
-			exposure = newExposure;
-			UserSettings::writeSetting<double>("exposureTimeAbs", exposure);
-		}
+		exposure = SpinnakerDeviceCommunication::setParameterFloat(camera, "ExposureTimeAbs", exposure);
 	}
 
 	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, "DeviceLinkThroughputLimit") != deviceLinkThroughputLimit) {
@@ -297,6 +294,14 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 		}
 	}
 	return cameraWasStopped;
+}
+
+void SpinnakerSpoutApp::updateParamsFromCamera() {
+	float newExposure = SpinnakerDeviceCommunication::getParameterFloatValue(camera, "ExposureTimeAbs");
+	if (newExposure != exposure) {
+		exposure = newExposure;
+		UserSettings::writeSetting<double>("exposureTimeAbs", exposure);
+	}
 }
 
 float lastCameraInitCheckTime = -100;

@@ -49,6 +49,7 @@ class SpinnakerSpoutApp : public App {
 	void initParamInterface();
 	bool cameraSettingsDirty = true;
 	bool applyCameraSettings();
+	void updateParamsFromCamera();
 
 	// -------- PARAMS --------
 	int binning = 0; // 0 is no binning (1x scale), 1 = factor 2 binning (0.5x scale)
