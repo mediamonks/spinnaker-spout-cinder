@@ -41,13 +41,37 @@ void SpinnakerSpoutApp::setup()
 	pixelFormatIndex = UserSettings::getSetting<int>("pixelFormat", pixelFormatIndex); // enum, but index stored as int
 	logLevelIndex = UserSettings::getSetting<int>("logLevelIndex", logLevelIndex);
 	deviceLinkThroughputLimit = UserSettings::getSetting<int>("deviceLinkThroughputLimit", deviceLinkThroughputLimit);
+
+	gl::enableAlphaBlending();
+	gl::color(ColorA(1, 1, 1, 1));
 }
 
 void SpinnakerSpoutApp::draw()
 {
 	gl::clear(ColorA(0, 0, 0, 1));
-	gl::color(ColorA(1, 1, 1, 1));
-	gl::enableAlphaBlending();
+	gl::setMatricesWindow(getWindowSize());
+
+	string status;
+	int fps = 0;
+
+	if (needsInitText) {
+		// draw this before starting camera initialization because it blocks app
+		status = "Initializing...";
+		needsInitText = false;
+	}
+	else {
+		gl::TextureRef cameraTexture = getCameraTexture(status); // blocks during intializion of the camera and every frame until a new texture arrived 
+
+		if (cameraTexture != NULL) {
+			if (paramGUI == NULL) initParamInterface(); // requires an active camera
+
+			bool flip = true;
+			gl::draw(cameraTexture, Rectf(0, flip ? getWindowHeight() : 0, getWindowWidth(), flip ? 0 : getWindowHeight()));
+
+			sendToSpout(cameraTexture);
+			fps = (int)getAverageFps();
+		}
+	}
 
 	int fontSize = getWindowWidth() / 50;
 
@@ -57,111 +81,58 @@ void SpinnakerSpoutApp::draw()
 	int infoLeft = toPixels(20);
 	int infoTop = getWindowHeight() - toPixels(20) - fontSize;
 
-	stringstream info;
-	int fps = 0;
-
-	if (needsInitText) {
-		info << "Initializing...";
-		needsInitText = false;
-	}
-	else {
-		if (!cameraFound) {
-			if (getElapsedSeconds() - lastCameraStartCheckTime > CAMERA_AVAILABLE_CHECK_INTERVAL) {
-				lastCameraStartCheckTime = getElapsedSeconds();
-				cameraFound = initializeCamera(); // blocks while initializing
-				console() << "No camera available, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
-			}
-		}
-
-		if (!cameraFound) {
-			info << "No camera found.";
-		}
-		else {
-			if (!paramInterfaceInited) {
-				initParamInterface();
-				paramInterfaceInited = true;
-			}
-
-			if (sendFbo == NULL || sendFbo->getWidth() != sendWidth || sendFbo->getHeight() != sendHeight || !spoutInitialized) {
-				initSpout();
-			}
-
-			if (cameraSettingsDirty) {
-				cameraSettingsDirty = false;
-				bool cameraWasStopped = applyCameraSettings(); // potentially stops camera acquisition to apply changed settings
-				cameraRunning = cameraRunning && !cameraWasStopped;
-			}
-
-			if (!cameraRunning) cameraRunning = startCamera();
-
-			if (!cameraRunning) {
-				info << "Unable to start camera...";
-			}
-			else {
-				if (!camera->IsValid()) {
-					cameraRunning = false;
-					cameraFound = false;
-					info << "Camera status invalid. Attempting to restart.";
-					console() << "Camera status invalid." << endl;
-				}
-				else {
-					gl::TextureRef cameraTexture = getCameraTexture(); // block until a new frame is available or a frame is reported incomplete
-					if (!cameraTexture) {
-						info << "Dropped frame.";
-					}
-					else {
-						gl::setMatricesWindow(getWindowSize());
-						bool flip = true;
-						gl::draw(cameraTexture, Rectf(0, flip ? getWindowHeight() : 0, getWindowWidth(), flip ? 0 : getWindowHeight()));
-
-						info << "Capturing from " << camera->DeviceModelName.GetValue() << " at " << cameraTexture->getWidth() << " x " << cameraTexture->getHeight() << ", sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight;
-
-						fps = (int)getAverageFps();
-
-						// -------- SPOUT --------
-						if (spoutInitialized) {
-							gl::ScopedFramebuffer frameBufferScope(sendFbo);
-							gl::ScopedViewport viewPortScope(sendFbo->getSize());
-							gl::ScopedMatrices matrixScope();
-							gl::setMatricesWindow(sendFbo->getSize(), false);
-
-							gl::draw(cameraTexture, sendFbo->getBounds());
-
-							// Send the texture for all receivers to use
-							// NOTE : if SendTexture is called with a framebuffer object bound,
-							// include the FBO id as an argument so that the binding is restored afterwards
-							// because Spout uses an fbo for intermediate rendering
-							auto tex = sendFbo->getColorTexture();
-							spoutSender.SendTexture(tex->getId(), tex->getTarget(), tex->getWidth(), tex->getHeight());
-						}
-					}
-				}
-			}
-		}
+	{
+		gl::ScopedColor colorScope(ColorA(0, 0, 0, 0.5));
+		gl::drawSolidRect(Rectf(fpsLeft - 10, fpsTop - 10, getWindowWidth(), fpsTop + fontSize + 10));
+		gl::drawSolidRect(Rectf(0, infoTop - 10, getWindowWidth(), infoTop + fontSize + 10));
 	}
 
-	// draw info
+	gl::drawString(status, vec2(infoLeft, infoTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
 
-	gl::setMatricesWindow(getWindowSize());
-	gl::enableAlphaBlending();
+	stringstream ss;
+	ss << "Fps: " << fps << ", dropped " << geLatestDroppedFrames();
+	gl::drawString(ss.str(), vec2(fpsLeft, fpsTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
 
-	gl::color(ColorA(0, 0, 0, 0.5));
-	gl::drawSolidRect(Rectf(fpsLeft - 10, fpsTop - 10, getWindowWidth(), fpsTop + fontSize + 10));
-	gl::drawSolidRect(Rectf(0, infoTop - 10, getWindowWidth(), infoTop + fontSize + 10));
+	if (paramGUI != NULL) paramGUI->draw();
+}
 
-	stringstream fpsSS;
-	fpsSS << "Fps: " << fps << ", dropped " << geLatestDroppedFrames();
-	gl::drawString(fpsSS.str(), vec2(fpsLeft, fpsTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
-	gl::drawString(info.str(), vec2(infoLeft, infoTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
+void SpinnakerSpoutApp::sendToSpout(gl::TextureRef &sendTexture) {
+	if (!checkSpoutInitialized()) return;
 
-	gl::disableAlphaBlending();
+	gl::ScopedFramebuffer frameBufferScope(sendFbo);
+	gl::ScopedViewport viewPortScope(sendFbo->getSize());
+	gl::ScopedMatrices matrixScope;
+	gl::setMatricesWindow(sendFbo->getSize(), false);
 
-	// -------- CINDER --------
-	if (params != NULL) params->draw();
+	gl::draw(sendTexture, sendFbo->getBounds());
+
+	// Send the texture for all receivers to use
+	// NOTE : if SendTexture is called with a framebuffer object bound,
+	// include the FBO id as an argument so that the binding is restored afterwards
+	// because Spout uses an fbo for intermediate rendering
+	auto tex = sendFbo->getColorTexture();
+	spoutSender.SendTexture(tex->getId(), tex->getTarget(), tex->getWidth(), tex->getHeight());
+}
+
+bool spoutInitialized = false;
+bool SpinnakerSpoutApp::checkSpoutInitialized() {
+	if (spoutInitialized && sendFbo != NULL && sendFbo->getWidth() == sendWidth && sendFbo->getHeight() == sendHeight) return true;
+
+	if (spoutInitialized) spoutSender.ReleaseSender();
+
+	sendFbo = gl::Fbo::create(sendWidth, sendHeight);
+	spoutInitialized = spoutSender.CreateSender(senderName.c_str(), sendWidth, sendHeight);
+
+	// MemoryShareMode informs us whether Spout is initialized for texture share or for memory share
+	bool memoryMode = spoutSender.GetMemoryShareMode();
+	if (spoutInitialized) console() << "Spout initialized using " << (memoryMode ? "Memory" : "Texture") << " sharing at " << sendWidth << " x " << sendHeight << endl;
+	else console() << "Spout initialization failed" << endl;
+
+	return spoutInitialized;
 }
 
 void SpinnakerSpoutApp::initParamInterface() {
-	params = params::InterfaceGl::create(getWindow(), "Parameters", toPixels(ivec2(200, 300)));
+	paramGUI = params::InterfaceGl::create(getWindow(), "Parameters", toPixels(ivec2(200, 300)));
 
 	// -------- SPINNAKER --------
 	std::vector<string> logLevelEnums;
@@ -176,58 +147,94 @@ void SpinnakerSpoutApp::initParamInterface() {
 	logLevelEnums.push_back("Debug");
 	logLevelEnums.push_back("All");
 
-	params->addParam("Camera Log Level", logLevelEnums, &logLevelIndex).min(20).updateFn([this] {		
+	paramGUI->addParam("Camera Log Level", logLevelEnums, &logLevelIndex).min(20).updateFn([this] {
 		system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
 		UserSettings::writeSetting<int>("logLevelIndex", logLevelIndex);
 	});
 
-	params->addSeparator();
+	paramGUI->addSeparator();
 
 	std::vector<string> binningEnums;
 	binningEnums.push_back("No binning");
 	binningEnums.push_back("Binning 2x");
-	params->addParam("Binning", binningEnums, &binning).updateFn([this] {
+	paramGUI->addParam("Binning", binningEnums, &binning).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>("binning", binning);
 	});
 
-	params->addParam("Gain Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "GainAuto"), &gainAutoIndex).updateFn([this] {
+	paramGUI->addParam("Gain Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "GainAuto"), &gainAutoIndex).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>("gainAuto", gainAutoIndex);
 	});
 
-	params->addParam("Exposure Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "ExposureAuto"), &exposureAutoIndex).updateFn([this] {
+	paramGUI->addParam("Exposure Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "ExposureAuto"), &exposureAutoIndex).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>("exposureAuto", exposureAutoIndex);
 	});
 
-	params->addParam("Exposure", &exposure).updateFn([this] {
+	paramGUI->addParam("Exposure", &exposure).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<double>("exposureTimeAbs", exposure);
 	});
 
-	params->addParam("Pixel Format", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat"), &pixelFormatIndex).updateFn([this] {
+	paramGUI->addParam("Pixel Format", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat"), &pixelFormatIndex).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>("pixelFormat", pixelFormatIndex);
 	});
 
-	params->addSeparator("Stream");
+	paramGUI->addSeparator("Stream");
 
-	params->addParam("Device Link Throughput Limit", &deviceLinkThroughputLimit).updateFn([this] {
+	paramGUI->addParam("Device Link Throughput Limit", &deviceLinkThroughputLimit).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>("deviceLinkThroughputLimit", deviceLinkThroughputLimit);
 	});
 
-	params->addSeparator("Spout");
+	paramGUI->addSeparator("Spout");
 
 	// -------- SPOUT --------
-	params->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
+	paramGUI->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
 		UserSettings::writeSetting<int>("sendWidth", sendWidth);
 	});
 
-	params->addParam("Send Height", &sendHeight).min(20).updateFn([this] {
+	paramGUI->addParam("Send Height", &sendHeight).min(20).updateFn([this] {
 		UserSettings::writeSetting<int>("sendHeight", sendHeight);
 	});
+}
+
+gl::TextureRef SpinnakerSpoutApp::getCameraTexture(string &status) {
+	if (!checkCameraInitialized()) { // blocks while initializing
+		status = "No camera available.";
+		return NULL;
+	}
+
+	if (cameraSettingsDirty) {
+		cameraSettingsDirty = false;
+		applyCameraSettings(); // potentially stops camera acquisition to apply changed settings
+	}
+
+	if (!checkStreamingStarted()) {
+		status = "Unable to start camera...";
+		return NULL;
+	}
+
+	if (!camera->IsValid()) {
+		checkStreamingStopped();
+		camera->DeInit();
+		status = "Camera status invalid. Attempting to restart.";
+		console() << "Camera status invalid." << endl;
+		return NULL;
+	}
+
+	gl::TextureRef cameraTexture = getCameraTexture(); // block until a new frame is available or a frame is reported incomplete
+	if (!cameraTexture) {
+		status = "Dropped frame.";
+		return NULL;
+	}
+
+	stringstream ss;
+	ss << "Capturing from " << camera->DeviceModelName.GetValue() << " at " << cameraTexture->getWidth() << " x " << cameraTexture->getHeight() << ", sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight;
+	status = ss.str();
+	return cameraTexture;
 }
 
 // Stops camera if necessary. Make sure to check whether it is started after calling this method.
@@ -238,7 +245,7 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 	bool cameraWasStopped = false;
 	// API is weird here since you can only read binning from Horizontal but need to write to Horizontal and Vertical
 	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, "BinningHorizontal") - 1 != binning) {
-		cameraWasStopped = stopCamera();
+		cameraWasStopped = checkStreamingStopped();
 		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningHorizontal", binning + 1); // binning param values are set as int starting from 1
 		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningVertical", binning + 1);
 	}
@@ -281,7 +288,7 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 
 	vector<string> pixelFormatOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat");
 	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "PixelFormat") != pixelFormatOptions[pixelFormatIndex]) {
-		cameraWasStopped = stopCamera();
+		cameraWasStopped = checkStreamingStopped();
 		string pixelFormat = SpinnakerDeviceCommunication::setParameterEnum(camera, "PixelFormat", pixelFormatOptions[pixelFormatIndex]);
 		int newPixelFormatIndex = find(pixelFormatOptions.begin(), pixelFormatOptions.end(), pixelFormat) - pixelFormatOptions.begin();
 		if (newPixelFormatIndex != pixelFormatIndex) {
@@ -292,19 +299,13 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 	return cameraWasStopped;
 }
 
-void SpinnakerSpoutApp::initSpout() {
-	if (spoutInitialized) spoutSender.ReleaseSender();
+float lastCameraInitCheckTime = -100;
+bool SpinnakerSpoutApp::checkCameraInitialized() {
+	if (camera != NULL && camera->IsInitialized()) return true;
 
-	sendFbo = gl::Fbo::create(sendWidth, sendHeight);
-	spoutInitialized = spoutSender.CreateSender(senderName.c_str(), sendWidth, sendHeight);
+	if (getElapsedSeconds() - lastCameraInitCheckTime < CAMERA_AVAILABLE_CHECK_INTERVAL) return false;
+	lastCameraInitCheckTime = getElapsedSeconds();
 
-	// MemoryShareMode informs us whether Spout is initialized for texture share or for memory share
-	bool memoryMode = spoutSender.GetMemoryShareMode();
-	if (spoutInitialized) console() << "Spout initialized using " << (memoryMode ? "Memory" : "Texture") << " sharing at " << sendWidth << " x " << sendHeight << endl;
-	else console() << "Spout initialization failed" << endl;
-}
-
-bool SpinnakerSpoutApp::initializeCamera() {
 	try {
 		if (system == NULL) {
 			system = System::GetInstance();
@@ -332,7 +333,7 @@ bool SpinnakerSpoutApp::initializeCamera() {
 			try {
 				console() << "Initializing camera 0 (" << camList.GetSize() << " available)..." << endl;
 				camera->Init();
-				SpinnakerDeviceCommunication::printDeviceInfo(camera);
+				//SpinnakerDeviceCommunication::printDeviceInfo(camera);
 				return true;
 			}
 			catch (Spinnaker::Exception &e) {
@@ -343,11 +344,16 @@ bool SpinnakerSpoutApp::initializeCamera() {
 	catch (exception e) {
 		console() << "Error initializing Spinnaker library: " << e.what() << ". Do the included Spinnaker header and lib files match the dll version?" << endl;
 	}
+
+	console() << "Initializing camera failed, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
+
 	return false;
 }
 
+int prevCaptureWidth = 0;
+int prevCaptureHeight = 0;
 // returns true if camera is streaming after calling this method
-bool SpinnakerSpoutApp::startCamera() {
+bool SpinnakerSpoutApp::checkStreamingStarted() {
 	if (camera->IsStreaming()) return true;
 
 	try
@@ -367,7 +373,7 @@ bool SpinnakerSpoutApp::startCamera() {
 }
 
 // returns true if camera is not streaming after calling this method
-bool SpinnakerSpoutApp::stopCamera() {
+bool SpinnakerSpoutApp::checkStreamingStopped() {
 	if (!camera->IsStreaming()) return true;
 
 	try {
@@ -429,9 +435,9 @@ int SpinnakerSpoutApp::geLatestDroppedFrames() {
 
 void SpinnakerSpoutApp::cleanup()
 {
-	if (camera != NULL && cameraRunning) {
-		camera->EndAcquisition();
-		camera->DeInit();
+	if (camera != NULL) {
+		if (camera->IsStreaming()) camera->EndAcquisition();
+		if (camera->IsInitialized()) camera->DeInit();
 		camera = NULL;
 	}
 	system->UnregisterLoggingEvent(loggingEventHandler);

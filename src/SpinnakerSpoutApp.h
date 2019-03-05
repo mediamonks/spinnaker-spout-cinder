@@ -35,39 +35,37 @@ class SpinnakerSpoutApp : public App {
 	// -------- SPINNAKER --------
 	SystemPtr system = NULL;
 	CameraPtr camera = NULL;
-	bool cameraFound = false;
-	bool cameraRunning = false;
 
-	bool initializeCamera();
-	bool startCamera();
-	bool stopCamera();
-	float lastCameraStartCheckTime = -100;
+	bool checkCameraInitialized();
+	bool checkStreamingStarted();
+	bool checkStreamingStopped();
+	gl::TextureRef getCameraTexture(string &status);
 
-	int prevCaptureWidth = 0;
-	int prevCaptureHeight = 0;
 	gl::TextureRef texture;
 	gl::TextureRef getCameraTexture();
 
 	// -------- CINDER PARAM UI --------
-	params::InterfaceGlRef	params = NULL;
+	params::InterfaceGlRef	paramGUI = NULL;
+	void initParamInterface();
+	bool cameraSettingsDirty = true;
+	bool applyCameraSettings();
+
+	// -------- PARAMS --------
 	int binning = 0; // 0 is no binning (1x scale), 1 = factor 2 binning (0.5x scale)
 	int gainAutoIndex = 0;
 	int exposureAutoIndex = 0;
 	double exposure = 10000; // microseconds
 	int pixelFormatIndex = 4; //4 = BayerRG8. Color mode of camera aquisition. Will be converted to RGB8 software-side, note that capturing at RGB8Packed would use a lot of bandwidth.
 	int deviceLinkThroughputLimit = 10000000; // max bandwidth used by this camera in bytes/second
-	void initParamInterface();
-	bool applyCameraSettings();
-	bool paramInterfaceInited = false;
+	int sendWidth = 640;
+	int sendHeight = 480;
 
 	// -------- SPOUT --------
 	SpoutSender spoutSender;					// Create a Spout sender object
-	bool spoutInitialized;						// true if a sender initializes OK
-	int sendWidth = 640;
-	int sendHeight = 480;
 	string senderName = "Point Grey";
 	gl::FboRef sendFbo;
-	void initSpout();
+	bool checkSpoutInitialized();
+	void sendToSpout(gl::TextureRef &sendTexture);
 
 	// -------- MISC --------
 	bool needsInitText = true;
@@ -77,9 +75,7 @@ class SpinnakerSpoutApp : public App {
 	int geLatestDroppedFrames();
 
 	LoggingEventHandler loggingEventHandler;
-	int logLevelIndex = 4; // LOG_LEVEL_ERROR
-
-	bool cameraSettingsDirty = true;
+	int logLevelIndex = 4; // 4 = LOG_LEVEL_ERROR
 
 public:
 	void setup() override;
