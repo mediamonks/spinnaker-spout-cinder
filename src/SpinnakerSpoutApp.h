@@ -54,8 +54,10 @@ class SpinnakerSpoutApp : public App {
 	// -------- PARAMS --------
 	int binning = 0; // 0 is no binning (1x scale), 1 = factor 2 binning (0.5x scale)
 	int gainAutoIndex = 0;
+	int balanceWhiteAutoIndex = 0;
 	int exposureAutoIndex = 0;
 	double exposure = 10000; // microseconds
+	double balanceRatio = 1; // 
 	int pixelFormatIndex = 4; //4 = BayerRG8. Color mode of camera aquisition. Will be converted to RGB8 software-side, note that capturing at RGB8Packed would use a lot of bandwidth.
 	int deviceLinkThroughputLimit = 10000000; // max bandwidth used by this camera in bytes/second
 	int sendWidth = 640;
