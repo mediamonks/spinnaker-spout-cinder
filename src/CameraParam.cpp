@@ -20,6 +20,10 @@ void CameraParam::createFloat(string uiText, string spinnakerName, params::Inter
 	params.push_back(new CameraParamFloat(uiText, spinnakerName, paramGUI, camera, defaultValue, needsCameraStop));
 }
 
+void CameraParam::createInt(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop) {
+	params.push_back(new CameraParamInt(uiText, spinnakerName, paramGUI, camera, defaultValue, needsCameraStop));
+}
+
 CameraParam::CameraParam(string _spinnakerName, CameraPtr _camera, bool _needsCameraStop) {
 	spinnakerName = _spinnakerName;
 	camera = _camera;
@@ -44,7 +48,6 @@ void CameraParam::updateParamsFromCamera() {
 }
 
 /***** Enum *****/
-
 
 CameraParamEnum::CameraParamEnum(string uiText, string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool _needsCameraStop) : CameraParam (_spinnakerName, _camera, _needsCameraStop)
 {
@@ -113,5 +116,39 @@ void CameraParamFloat::updateFromCamera() {
 	if (newValue != value) {
 		value = newValue;
 		UserSettings::writeSetting<double>(spinnakerName, value);
+	}
+}
+
+/***** Int *****/
+
+CameraParamInt::CameraParamInt(string uiText, string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool _needsCameraStop) : CameraParam(_spinnakerName, _camera, _needsCameraStop) {
+	value = UserSettings::getSetting<int>(spinnakerName, defaultValue);
+
+	paramGUI->addParam(spinnakerName, &value).updateFn([this] {
+		cameraSettingsDirty = true;
+		UserSettings::writeSetting<int>(spinnakerName, value);
+	});
+}
+
+bool CameraParamInt::applyParam() {
+	bool cameraStopped = false;
+
+	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, spinnakerName) != value) {
+		if (needsCameraStop) cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
+
+		int newValue = SpinnakerDeviceCommunication::setParameterInt(camera, spinnakerName, value);
+		if (newValue != value) {
+			value = newValue;
+			UserSettings::writeSetting<int>(spinnakerName, value);
+		}
+	}
+	return cameraStopped;
+}
+
+void CameraParamInt::updateFromCamera() {
+	int newValue = SpinnakerDeviceCommunication::getParameterIntValue(camera, spinnakerName);
+	if (newValue != value) {
+		value = newValue;
+		UserSettings::writeSetting<int>(spinnakerName, value);
 	}
 }

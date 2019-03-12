@@ -36,7 +36,6 @@ void SpinnakerSpoutApp::setup()
 	sendHeight = UserSettings::getSetting<int>("SendHeight", sendHeight);
 	binning = UserSettings::getSetting<int>("Binning", binning);
 	logLevelIndex = UserSettings::getSetting<int>("LogLevelIndex", logLevelIndex);
-	deviceLinkThroughputLimit = UserSettings::getSetting<int>("DeviceLinkThroughputLimit", deviceLinkThroughputLimit);
 
 	gl::enableAlphaBlending();
 	gl::color(ColorA(1, 1, 1, 1));
@@ -149,19 +148,12 @@ void SpinnakerSpoutApp::initParamInterface() {
 	CameraParam::createEnum("Gain Auto", "GainAuto", paramGUI, camera, 0);
 	CameraParam::createEnum("White Balance Auto", "BalanceWhiteAuto", paramGUI, camera, 0);
 	CameraParam::createFloat("White Balance Ratio", "BalanceRatio", paramGUI, camera, 1);
-
 	CameraParam::createEnum("Exposure Auto", "ExposureAuto", paramGUI, camera, 0);
 	CameraParam::createFloat("Exposure", "ExposureTimeAbs", paramGUI, camera, 10000);
 
 	CameraParam::createEnum("Pixel Format", "PixelFormat", paramGUI, camera, 4, true);
-
 	paramGUI->addSeparator("Stream");
-
-	paramGUI->addParam("Device Link Throughput Limit", &deviceLinkThroughputLimit).updateFn([this] {
-		cameraSettingsDirty = true;
-		UserSettings::writeSetting<int>("DeviceLinkThroughputLimit", deviceLinkThroughputLimit);
-	});
-
+	CameraParam::createInt("Device Link Throughput Limit", "DeviceLinkThroughputLimit", paramGUI, camera, 10000000);  // max bandwidth used by this camera in bytes/second
 	paramGUI->addSeparator("Spout");
 
 	// -------- SPOUT --------
@@ -225,14 +217,6 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 		cameraWasStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningHorizontal", binning + 1); // binning param values are set as int starting from 1
 		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningVertical", binning + 1);
-	}
-
-	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, "DeviceLinkThroughputLimit") != deviceLinkThroughputLimit) {
-		int newValue = SpinnakerDeviceCommunication::setParameterInt(camera, "DeviceLinkThroughputLimit", deviceLinkThroughputLimit);
-		if (newValue != deviceLinkThroughputLimit) {
-			deviceLinkThroughputLimit = newValue;
-			UserSettings::writeSetting<int>("DeviceLinkThroughputLimit", newValue);
-		}
 	}
 
 	return cameraWasStopped;

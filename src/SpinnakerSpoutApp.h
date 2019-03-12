@@ -58,7 +58,6 @@ class SpinnakerSpoutApp : public App {
 
 	// -------- PARAMS --------
 	int binning = 0; // 0 is no binning (1x scale), 1 = factor 2 binning (0.5x scale)
-	int deviceLinkThroughputLimit = 10000000; // max bandwidth used by this camera in bytes/second
 	int sendWidth = 640;
 	int sendHeight = 480;
 

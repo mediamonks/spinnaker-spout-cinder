@@ -22,6 +22,7 @@ public:
 
 	static void createEnum(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop = false);
 	static void createFloat(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, double defaultValue, bool needsCameraStop = false);
+	static void createInt(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop = false);
 
 	static bool applyParams();
 	static void updateParamsFromCamera();
@@ -60,5 +61,16 @@ private:
 	bool applyParam() override;
 	void updateFromCamera() override;
 	double value = 0;
+};
+
+class CameraParamInt: public CameraParam
+{
+public:
+	CameraParamInt(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool needsCameraStop = false);
+
+private:
+	bool applyParam() override;
+	void updateFromCamera() override;
+	int value = 0;
 };
 
