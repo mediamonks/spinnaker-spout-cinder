@@ -35,7 +35,6 @@ void SpinnakerSpoutApp::setup()
 	sendWidth = UserSettings::getSetting<int>("SendWidth", sendWidth);
 	sendHeight = UserSettings::getSetting<int>("SendHeight", sendHeight);
 	binning = UserSettings::getSetting<int>("Binning", binning);
-	exposure = UserSettings::getSetting<double>("ExposureTimeAbs", exposure);
 	logLevelIndex = UserSettings::getSetting<int>("LogLevelIndex", logLevelIndex);
 	deviceLinkThroughputLimit = UserSettings::getSetting<int>("DeviceLinkThroughputLimit", deviceLinkThroughputLimit);
 
@@ -61,7 +60,7 @@ void SpinnakerSpoutApp::draw()
 
 		if (cameraTexture != NULL) {
 			if (paramGUI == NULL) initParamInterface(); // requires an active camera
-			updateMovingCameraParams();
+			CameraParam::updateParamsFromCamera();
 
 			bool flip = true;
 			gl::draw(cameraTexture, Rectf(0.f, flip ? (float)getWindowHeight() : 0.f, (float)getWindowWidth(), flip ? 0.f : (float)getWindowHeight()));
@@ -149,18 +148,10 @@ void SpinnakerSpoutApp::initParamInterface() {
 
 	CameraParam::createEnum("Gain Auto", "GainAuto", paramGUI, camera, 0);
 	CameraParam::createEnum("White Balance Auto", "BalanceWhiteAuto", paramGUI, camera, 0);
-
-	paramGUI->addParam("White Balance Ratio", &balanceRatio).updateFn([this] {
-		cameraSettingsDirty = true;
-		UserSettings::writeSetting<double>("BalanceRatio", balanceRatio);
-	});
+	CameraParam::createFloat("White Balance Ratio", "BalanceRatio", paramGUI, camera, 1);
 
 	CameraParam::createEnum("Exposure Auto", "ExposureAuto", paramGUI, camera, 0);
-
-	paramGUI->addParam("Exposure", &exposure).updateFn([this] {
-		cameraSettingsDirty = true;
-		UserSettings::writeSetting<double>("ExposureTimeAbs", exposure);
-	});
+	CameraParam::createFloat("Exposure", "ExposureTimeAbs", paramGUI, camera, 10000);
 
 	CameraParam::createEnum("Pixel Format", "PixelFormat", paramGUI, camera, 4, true);
 
@@ -236,14 +227,6 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningVertical", binning + 1);
 	}
 
-	if (SpinnakerDeviceCommunication::getParameterFloatValue(camera, "BalanceRatio") != balanceRatio) {
-		balanceRatio = SpinnakerDeviceCommunication::setParameterFloat(camera, "BalanceRatio", balanceRatio);
-	}
-
-	if (SpinnakerDeviceCommunication::getParameterFloatValue(camera, "ExposureTimeAbs") != exposure) {
-		exposure = SpinnakerDeviceCommunication::setParameterFloat(camera, "ExposureTimeAbs", exposure);
-	}
-
 	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, "DeviceLinkThroughputLimit") != deviceLinkThroughputLimit) {
 		int newValue = SpinnakerDeviceCommunication::setParameterInt(camera, "DeviceLinkThroughputLimit", deviceLinkThroughputLimit);
 		if (newValue != deviceLinkThroughputLimit) {
@@ -253,20 +236,6 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 	}
 
 	return cameraWasStopped;
-}
-
-void SpinnakerSpoutApp::updateMovingCameraParams() {
-	double newExposure = SpinnakerDeviceCommunication::getParameterFloatValue(camera, "ExposureTimeAbs");
-	if (newExposure != exposure) {
-		exposure = newExposure;
-		UserSettings::writeSetting<double>("ExposureTimeAbs", exposure);
-	}
-
-	double newBalanceRatio = SpinnakerDeviceCommunication::getParameterFloatValue(camera, "BalanceRatio");
-	if (newBalanceRatio != balanceRatio) {
-		balanceRatio = newBalanceRatio;
-		UserSettings::writeSetting<double>("BalanceRatio", balanceRatio);
-	}
 }
 
 double lastCameraInitCheckTime = -100;

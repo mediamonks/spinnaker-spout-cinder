@@ -16,6 +16,16 @@ void CameraParam::createEnum(string uiText, string spinnakerName, params::Interf
 	params.push_back(new CameraParamEnum(uiText, spinnakerName, paramGUI, camera, defaultValue, needsCameraStop));
 }
 
+void CameraParam::createFloat(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, double defaultValue, bool needsCameraStop) {
+	params.push_back(new CameraParamFloat(uiText, spinnakerName, paramGUI, camera, defaultValue, needsCameraStop));
+}
+
+CameraParam::CameraParam(string _spinnakerName, CameraPtr _camera, bool _needsCameraStop) {
+	spinnakerName = _spinnakerName;
+	camera = _camera;
+	needsCameraStop = _needsCameraStop;
+}
+
 // returns true if camera stopped
 bool CameraParam::applyParams() {
 	if (!cameraSettingsDirty) return false;
@@ -27,12 +37,17 @@ bool CameraParam::applyParams() {
 	return cameraStopped;
 }
 
-CameraParamEnum::CameraParamEnum(string uiText, string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool _needsCameraStop)
-{
-	spinnakerName = _spinnakerName;
-	camera = _camera;
-	needsCameraStop = _needsCameraStop;
+void CameraParam::updateParamsFromCamera() {
+	for (auto param : params) {
+		param->updateFromCamera();
+	}
+}
 
+/***** Enum *****/
+
+
+CameraParamEnum::CameraParamEnum(string uiText, string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool _needsCameraStop) : CameraParam (_spinnakerName, _camera, _needsCameraStop)
+{
 	enumIndex = UserSettings::getSetting<int>(spinnakerName, defaultValue); // enum, but index stored as int
 
 	paramGUI->addParam(uiText, SpinnakerDeviceCommunication::getParameterEnumOptions(camera, spinnakerName), &enumIndex).updateFn([this] {
@@ -55,8 +70,48 @@ bool CameraParamEnum::applyParam() {
 			}
 		}
 		else {
-			//console() << "Error writing param value " << options[param->enumIndex] << " to enum " << param->spinnakerName << endl;
+			console() << "Error writing param value " << options[enumIndex] << " to enum " << spinnakerName << endl;
 		}
 	}
 	return cameraStopped;
+}
+
+void CameraParamEnum::updateFromCamera() {
+	// TODO: only update the ones that we want updated, continuously auto-adjusted ones like exposure
+
+	vector<string> options = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, spinnakerName);
+	string newChoice = SpinnakerDeviceCommunication::getParameterEnumValue(camera, spinnakerName);
+	int newIndex = find(options.begin(), options.end(), newChoice) - options.begin();
+	if (newIndex != enumIndex) {
+		enumIndex = newIndex;
+		UserSettings::writeSetting<int>(spinnakerName, enumIndex);
+	}
+}
+
+/***** Float *****/
+
+CameraParamFloat::CameraParamFloat(string uiText, string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, double defaultValue, bool _needsCameraStop) : CameraParam(_spinnakerName, _camera, _needsCameraStop) {
+	value = UserSettings::getSetting<double>(spinnakerName, defaultValue);
+
+	paramGUI->addParam(spinnakerName, &value).updateFn([this] {
+		cameraSettingsDirty = true;
+		UserSettings::writeSetting<double>(spinnakerName, value);
+	});
+}
+
+bool CameraParamFloat::applyParam() {
+	bool cameraStopped = false;
+	if (SpinnakerDeviceCommunication::getParameterFloatValue(camera, spinnakerName) != value) {
+		if (needsCameraStop) cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
+		value = SpinnakerDeviceCommunication::setParameterFloat(camera, spinnakerName, value);
+	}
+	return cameraStopped;
+}
+
+void CameraParamFloat::updateFromCamera() {
+	double newValue = SpinnakerDeviceCommunication::getParameterFloatValue(camera, spinnakerName);
+	if (newValue != value) {
+		value = newValue;
+		UserSettings::writeSetting<double>(spinnakerName, value);
+	}
 }

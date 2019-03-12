@@ -18,14 +18,19 @@ using namespace Spinnaker::GenICam;
 class CameraParam
 {
 public:
+	CameraParam(string spinnakerName, CameraPtr camera, bool needsCameraStop);
+
 	static void createEnum(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop = false);
+	static void createFloat(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, double defaultValue, bool needsCameraStop = false);
+
 	static bool applyParams();
-
-	virtual bool applyParam() = 0;
-
+	static void updateParamsFromCamera();
+	
 protected:
 	static bool cameraSettingsDirty;
 
+	virtual bool applyParam() = 0;
+	virtual void updateFromCamera() = 0;
 	CameraPtr camera;
 	string spinnakerName;
 	bool needsCameraStop;
@@ -38,12 +43,22 @@ private:
 class CameraParamEnum : public CameraParam
 {
 public:
-	bool applyParam() override;
-
 	CameraParamEnum(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool needsCameraStop = false);
-	~CameraParamEnum();
 
 private:
+	bool applyParam() override;
+	void updateFromCamera() override;
 	int enumIndex = 0;
+};
+
+class CameraParamFloat: public CameraParam
+{
+public:
+	CameraParamFloat(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, double defaultValue, bool needsCameraStop = false);
+
+private:
+	bool applyParam() override;
+	void updateFromCamera() override;
+	double value = 0;
 };
 
