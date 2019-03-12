@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <spinnakerSpoutCinder>
-	<sendHeight>480</sendHeight>
-	<sendWidth>640</sendWidth>
-	<binning>1</binning>
-	<pixelFormat>4</pixelFormat>
-	<exposureAuto>0</exposureAuto>
-	<gainAuto>0</gainAuto>
-	<exposureTimeAbs>2553.34</exposureTimeAbs>
-	<logLevelIndex>4</logLevelIndex>
+	<PixelFormat>4</PixelFormat>
+	<ExposureAuto>0</ExposureAuto>
+	<GainAuto>0</GainAuto>
+	<BalanceWhiteAuto>0</BalanceWhiteAuto>
+	<DeviceLinkThroughputLimit>20984000</DeviceLinkThroughputLimit>
+	<ExposureTimeAbs>21055</ExposureTimeAbs>
+	<Binning>1</Binning>
 </spinnakerSpoutCinder>
 

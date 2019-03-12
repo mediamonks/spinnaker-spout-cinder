@@ -32,16 +32,12 @@ void prepareSettings(App::Settings *settings)
 
 void SpinnakerSpoutApp::setup()
 {
-	sendWidth = UserSettings::getSetting<int>("sendWidth", sendWidth);
-	sendHeight = UserSettings::getSetting<int>("sendHeight", sendHeight);
-	binning = UserSettings::getSetting<int>("binning", binning);
-	gainAutoIndex = UserSettings::getSetting<int>("gainAuto", gainAutoIndex); // enum, but index stored as int
-	balanceWhiteAutoIndex = UserSettings::getSetting<int>("balanceWhiteAuto", balanceWhiteAutoIndex); // enum, but index stored as int
-	exposureAutoIndex = UserSettings::getSetting<int>("exposureAuto", exposureAutoIndex); // enum, but index stored as int
-	exposure = UserSettings::getSetting<double>("exposureTimeAbs", exposure);
-	pixelFormatIndex = UserSettings::getSetting<int>("pixelFormat", pixelFormatIndex); // enum, but index stored as int
-	logLevelIndex = UserSettings::getSetting<int>("logLevelIndex", logLevelIndex);
-	deviceLinkThroughputLimit = UserSettings::getSetting<int>("deviceLinkThroughputLimit", deviceLinkThroughputLimit);
+	sendWidth = UserSettings::getSetting<int>("SendWidth", sendWidth);
+	sendHeight = UserSettings::getSetting<int>("SendHeight", sendHeight);
+	binning = UserSettings::getSetting<int>("Binning", binning);
+	exposure = UserSettings::getSetting<double>("ExposureTimeAbs", exposure);
+	logLevelIndex = UserSettings::getSetting<int>("LogLevelIndex", logLevelIndex);
+	deviceLinkThroughputLimit = UserSettings::getSetting<int>("DeviceLinkThroughputLimit", deviceLinkThroughputLimit);
 
 	gl::enableAlphaBlending();
 	gl::color(ColorA(1, 1, 1, 1));
@@ -61,11 +57,11 @@ void SpinnakerSpoutApp::draw()
 		needsInitText = false;
 	}
 	else {
-		gl::TextureRef cameraTexture = getCameraTexture(status); // blocks during intializion of the camera and every frame until a new texture arrived 
+		updateCameraTexture(status); // blocks during intializion of the camera and every frame until a new texture arrived 
 
 		if (cameraTexture != NULL) {
 			if (paramGUI == NULL) initParamInterface(); // requires an active camera
-			updateParamsFromCamera();
+			updateMovingCameraParams();
 
 			bool flip = true;
 			gl::draw(cameraTexture, Rectf(0, flip ? getWindowHeight() : 0, getWindowWidth(), flip ? 0 : getWindowHeight()));
@@ -151,7 +147,7 @@ void SpinnakerSpoutApp::initParamInterface() {
 
 	paramGUI->addParam("Camera Log Level", logLevelEnums, &logLevelIndex).min(20).updateFn([this] {
 		system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
-		UserSettings::writeSetting<int>("logLevelIndex", logLevelIndex);
+		UserSettings::writeSetting<int>("LogLevelIndex", logLevelIndex);
 	});
 
 	paramGUI->addSeparator();
@@ -161,140 +157,100 @@ void SpinnakerSpoutApp::initParamInterface() {
 	binningEnums.push_back("Binning 2x");
 	paramGUI->addParam("Binning", binningEnums, &binning).updateFn([this] {
 		cameraSettingsDirty = true;
-		UserSettings::writeSetting<int>("binning", binning);
+		UserSettings::writeSetting<int>("Binning", binning);
 	});
 
-	paramGUI->addParam("Gain Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "GainAuto"), &gainAutoIndex).updateFn([this] {
-		cameraSettingsDirty = true;
-		UserSettings::writeSetting<int>("gainAuto", gainAutoIndex);
-	});
-
-	paramGUI->addParam("White Balance Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "BalanceWhiteAuto"), &balanceWhiteAutoIndex).updateFn([this] {
-		cameraSettingsDirty = true;
-		UserSettings::writeSetting<int>("balanceWhiteAuto", balanceWhiteAutoIndex);
-	});
-
-	paramGUI->addParam("Exposure Auto", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "ExposureAuto"), &exposureAutoIndex).updateFn([this] {
-		cameraSettingsDirty = true;
-		UserSettings::writeSetting<int>("exposureAuto", exposureAutoIndex);
-		
-	});
-
-	paramGUI->addParam("Exposure", &exposure).updateFn([this] {
-		cameraSettingsDirty = true;
-		UserSettings::writeSetting<double>("exposureTimeAbs", exposure);
-	});
+	CameraParam::create("Gain Auto", "GainAuto", paramGUI, camera, 0);
+	CameraParam::create("White Balance Auto", "BalanceWhiteAuto", paramGUI, camera, 0);
 
 	paramGUI->addParam("White Balance Ratio", &balanceRatio).updateFn([this] {
 		cameraSettingsDirty = true;
-		UserSettings::writeSetting<double>("balanceRatio", balanceRatio);
+		UserSettings::writeSetting<double>("BalanceRatio", balanceRatio);
 	});
 
-	paramGUI->addParam("Pixel Format", SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat"), &pixelFormatIndex).updateFn([this] {
+	CameraParam::create("Exposure Auto", "ExposureAuto", paramGUI, camera, 0);
+
+	paramGUI->addParam("Exposure", &exposure).updateFn([this] {
 		cameraSettingsDirty = true;
-		UserSettings::writeSetting<int>("pixelFormat", pixelFormatIndex);
+		UserSettings::writeSetting<double>("ExposureTimeAbs", exposure);
 	});
+
+	CameraParam::create("Pixel Format", "PixelFormat", paramGUI, camera, 4, true);
 
 	paramGUI->addSeparator("Stream");
 
 	paramGUI->addParam("Device Link Throughput Limit", &deviceLinkThroughputLimit).updateFn([this] {
 		cameraSettingsDirty = true;
-		UserSettings::writeSetting<int>("deviceLinkThroughputLimit", deviceLinkThroughputLimit);
+		UserSettings::writeSetting<int>("DeviceLinkThroughputLimit", deviceLinkThroughputLimit);
 	});
 
 	paramGUI->addSeparator("Spout");
 
 	// -------- SPOUT --------
 	paramGUI->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
-		UserSettings::writeSetting<int>("sendWidth", sendWidth);
+		UserSettings::writeSetting<int>("SendWidth", sendWidth);
 	});
 
 	paramGUI->addParam("Send Height", &sendHeight).min(20).updateFn([this] {
-		UserSettings::writeSetting<int>("sendHeight", sendHeight);
+		UserSettings::writeSetting<int>("SendHeight", sendHeight);
 	});
 }
 
-gl::TextureRef SpinnakerSpoutApp::getCameraTexture(string &status) {
+void SpinnakerSpoutApp::updateCameraTexture(string &status) {
 	if (!checkCameraInitialized()) { // blocks while initializing
 		status = "No camera available.";
-		return NULL;
+		cameraTexture = NULL;
+		return;
 	}
+
+	if (camera != NULL) CameraParam::applyParams();  // potentially stops camera acquisition to apply changed settings
 
 	if (cameraSettingsDirty) {
 		cameraSettingsDirty = false;
-		applyCameraSettings(); // potentially stops camera acquisition to apply changed settings
+		if (camera != NULL) applyCameraSettings(); // potentially stops camera acquisition to apply changed settings
 	}
 
-	if (!checkStreamingStarted()) {
+	if (!SpinnakerDeviceCommunication::checkStreamingStarted(camera)) {
 		status = "Unable to start camera...";
-		return NULL;
+		cameraTexture = NULL;
+		return;
 	}
 
 	if (!camera->IsValid()) {
-		checkStreamingStopped();
+		SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		camera->DeInit();
 		status = "Camera status invalid. Attempting to restart.";
 		console() << "Camera status invalid." << endl;
-		return NULL;
+		cameraTexture = NULL;
+		return;
 	}
 
-	gl::TextureRef cameraTexture = getCameraTexture(); // block until a new frame is available or a frame is reported incomplete
-	if (!cameraTexture) {
+	bool success = SpinnakerDeviceCommunication::getCameraTexture(camera, cameraTexture); // block until a new frame is available or a frame is reported incomplete. (re-)initializes output texture if needed
+
+	if (success == false || cameraTexture == NULL) {
 		status = "Dropped frame.";
-		return NULL;
+		droppedFrames++;
+		return;
 	}
 
 	stringstream ss;
 	ss << "Capturing from " << camera->DeviceModelName.GetValue() << " at " << cameraTexture->getWidth() << " x " << cameraTexture->getHeight() << ", sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight;
 	status = ss.str();
-	return cameraTexture;
 }
 
 // Stops camera if necessary. Make sure to check whether it is started after calling this method.
 // returns true if camera was stopped, false otherwise
 bool SpinnakerSpoutApp::applyCameraSettings() {
-	if (camera == NULL) return true;
-
 	bool cameraWasStopped = false;
 	// API is weird here since you can only read binning from Horizontal but need to write to Horizontal and Vertical
 	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, "BinningHorizontal") - 1 != binning) {
-		cameraWasStopped = checkStreamingStopped();
+		cameraWasStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningHorizontal", binning + 1); // binning param values are set as int starting from 1
 		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningVertical", binning + 1);
 	}
 
-	vector<string> gainAutoOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "GainAuto");
-	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "GainAuto") != gainAutoOptions[gainAutoIndex]) {
-		string newChoice = SpinnakerDeviceCommunication::setParameterEnum(camera, "GainAuto", gainAutoOptions[gainAutoIndex]);
-		int newIndex = find(gainAutoOptions.begin(), gainAutoOptions.end(), newChoice) - gainAutoOptions.begin();
-		if (newIndex != gainAutoIndex) {
-			gainAutoIndex = newIndex;
-			UserSettings::writeSetting<int>("gainAuto", gainAutoIndex);
-		}
-	}
-
-	vector<string> balanceWhiteAutoOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "BalanceWhiteAuto");
-	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "BalanceWhiteAuto") != balanceWhiteAutoOptions[balanceWhiteAutoIndex]) {
-		string newChoice = SpinnakerDeviceCommunication::setParameterEnum(camera, "BalanceWhiteAuto", balanceWhiteAutoOptions[balanceWhiteAutoIndex]);
-		int newIndex = find(balanceWhiteAutoOptions.begin(), balanceWhiteAutoOptions.end(), newChoice) - balanceWhiteAutoOptions.begin();
-		if (newIndex != balanceWhiteAutoIndex) {
-			balanceWhiteAutoIndex = newIndex;
-			UserSettings::writeSetting<int>("balanceWhiteAuto", balanceWhiteAutoIndex);
-		}
-	}
-
 	if (SpinnakerDeviceCommunication::getParameterFloatValue(camera, "BalanceRatio") != balanceRatio) {
 		balanceRatio = SpinnakerDeviceCommunication::setParameterFloat(camera, "BalanceRatio", balanceRatio);
-	}
-
-	vector<string> exposureAutoOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "ExposureAuto");
-	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "ExposureAuto") != exposureAutoOptions[exposureAutoIndex]) {
-		string newChoice = SpinnakerDeviceCommunication::setParameterEnum(camera, "ExposureAuto", exposureAutoOptions[exposureAutoIndex]);
-		int newIndex = find(exposureAutoOptions.begin(), exposureAutoOptions.end(), newChoice) - exposureAutoOptions.begin();
-		if (newIndex != exposureAutoIndex) {
-			exposureAutoIndex = newIndex;
-			UserSettings::writeSetting<int>("exposureAuto", exposureAutoIndex);
-		}
 	}
 
 	if (SpinnakerDeviceCommunication::getParameterFloatValue(camera, "ExposureTimeAbs") != exposure) {
@@ -305,34 +261,24 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 		int newValue = SpinnakerDeviceCommunication::setParameterInt(camera, "DeviceLinkThroughputLimit", deviceLinkThroughputLimit);
 		if (newValue != deviceLinkThroughputLimit) {
 			deviceLinkThroughputLimit = newValue;
-			UserSettings::writeSetting<int>("deviceLinkThroughputLimit", newValue);
+			UserSettings::writeSetting<int>("DeviceLinkThroughputLimit", newValue);
 		}
 	}
 
-	vector<string> pixelFormatOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, "PixelFormat");
-	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, "PixelFormat") != pixelFormatOptions[pixelFormatIndex]) {
-		cameraWasStopped = checkStreamingStopped();
-		string newChoice = SpinnakerDeviceCommunication::setParameterEnum(camera, "PixelFormat", pixelFormatOptions[pixelFormatIndex]);
-		int newIndex = find(pixelFormatOptions.begin(), pixelFormatOptions.end(), newChoice) - pixelFormatOptions.begin();
-		if (newIndex != pixelFormatIndex) {
-			pixelFormatIndex = newIndex;
-			UserSettings::writeSetting<int>("pixelFormat", pixelFormatIndex);
-		}
-	}
 	return cameraWasStopped;
 }
 
-void SpinnakerSpoutApp::updateParamsFromCamera() {
+void SpinnakerSpoutApp::updateMovingCameraParams() {
 	float newExposure = SpinnakerDeviceCommunication::getParameterFloatValue(camera, "ExposureTimeAbs");
 	if (newExposure != exposure) {
 		exposure = newExposure;
-		UserSettings::writeSetting<double>("exposureTimeAbs", exposure);
+		UserSettings::writeSetting<double>("ExposureTimeAbs", exposure);
 	}
 
 	float newBalanceRatio = SpinnakerDeviceCommunication::getParameterFloatValue(camera, "BalanceRatio");
 	if (newBalanceRatio != balanceRatio) {
 		balanceRatio = newBalanceRatio;
-		UserSettings::writeSetting<double>("balanceRatio", balanceRatio);
+		UserSettings::writeSetting<double>("BalanceRatio", balanceRatio);
 	}
 }
 
@@ -385,81 +331,6 @@ bool SpinnakerSpoutApp::checkCameraInitialized() {
 	console() << "Initializing camera failed, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
 
 	return false;
-}
-
-int prevCaptureWidth = 0;
-int prevCaptureHeight = 0;
-// returns true if camera is streaming after calling this method
-bool SpinnakerSpoutApp::checkStreamingStarted() {
-	if (camera->IsStreaming()) return true;
-
-	try
-	{
-		console() << "Starting camera with access mode " << SpinnakerDeviceCommunication::accessModeToString(camera->GetAccessMode()) << "..." << endl;
-		SpinnakerDeviceCommunication::setParameterEnum(camera, "AcquisitionMode", "Continuous");
-		camera->BeginAcquisition();
-		prevCaptureWidth = 0;
-		prevCaptureHeight = 0;
-		return true;
-	}
-	catch (Spinnaker::Exception &e)	{
-		console() << "Error starting camera aquisition: " << e.what() << endl;
-		camera->DeInit();
-		return false;
-	}
-}
-
-// returns true if camera is not streaming after calling this method
-bool SpinnakerSpoutApp::checkStreamingStopped() {
-	if (!camera->IsStreaming()) return true;
-
-	try {
-		camera->EndAcquisition();
-		return true;
-	}
-	catch (Spinnaker::Exception &e) {
-		console() << "Error stopping camera aquisition: " << e.what() << endl;
-		return false;
-	}
-}
-
-gl::TextureRef SpinnakerSpoutApp::getCameraTexture() {
-	try {
-		ImagePtr capturedImage = camera->GetNextImage(1000); // Note: blocks until a new frame is available, limiting the frame rate of the entire app
-		if (capturedImage->IsIncomplete())
-		{
-			console() << "Image incomplete with image status " << capturedImage->GetImageStatus() << "..." << endl;
-			capturedImage->Release();
-			droppedFrames++;
-		}
-		else
-		{
-			int w = capturedImage->GetWidth();
-			int h = capturedImage->GetHeight();
-
-			if (prevCaptureWidth != w || prevCaptureHeight != h) {
-				console() << "Now grabbing images at " << capturedImage->GetWidth() << " x " << capturedImage->GetHeight() << ", " << capturedImage->GetPixelFormatName() << endl;
-				prevCaptureWidth = w;
-				prevCaptureHeight = h;
-			}
-
-			ImagePtr convertedImage = capturedImage->Convert(PixelFormat_RGB8, NEAREST_NEIGHBOR); // Note that color processing algorithms other than NEAREST_NEIGHBOR are probably too slow for continous acquisition at high resolutions.
-			capturedImage->Release();
-
-			if (texture == NULL || texture->getWidth() != w || texture->getHeight() != h) {
-				texture = gl::Texture2d::create(w, h);
-			}
-
-			texture->update(convertedImage->GetData(), GL_RGB, GL_UNSIGNED_BYTE, 0, w, h);
-			return texture;
-		}
-	}
-	catch (Spinnaker::Exception &e)
-	{
-		console() << "Error capturing image: " << e.what() << endl;
-	}
-
-	return NULL;
 }
 
 int SpinnakerSpoutApp::geLatestDroppedFrames() {

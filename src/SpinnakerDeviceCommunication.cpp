@@ -8,7 +8,6 @@ using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
 
-
 int SpinnakerDeviceCommunication::getParameterIntValue(CameraPtr camera, string paramName) {
 	INodeMap& nodeMap = camera->GetNodeMap();
 	CIntegerPtr node = nodeMap.GetNode(paramName.c_str());
@@ -720,4 +719,82 @@ void SpinnakerDeviceCommunication::indent(unsigned int level)
 	{
 		console() << "   ";
 	}
+}
+
+
+int prevCaptureWidth = 0;
+int prevCaptureHeight = 0;
+// returns true if camera is streaming after calling this method
+bool SpinnakerDeviceCommunication::checkStreamingStarted(CameraPtr camera) {
+	if (camera->IsStreaming()) return true;
+
+	try
+	{
+		console() << "Starting camera with access mode " << SpinnakerDeviceCommunication::accessModeToString(camera->GetAccessMode()) << "..." << endl;
+		SpinnakerDeviceCommunication::setParameterEnum(camera, "AcquisitionMode", "Continuous");
+		camera->BeginAcquisition();
+		prevCaptureWidth = 0;
+		prevCaptureHeight = 0;
+		return true;
+	}
+	catch (Spinnaker::Exception &e) {
+		console() << "Error starting camera aquisition: " << e.what() << endl;
+		camera->DeInit();
+		return false;
+	}
+}
+
+// returns true if camera is not streaming after calling this method
+bool SpinnakerDeviceCommunication::checkStreamingStopped(CameraPtr camera) {
+	if (!camera->IsStreaming()) return true;
+
+	try {
+		camera->EndAcquisition();
+		return true;
+	}
+	catch (Spinnaker::Exception &e) {
+		console() << "Error stopping camera aquisition: " << e.what() << endl;
+		return false;
+	}
+}
+
+bool SpinnakerDeviceCommunication::getCameraTexture(CameraPtr camera, gl::TextureRef& outputTexture) {
+	try {
+		// TODO: we only grab one frame at a time. So if frame rate of app is lower than camera, we are building up the frame buffer of the camera and getting slow motion output as a result. Multithread this.
+
+		ImagePtr capturedImage = camera->GetNextImage(1000); // Note: blocks until a new frame is available, limiting the frame rate of the entire app
+		if (capturedImage->IsIncomplete())
+		{
+			console() << "Image incomplete with image status " << capturedImage->GetImageStatus() << "..." << endl;
+			capturedImage->Release();
+			return false;
+		}
+		else
+		{
+			int w = capturedImage->GetWidth();
+			int h = capturedImage->GetHeight();
+
+			if (prevCaptureWidth != w || prevCaptureHeight != h) {
+				console() << "Now grabbing images at " << capturedImage->GetWidth() << " x " << capturedImage->GetHeight() << ", " << capturedImage->GetPixelFormatName() << endl;
+				prevCaptureWidth = w;
+				prevCaptureHeight = h;
+			}
+
+			ImagePtr convertedImage = capturedImage->Convert(PixelFormat_RGB8, NEAREST_NEIGHBOR); // Note that color processing algorithms other than NEAREST_NEIGHBOR are probably too slow for continous acquisition at high resolutions.
+			capturedImage->Release();
+
+			if (outputTexture == NULL || outputTexture->getWidth() != w || outputTexture->getHeight() != h) {
+				outputTexture = gl::Texture2d::create(w, h);
+			}
+
+			outputTexture->update(convertedImage->GetData(), GL_RGB, GL_UNSIGNED_BYTE, 0, w, h);
+			return true;
+		}
+	}
+	catch (Spinnaker::Exception &e)
+	{
+		console() << "Error capturing image: " << e.what() << endl;
+	}
+
+	return false;
 }

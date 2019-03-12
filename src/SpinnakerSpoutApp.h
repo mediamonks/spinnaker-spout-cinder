@@ -14,6 +14,15 @@
 
 #include "UserSettings.h"
 
+#include "CameraParam.h"
+
+using namespace ci;
+using namespace ci::app;
+using namespace std;
+using namespace Spinnaker;
+using namespace Spinnaker::GenApi;
+using namespace Spinnaker::GenICam;
+
 
 // Although logging events are just as flexible and extensible as other events, 
 // they are generally only used for logging purposes, which is why a number of 
@@ -39,26 +48,21 @@ class SpinnakerSpoutApp : public App {
 	bool checkCameraInitialized();
 	bool checkStreamingStarted();
 	bool checkStreamingStopped();
-	gl::TextureRef getCameraTexture(string &status);
 
-	gl::TextureRef texture;
-	gl::TextureRef getCameraTexture();
+	gl::TextureRef cameraTexture = NULL;
+	void updateCameraTexture(string &status);
 
 	// -------- CINDER PARAM UI --------
 	params::InterfaceGlRef	paramGUI = NULL;
 	void initParamInterface();
 	bool cameraSettingsDirty = true;
 	bool applyCameraSettings();
-	void updateParamsFromCamera();
+	void updateMovingCameraParams();
 
 	// -------- PARAMS --------
 	int binning = 0; // 0 is no binning (1x scale), 1 = factor 2 binning (0.5x scale)
-	int gainAutoIndex = 0;
-	int balanceWhiteAutoIndex = 0;
-	int exposureAutoIndex = 0;
 	double exposure = 10000; // microseconds
 	double balanceRatio = 1; // 
-	int pixelFormatIndex = 4; //4 = BayerRG8. Color mode of camera aquisition. Will be converted to RGB8 software-side, note that capturing at RGB8Packed would use a lot of bandwidth.
 	int deviceLinkThroughputLimit = 10000000; // max bandwidth used by this camera in bytes/second
 	int sendWidth = 640;
 	int sendHeight = 480;

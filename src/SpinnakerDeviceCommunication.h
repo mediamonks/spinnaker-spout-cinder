@@ -49,6 +49,10 @@ public:
 	static int printEnumerationNodeAndCurrentEntry(CNodePtr node, unsigned int level);
 	static int printCategoryNodeAndAllFeatures(CNodePtr node, unsigned int level);
 	static void indent(unsigned int level);
-	static std::string paramTypeToString(EInterfaceType interfaceType);
-	static std::string accessModeToString(GenApi::EAccessMode mode);
+	static string paramTypeToString(EInterfaceType interfaceType);
+	static string accessModeToString(GenApi::EAccessMode mode);
+
+	static bool checkStreamingStarted(CameraPtr camera);
+	static bool checkStreamingStopped(CameraPtr camera);
+	static bool getCameraTexture(CameraPtr camera, gl::TextureRef& outputTexture);
 };
