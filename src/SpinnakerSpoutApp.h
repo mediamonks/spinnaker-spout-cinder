@@ -46,8 +46,6 @@ class SpinnakerSpoutApp : public App {
 	CameraPtr camera = NULL;
 
 	bool checkCameraInitialized();
-	bool checkStreamingStarted();
-	bool checkStreamingStopped();
 
 	gl::TextureRef cameraTexture = NULL;
 	void updateCameraTexture(string &status);

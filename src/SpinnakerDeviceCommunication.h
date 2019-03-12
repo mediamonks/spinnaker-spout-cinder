@@ -18,17 +18,6 @@ using namespace Spinnaker::GenICam;
 #define MAX_CHARS 35
 
 class SpinnakerDeviceCommunication {
-private:
-
-	// Use the following enum and global constant to select whether nodes are read
-	// as 'value' nodes or their individual types.
-	enum readType {
-		VALUE,
-		INDIVIDUAL
-	};
-
-	const static readType chosenRead = VALUE;
-
 public:
 	static string getParameterEnumValue(CameraPtr camera, string paramName);
 	static vector<string> getParameterEnumOptions(CameraPtr camera, string paramName);
@@ -41,12 +30,6 @@ public:
 
 	static void printDeviceInfo(CameraPtr camera);
 	static int printValueNode(CNodePtr node, unsigned int level);
-	static int printStringNode(CNodePtr node, unsigned int level);
-	static int printIntegerNode(CNodePtr node, unsigned int level);
-	static int printFloatNode(CNodePtr node, unsigned int level);
-	static int printBooleanNode(CNodePtr node, unsigned int level);
-	static int printCommandNode(CNodePtr node, unsigned int level);
-	static int printEnumerationNodeAndCurrentEntry(CNodePtr node, unsigned int level);
 	static int printCategoryNodeAndAllFeatures(CNodePtr node, unsigned int level);
 	static void indent(unsigned int level);
 	static string paramTypeToString(EInterfaceType interfaceType);
