@@ -38,4 +38,6 @@ public:
 	static bool checkStreamingStarted(CameraPtr camera);
 	static bool checkStreamingStopped(CameraPtr camera);
 	static bool getCameraTexture(CameraPtr camera, gl::TextureRef& outputTexture);
+
+	static vector<string> getLogLevelStrings();
 };

@@ -76,7 +76,6 @@ class SpinnakerSpoutApp : public App {
 	bool needsInitText = true;
 
 	int droppedFrames = 0;
-	float lastDroppedFramesTime = 0;
 	int geLatestDroppedFrames();
 
 	LoggingEventHandler loggingEventHandler;

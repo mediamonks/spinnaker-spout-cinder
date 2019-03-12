@@ -509,3 +509,18 @@ bool SpinnakerDeviceCommunication::getCameraTexture(CameraPtr camera, gl::Textur
 
 	return false;
 }
+
+vector<string> SpinnakerDeviceCommunication::getLogLevelStrings() {
+	std::vector<string> strings;
+	strings.push_back("Off");
+	strings.push_back("Fatal");
+	strings.push_back("Alert");
+	strings.push_back("Crit");
+	strings.push_back("Error");
+	strings.push_back("Warn");
+	strings.push_back("Notice");
+	strings.push_back("Info");
+	strings.push_back("Debug");
+	strings.push_back("All");
+	return strings;
+}

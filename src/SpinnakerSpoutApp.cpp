@@ -64,25 +64,26 @@ void SpinnakerSpoutApp::draw()
 			updateMovingCameraParams();
 
 			bool flip = true;
-			gl::draw(cameraTexture, Rectf(0, flip ? getWindowHeight() : 0, getWindowWidth(), flip ? 0 : getWindowHeight()));
+			gl::draw(cameraTexture, Rectf(0.f, flip ? (float)getWindowHeight() : 0.f, (float)getWindowWidth(), flip ? 0.f : (float)getWindowHeight()));
 
 			sendToSpout(cameraTexture);
 			fps = (int)getAverageFps();
 		}
 	}
 
-	int fontSize = getWindowWidth() / 50;
+	float fontSize = (float)(getWindowWidth() / 50);
 
-	int fpsLeft = getWindowWidth() - toPixels(240);
-	int fpsTop = toPixels(20);
+	float fpsLeft = getWindowWidth() - toPixels(240);
+	float fpsTop = toPixels(20);
 
-	int infoLeft = toPixels(20);
-	int infoTop = getWindowHeight() - toPixels(20) - fontSize;
+	float infoLeft = toPixels(20);
+	float infoTop = getWindowHeight() - toPixels(20) - fontSize;
+
 
 	{
 		gl::ScopedColor colorScope(ColorA(0, 0, 0, 0.5));
-		gl::drawSolidRect(Rectf(fpsLeft - 10, fpsTop - 10, getWindowWidth(), fpsTop + fontSize + 10));
-		gl::drawSolidRect(Rectf(0, infoTop - 10, getWindowWidth(), infoTop + fontSize + 10));
+		gl::drawSolidRect(Rectf(fpsLeft - 10.f, fpsTop - 10.f, (float)getWindowWidth(), fpsTop + fontSize + 10.f));
+		gl::drawSolidRect(Rectf(0.f, infoTop - 10.f, (float)getWindowWidth(), infoTop + fontSize + 10.f));
 	}
 
 	gl::drawString(status, vec2(infoLeft, infoTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
@@ -132,20 +133,7 @@ bool SpinnakerSpoutApp::checkSpoutInitialized() {
 void SpinnakerSpoutApp::initParamInterface() {
 	paramGUI = params::InterfaceGl::create(getWindow(), "Parameters", toPixels(ivec2(200, 300)));
 
-	// -------- SPINNAKER --------
-	std::vector<string> logLevelEnums;
-	logLevelEnums.push_back("Off");
-	logLevelEnums.push_back("Fatal");
-	logLevelEnums.push_back("Alert");
-	logLevelEnums.push_back("Crit");
-	logLevelEnums.push_back("Error");
-	logLevelEnums.push_back("Warn");
-	logLevelEnums.push_back("Notice");
-	logLevelEnums.push_back("Info");
-	logLevelEnums.push_back("Debug");
-	logLevelEnums.push_back("All");
-
-	paramGUI->addParam("Camera Log Level", logLevelEnums, &logLevelIndex).min(20).updateFn([this] {
+	paramGUI->addParam("Camera Log Level", SpinnakerDeviceCommunication::getLogLevelStrings(), &logLevelIndex).min(20).updateFn([this] {
 		system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
 		UserSettings::writeSetting<int>("LogLevelIndex", logLevelIndex);
 	});
@@ -269,20 +257,20 @@ bool SpinnakerSpoutApp::applyCameraSettings() {
 }
 
 void SpinnakerSpoutApp::updateMovingCameraParams() {
-	float newExposure = SpinnakerDeviceCommunication::getParameterFloatValue(camera, "ExposureTimeAbs");
+	double newExposure = SpinnakerDeviceCommunication::getParameterFloatValue(camera, "ExposureTimeAbs");
 	if (newExposure != exposure) {
 		exposure = newExposure;
 		UserSettings::writeSetting<double>("ExposureTimeAbs", exposure);
 	}
 
-	float newBalanceRatio = SpinnakerDeviceCommunication::getParameterFloatValue(camera, "BalanceRatio");
+	double newBalanceRatio = SpinnakerDeviceCommunication::getParameterFloatValue(camera, "BalanceRatio");
 	if (newBalanceRatio != balanceRatio) {
 		balanceRatio = newBalanceRatio;
 		UserSettings::writeSetting<double>("BalanceRatio", balanceRatio);
 	}
 }
 
-float lastCameraInitCheckTime = -100;
+double lastCameraInitCheckTime = -100;
 bool SpinnakerSpoutApp::checkCameraInitialized() {
 	if (camera != NULL && camera->IsInitialized()) return true;
 
@@ -333,6 +321,7 @@ bool SpinnakerSpoutApp::checkCameraInitialized() {
 	return false;
 }
 
+double lastDroppedFramesTime = 0;
 int SpinnakerSpoutApp::geLatestDroppedFrames() {
 	if (getElapsedSeconds() - lastDroppedFramesTime > 1) {
 		droppedFrames = 0;
@@ -355,16 +344,17 @@ void SpinnakerSpoutApp::cleanup()
 
 SpinnakerLogLevel indexToSpinnakerLogLevel(int index) {
 	switch (index) {
-	case 0: return LOG_LEVEL_OFF;
-	case 1: return LOG_LEVEL_FATAL;
-	case 2: return LOG_LEVEL_ALERT;
-	case 3: return LOG_LEVEL_CRIT;
-	case 4: return LOG_LEVEL_ERROR;
-	case 5: return LOG_LEVEL_WARN;
-	case 6: return LOG_LEVEL_NOTICE;
-	case 7: return LOG_LEVEL_INFO;
-	case 8: return LOG_LEVEL_DEBUG;
-	case 9: return LOG_LEVEL_NOTSET;
+		case 0: return LOG_LEVEL_OFF;
+		case 1: return LOG_LEVEL_FATAL;
+		case 2: return LOG_LEVEL_ALERT;
+		case 3: return LOG_LEVEL_CRIT;
+		case 4: return LOG_LEVEL_ERROR;
+		case 5: return LOG_LEVEL_WARN;
+		case 6: return LOG_LEVEL_NOTICE;
+		case 7: return LOG_LEVEL_INFO;
+		case 8: return LOG_LEVEL_DEBUG;
+		case 9: return LOG_LEVEL_NOTSET;
+		default: return LOG_LEVEL_OFF;
 	}
 }
 
