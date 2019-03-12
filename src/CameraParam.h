@@ -18,19 +18,32 @@ using namespace Spinnaker::GenICam;
 class CameraParam
 {
 public:
-	static void create(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop = false);
+	static void createEnum(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop = false);
 	static bool applyParams();
 
-	CameraParam(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool needsCameraStop = false);
-	~CameraParam();
+	virtual bool applyParam() = 0;
+
+protected:
+	static bool cameraSettingsDirty;
+
+	CameraPtr camera;
+	string spinnakerName;
+	bool needsCameraStop;
 
 private:
 	static vector<CameraParam*> params;
-	static bool cameraSettingsDirty;
 
-	static CameraPtr camera;
+};
+
+class CameraParamEnum : public CameraParam
+{
+public:
+	bool applyParam() override;
+
+	CameraParamEnum(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool needsCameraStop = false);
+	~CameraParamEnum();
+
+private:
 	int enumIndex = 0;
-	string spinnakerName;
-	bool needsCameraStop;
 };
 

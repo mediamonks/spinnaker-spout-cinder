@@ -79,7 +79,6 @@ void SpinnakerSpoutApp::draw()
 	float infoLeft = toPixels(20);
 	float infoTop = getWindowHeight() - toPixels(20) - fontSize;
 
-
 	{
 		gl::ScopedColor colorScope(ColorA(0, 0, 0, 0.5));
 		gl::drawSolidRect(Rectf(fpsLeft - 10.f, fpsTop - 10.f, (float)getWindowWidth(), fpsTop + fontSize + 10.f));
@@ -148,22 +147,22 @@ void SpinnakerSpoutApp::initParamInterface() {
 		UserSettings::writeSetting<int>("Binning", binning);
 	});
 
-	CameraParam::create("Gain Auto", "GainAuto", paramGUI, camera, 0);
-	CameraParam::create("White Balance Auto", "BalanceWhiteAuto", paramGUI, camera, 0);
+	CameraParam::createEnum("Gain Auto", "GainAuto", paramGUI, camera, 0);
+	CameraParam::createEnum("White Balance Auto", "BalanceWhiteAuto", paramGUI, camera, 0);
 
 	paramGUI->addParam("White Balance Ratio", &balanceRatio).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<double>("BalanceRatio", balanceRatio);
 	});
 
-	CameraParam::create("Exposure Auto", "ExposureAuto", paramGUI, camera, 0);
+	CameraParam::createEnum("Exposure Auto", "ExposureAuto", paramGUI, camera, 0);
 
 	paramGUI->addParam("Exposure", &exposure).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<double>("ExposureTimeAbs", exposure);
 	});
 
-	CameraParam::create("Pixel Format", "PixelFormat", paramGUI, camera, 4, true);
+	CameraParam::createEnum("Pixel Format", "PixelFormat", paramGUI, camera, 4, true);
 
 	paramGUI->addSeparator("Stream");
 
