@@ -51,19 +51,14 @@ class SpinnakerSpoutApp : public App {
 	void updateCameraTexture(string &status);
 
 	// -------- CINDER PARAM UI --------
-	params::InterfaceGlRef	paramGUI = NULL;
+	params::InterfaceGlRef paramGUI = NULL;
 	void initParamInterface();
-	bool cameraSettingsDirty = true;
-	bool applyCameraSettings();
-
-	// -------- PARAMS --------
-	int binning = 0; // 0 is no binning (1x scale), 1 = factor 2 binning (0.5x scale)
-	int sendWidth = 640;
-	int sendHeight = 480;
 
 	// -------- SPOUT --------
 	SpoutSender spoutSender;					// Create a Spout sender object
 	string senderName = "Point Grey";
+	int sendWidth = 640;
+	int sendHeight = 480;
 	gl::FboRef sendFbo;
 	bool checkSpoutInitialized();
 	void sendToSpout(gl::TextureRef &sendTexture);

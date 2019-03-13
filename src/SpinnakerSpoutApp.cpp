@@ -34,7 +34,6 @@ void SpinnakerSpoutApp::setup()
 {
 	sendWidth = UserSettings::getSetting<int>("SendWidth", sendWidth);
 	sendHeight = UserSettings::getSetting<int>("SendHeight", sendHeight);
-	binning = UserSettings::getSetting<int>("Binning", binning);
 	logLevelIndex = UserSettings::getSetting<int>("LogLevelIndex", logLevelIndex);
 
 	gl::enableAlphaBlending();
@@ -137,20 +136,12 @@ void SpinnakerSpoutApp::initParamInterface() {
 
 	paramGUI->addSeparator();
 
-	std::vector<string> binningEnums;
-	binningEnums.push_back("No binning");
-	binningEnums.push_back("Binning 2x");
-	paramGUI->addParam("Binning", binningEnums, &binning).updateFn([this] {
-		cameraSettingsDirty = true;
-		UserSettings::writeSetting<int>("Binning", binning);
-	});
-
+	CameraParam::createInt("Binning", "BinningVertical", paramGUI, camera, 1, true); // 1 is no binning (1x scale), 2 = factor 2 binning (0.5x scale)
 	CameraParam::createEnum("Gain Auto", "GainAuto", paramGUI, camera, 0);
 	CameraParam::createEnum("White Balance Auto", "BalanceWhiteAuto", paramGUI, camera, 0);
 	CameraParam::createFloat("White Balance Ratio", "BalanceRatio", paramGUI, camera, 1);
 	CameraParam::createEnum("Exposure Auto", "ExposureAuto", paramGUI, camera, 0);
-	CameraParam::createFloat("Exposure", "ExposureTimeAbs", paramGUI, camera, 10000);
-
+	CameraParam::createFloat("Exposure", "ExposureTimeAbs", paramGUI, camera, 10000); // in microseconds
 	CameraParam::createEnum("Pixel Format", "PixelFormat", paramGUI, camera, 4, true);
 	paramGUI->addSeparator("Stream");
 	CameraParam::createInt("Device Link Throughput Limit", "DeviceLinkThroughputLimit", paramGUI, camera, 10000000);  // max bandwidth used by this camera in bytes/second
@@ -174,11 +165,6 @@ void SpinnakerSpoutApp::updateCameraTexture(string &status) {
 	}
 
 	if (camera != NULL) CameraParam::applyParams();  // potentially stops camera acquisition to apply changed settings
-
-	if (cameraSettingsDirty) {
-		cameraSettingsDirty = false;
-		if (camera != NULL) applyCameraSettings(); // potentially stops camera acquisition to apply changed settings
-	}
 
 	if (!SpinnakerDeviceCommunication::checkStreamingStarted(camera)) {
 		status = "Unable to start camera...";
@@ -206,20 +192,6 @@ void SpinnakerSpoutApp::updateCameraTexture(string &status) {
 	stringstream ss;
 	ss << "Capturing from " << camera->DeviceModelName.GetValue() << " at " << cameraTexture->getWidth() << " x " << cameraTexture->getHeight() << ", sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight;
 	status = ss.str();
-}
-
-// Stops camera if necessary. Make sure to check whether it is started after calling this method.
-// returns true if camera was stopped, false otherwise
-bool SpinnakerSpoutApp::applyCameraSettings() {
-	bool cameraWasStopped = false;
-	// API is weird here since you can only read binning from Horizontal but need to write to Horizontal and Vertical
-	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, "BinningHorizontal") - 1 != binning) {
-		cameraWasStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
-		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningHorizontal", binning + 1); // binning param values are set as int starting from 1
-		SpinnakerDeviceCommunication::setParameterInt(camera, "BinningVertical", binning + 1);
-	}
-
-	return cameraWasStopped;
 }
 
 double lastCameraInitCheckTime = -100;

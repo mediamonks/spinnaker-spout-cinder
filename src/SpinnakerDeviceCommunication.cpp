@@ -21,6 +21,19 @@ int SpinnakerDeviceCommunication::getParameterIntValue(CameraPtr camera, string 
 	}
 }
 
+pair<int, int> SpinnakerDeviceCommunication::getIntParameterMinMax(CameraPtr camera, string paramName) {
+	INodeMap& nodeMap = camera->GetNodeMap();
+	CIntegerPtr node = nodeMap.GetNode(paramName.c_str());
+	if (IsAvailable(node) && IsReadable(node))
+	{
+		return make_pair(node->GetMin(), node->GetMax());
+	}
+	else {
+		console() << paramName << " setting not available as Integer for getting range..." << endl;
+		return make_pair(0, 0);
+	}
+}
+
 double SpinnakerDeviceCommunication::getParameterFloatValue(CameraPtr camera, string paramName) {
 	INodeMap& nodeMap = camera->GetNodeMap();
 	CFloatPtr node = nodeMap.GetNode(paramName.c_str());
@@ -31,6 +44,19 @@ double SpinnakerDeviceCommunication::getParameterFloatValue(CameraPtr camera, st
 	else {
 		console() << paramName << " setting not available for reading as Float..." << endl;
 		return 0;
+	}
+}
+
+pair<double, double> SpinnakerDeviceCommunication::getFloatParameterMinMax(CameraPtr camera, string paramName) {
+	INodeMap& nodeMap = camera->GetNodeMap();
+	CFloatPtr node = nodeMap.GetNode(paramName.c_str());
+	if (IsAvailable(node) && IsReadable(node))
+	{
+		return make_pair(node->GetMin(), node->GetMax());
+	}
+	else {
+		console() << paramName << " setting not available as Float for getting range..." << endl;
+		return make_pair(0.0, 0.0);
 	}
 }
 

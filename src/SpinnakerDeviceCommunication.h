@@ -22,7 +22,9 @@ public:
 	static string getParameterEnumValue(CameraPtr camera, string paramName);
 	static vector<string> getParameterEnumOptions(CameraPtr camera, string paramName);
 	static int getParameterIntValue(CameraPtr camera, string paramName);
+	static pair<int, int> getIntParameterMinMax(CameraPtr camera, string paramName); 
 	static double getParameterFloatValue(CameraPtr camera, string paramName);
+	static pair<double, double> getFloatParameterMinMax(CameraPtr camera, string paramName);
 
 	static string setParameterEnum(CameraPtr camera, string paramName, string enumValueName);
 	static int setParameterInt(CameraPtr camera, string paramName, int newValue);

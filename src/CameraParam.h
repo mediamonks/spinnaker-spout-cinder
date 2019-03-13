@@ -38,7 +38,6 @@ protected:
 
 private:
 	static vector<CameraParam*> params;
-
 };
 
 class CameraParamEnum : public CameraParam
@@ -61,6 +60,8 @@ private:
 	bool applyParam() override;
 	void updateFromCamera() override;
 	double value = 0;
+	pair<double, double> range;
+
 };
 
 class CameraParamInt: public CameraParam
@@ -72,5 +73,5 @@ private:
 	bool applyParam() override;
 	void updateFromCamera() override;
 	int value = 0;
+	pair<int, int> range;
 };
-
