@@ -103,7 +103,7 @@ CameraParamFloat::CameraParamFloat(string uiText, string _spinnakerName, params:
 	value = UserSettings::getSetting<double>(spinnakerName, defaultValue);
 	range = SpinnakerDeviceCommunication::getFloatParameterMinMax(camera, spinnakerName);
 
-	paramGUI->addParam(spinnakerName, &value).updateFn([this] {
+	paramGUI->addParam(uiText, &value).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<double>(spinnakerName, value);
 	}).min(range.first).max(range.second);
@@ -132,7 +132,7 @@ CameraParamInt::CameraParamInt(string uiText, string _spinnakerName, params::Int
 	value = UserSettings::getSetting<int>(spinnakerName, defaultValue);
 	range = SpinnakerDeviceCommunication::getIntParameterMinMax(camera, spinnakerName);
 
-	paramGUI->addParam(spinnakerName, &value).updateFn([this] {
+	paramGUI->addParam(uiText, &value).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>(spinnakerName, value);
 	}).min(range.first).max(range.second);

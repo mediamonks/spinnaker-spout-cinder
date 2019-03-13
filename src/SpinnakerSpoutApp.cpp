@@ -20,11 +20,14 @@ In general, keep these guidelines in mind:
 https://www.ptgrey.com/KB/11151
 */
 
+#define WINDOW_W 1024
+#define WINDOW_H 768
+
 void prepareSettings(App::Settings *settings)
 {
 	settings->setHighDensityDisplayEnabled();
 	settings->setTitle("Spinnaker to Spout");
-	settings->setWindowSize(1024, 768);
+	settings->setWindowSize(WINDOW_W, WINDOW_H);
 	settings->setFullScreen(false);
 	settings->setResizable(true);
 	settings->setFrameRate(60.0f);
@@ -128,6 +131,7 @@ bool SpinnakerSpoutApp::checkSpoutInitialized() {
 
 void SpinnakerSpoutApp::initParamInterface() {
 	paramGUI = params::InterfaceGl::create(getWindow(), "Parameters", toPixels(ivec2(200, 300)));
+	paramGUI->setSize(vec2(WINDOW_W / 3, WINDOW_H / 2));
 
 	paramGUI->addParam("Camera Log Level", SpinnakerDeviceCommunication::getLogLevelStrings(), &logLevelIndex).min(20).updateFn([this] {
 		system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
