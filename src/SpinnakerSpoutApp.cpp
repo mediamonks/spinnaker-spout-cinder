@@ -58,7 +58,7 @@ void SpinnakerSpoutApp::draw()
 
 		if (cameraTexture != NULL) {
 			if (paramGUI == NULL) initParamInterface(); // requires an active camera
-			CameraParam::updateParamsFromCamera();
+			CameraParam::pollParamsFromCamera();
 
 			bool flip = true;
 			gl::draw(cameraTexture, Rectf(0.f, flip ? (float)getWindowHeight() : 0.f, (float)getWindowWidth(), flip ? 0.f : (float)getWindowHeight()));
@@ -139,9 +139,9 @@ void SpinnakerSpoutApp::initParamInterface() {
 	CameraParam::createInt("Binning", "BinningVertical", paramGUI, camera, 1, true); // 1 is no binning (1x scale), 2 = factor 2 binning (0.5x scale)
 	CameraParam::createEnum("Gain Auto", "GainAuto", paramGUI, camera, 0);
 	CameraParam::createEnum("White Balance Auto", "BalanceWhiteAuto", paramGUI, camera, 0);
-	CameraParam::createFloat("White Balance Ratio", "BalanceRatio", paramGUI, camera, 1);
+	CameraParam::createFloat("White Balance Ratio", "BalanceRatio", paramGUI, camera, 1, false, true);
 	CameraParam::createEnum("Exposure Auto", "ExposureAuto", paramGUI, camera, 0);
-	CameraParam::createFloat("Exposure", "ExposureTimeAbs", paramGUI, camera, 10000); // in microseconds
+	CameraParam::createFloat("Exposure", "ExposureTimeAbs", paramGUI, camera, 10000, false, true); // in microseconds
 	CameraParam::createEnum("Pixel Format", "PixelFormat", paramGUI, camera, 4, true);
 	paramGUI->addSeparator("Stream");
 	CameraParam::createInt("Device Link Throughput Limit", "DeviceLinkThroughputLimit", paramGUI, camera, 10000000);  // max bandwidth used by this camera in bytes/second
