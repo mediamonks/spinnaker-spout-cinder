@@ -138,6 +138,7 @@ void SpinnakerSpoutApp::initParamInterface() {
 
 	CameraParam::createInt("Binning", "BinningVertical", paramGUI, camera, 1, true); // 1 is no binning (1x scale), 2 = factor 2 binning (0.5x scale)
 	CameraParam::createEnum("Gain Auto", "GainAuto", paramGUI, camera, 0);
+	CameraParam::createFloat("Gain", "Gain", paramGUI, camera, 15, false, true); // in dB
 	CameraParam::createEnum("White Balance Auto", "BalanceWhiteAuto", paramGUI, camera, 0);
 	CameraParam::createFloat("White Balance Ratio", "BalanceRatio", paramGUI, camera, 1, false, true);
 	CameraParam::createEnum("Exposure Auto", "ExposureAuto", paramGUI, camera, 0);
