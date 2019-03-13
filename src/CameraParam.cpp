@@ -32,7 +32,8 @@ CameraParam::CameraParam(string _spinnakerName, CameraPtr _camera, bool _needsCa
 
 // returns true if camera stopped
 bool CameraParam::applyParams() {
-	if (!cameraSettingsDirty) return false;
+	if (cameraSettingsDirty == false) return false;
+	cameraSettingsDirty = false;
 
 	bool cameraStopped = false;
 	for (auto param : params) {
