@@ -71,62 +71,8 @@ void SpinnakerSpoutApp::draw()
 		}
 	}
 
-	float fontSize = (float)(getWindowWidth() / 50);
-
-	float fpsLeft = getWindowWidth() - toPixels(240);
-	float fpsTop = toPixels(20);
-
-	float infoLeft = toPixels(20);
-	float infoTop = getWindowHeight() - toPixels(20) - fontSize;
-
-	{
-		gl::ScopedColor colorScope(ColorA(0, 0, 0, 0.5));
-		gl::drawSolidRect(Rectf(fpsLeft - 10.f, fpsTop - 10.f, (float)getWindowWidth(), fpsTop + fontSize + 10.f));
-		gl::drawSolidRect(Rectf(0.f, infoTop - 10.f, (float)getWindowWidth(), infoTop + fontSize + 10.f));
-	}
-
-	gl::drawString(status, vec2(infoLeft, infoTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
-
-	stringstream ss;
-	ss << "Fps: " << fps << ", dropped " << geLatestDroppedFrames();
-	gl::drawString(ss.str(), vec2(fpsLeft, fpsTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
-
+	drawInfoBoxes(status, fps);
 	if (paramGUI != NULL) paramGUI->draw();
-}
-
-void SpinnakerSpoutApp::sendToSpout(gl::TextureRef &sendTexture) {
-	if (!checkSpoutInitialized()) return;
-
-	gl::ScopedFramebuffer frameBufferScope(sendFbo);
-	gl::ScopedViewport viewPortScope(sendFbo->getSize());
-	gl::ScopedMatrices matrixScope;
-	gl::setMatricesWindow(sendFbo->getSize(), false);
-
-	gl::draw(sendTexture, sendFbo->getBounds());
-
-	// Send the texture for all receivers to use
-	// NOTE : if SendTexture is called with a framebuffer object bound,
-	// include the FBO id as an argument so that the binding is restored afterwards
-	// because Spout uses an fbo for intermediate rendering
-	auto tex = sendFbo->getColorTexture();
-	spoutSender.SendTexture(tex->getId(), tex->getTarget(), tex->getWidth(), tex->getHeight());
-}
-
-bool spoutInitialized = false;
-bool SpinnakerSpoutApp::checkSpoutInitialized() {
-	if (spoutInitialized && sendFbo != NULL && sendFbo->getWidth() == sendWidth && sendFbo->getHeight() == sendHeight) return true;
-
-	if (spoutInitialized) spoutSender.ReleaseSender();
-
-	sendFbo = gl::Fbo::create(sendWidth, sendHeight);
-	spoutInitialized = spoutSender.CreateSender(senderName.c_str(), sendWidth, sendHeight);
-
-	// MemoryShareMode informs us whether Spout is initialized for texture share or for memory share
-	bool memoryMode = spoutSender.GetMemoryShareMode();
-	if (spoutInitialized) console() << "Spout initialized using " << (memoryMode ? "Memory" : "Texture") << " sharing at " << sendWidth << " x " << sendHeight << endl;
-	else console() << "Spout initialization failed" << endl;
-
-	return spoutInitialized;
 }
 
 void SpinnakerSpoutApp::initParamInterface() {
@@ -250,8 +196,66 @@ bool SpinnakerSpoutApp::checkCameraInitialized() {
 	return false;
 }
 
+void SpinnakerSpoutApp::sendToSpout(gl::TextureRef &sendTexture) {
+	if (!checkSpoutInitialized()) return;
+
+	gl::ScopedFramebuffer frameBufferScope(sendFbo);
+	gl::ScopedViewport viewPortScope(sendFbo->getSize());
+	gl::ScopedMatrices matrixScope;
+	gl::setMatricesWindow(sendFbo->getSize(), false);
+
+	gl::draw(sendTexture, sendFbo->getBounds());
+
+	// Send the texture for all receivers to use
+	// NOTE : if SendTexture is called with a framebuffer object bound,
+	// include the FBO id as an argument so that the binding is restored afterwards
+	// because Spout uses an fbo for intermediate rendering
+	auto tex = sendFbo->getColorTexture();
+	spoutSender.SendTexture(tex->getId(), tex->getTarget(), tex->getWidth(), tex->getHeight());
+}
+
+bool spoutInitialized = false;
+bool SpinnakerSpoutApp::checkSpoutInitialized() {
+	if (spoutInitialized && sendFbo != NULL && sendFbo->getWidth() == sendWidth && sendFbo->getHeight() == sendHeight) return true;
+
+	if (spoutInitialized) spoutSender.ReleaseSender();
+
+	sendFbo = gl::Fbo::create(sendWidth, sendHeight);
+	spoutInitialized = spoutSender.CreateSender(senderName.c_str(), sendWidth, sendHeight);
+
+	// MemoryShareMode informs us whether Spout is initialized for texture share or for memory share
+	bool memoryMode = spoutSender.GetMemoryShareMode();
+	if (spoutInitialized) console() << "Spout initialized using " << (memoryMode ? "Memory" : "Texture") << " sharing at " << sendWidth << " x " << sendHeight << endl;
+	else console() << "Spout initialization failed" << endl;
+
+	return spoutInitialized;
+}
+
+void SpinnakerSpoutApp::drawInfoBoxes(string status, int fps) {
+
+	float fontSize = (float)(getWindowWidth() / 50);
+
+	float fpsLeft = getWindowWidth() - toPixels(240);
+	float fpsTop = toPixels(20);
+
+	float infoLeft = toPixels(20);
+	float infoTop = getWindowHeight() - toPixels(20) - fontSize;
+
+	{
+		gl::ScopedColor colorScope(ColorA(0, 0, 0, 0.5));
+		gl::drawSolidRect(Rectf(fpsLeft - 10.f, fpsTop - 10.f, (float)getWindowWidth(), fpsTop + fontSize + 10.f));
+		gl::drawSolidRect(Rectf(0.f, infoTop - 10.f, (float)getWindowWidth(), infoTop + fontSize + 10.f));
+	}
+
+	gl::drawString(status, vec2(infoLeft, infoTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
+
+	stringstream ss;
+	ss << "Fps: " << fps << ", dropped " << getLatestDroppedFrames();
+	gl::drawString(ss.str(), vec2(fpsLeft, fpsTop), ColorA(1, 1, 1, 1), Font("Verdana", fontSize));
+}
+
 double lastDroppedFramesTime = 0;
-int SpinnakerSpoutApp::geLatestDroppedFrames() {
+int SpinnakerSpoutApp::getLatestDroppedFrames() {
 	if (getElapsedSeconds() - lastDroppedFramesTime > 1) {
 		droppedFrames = 0;
 		lastDroppedFramesTime = getElapsedSeconds();

@@ -41,6 +41,10 @@ class LoggingEventHandler : public LoggingEvent
 };
 
 class SpinnakerSpoutApp : public App {
+	// -------- CINDER PARAM UI --------
+	params::InterfaceGlRef paramGUI = NULL;
+	void initParamInterface();
+
 	// -------- SPINNAKER --------
 	SystemPtr system = NULL;
 	CameraPtr camera = NULL;
@@ -49,10 +53,6 @@ class SpinnakerSpoutApp : public App {
 
 	gl::TextureRef cameraTexture = NULL;
 	void updateCameraTexture(string &status);
-
-	// -------- CINDER PARAM UI --------
-	params::InterfaceGlRef paramGUI = NULL;
-	void initParamInterface();
 
 	// -------- SPOUT --------
 	SpoutSender spoutSender;					// Create a Spout sender object
@@ -66,8 +66,9 @@ class SpinnakerSpoutApp : public App {
 	// -------- MISC --------
 	bool needsInitText = true;
 
+	void drawInfoBoxes(string status, int fps);
 	int droppedFrames = 0;
-	int geLatestDroppedFrames();
+	int getLatestDroppedFrames();
 
 	LoggingEventHandler loggingEventHandler;
 	int logLevelIndex = 4; // 4 = LOG_LEVEL_ERROR
