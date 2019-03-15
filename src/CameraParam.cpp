@@ -16,14 +16,17 @@ bool CameraParam::cameraSettingsDirty = true;
 
 void CameraParam::createEnum(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop, bool poll) {
 	params.push_back(new CameraParamEnum(uiText, spinnakerName, paramGUI, camera, defaultValue, needsCameraStop, poll));
+	cameraSettingsDirty = true;
 }
 
 void CameraParam::createFloat(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, double defaultValue, bool needsCameraStop, bool poll) {
 	params.push_back(new CameraParamFloat(uiText, spinnakerName, paramGUI, camera, defaultValue, needsCameraStop, poll));
+	cameraSettingsDirty = true;
 }
 
 void CameraParam::createInt(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop, bool poll) {
 	params.push_back(new CameraParamInt(uiText, spinnakerName, paramGUI, camera, defaultValue, needsCameraStop, poll));
+	cameraSettingsDirty = true;
 }
 
 CameraParam::CameraParam(string _spinnakerName, CameraPtr _camera, bool _needsCameraStop, bool _poll) {
