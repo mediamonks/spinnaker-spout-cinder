@@ -48,7 +48,7 @@ bool CameraParam::applyParams() {
 	return cameraStopped;
 }
 
-float lastPollingTime = 0;
+double lastPollingTime = 0;
 void CameraParam::pollParamsFromCamera() {
 	if (getElapsedSeconds() - lastPollingTime < POLL_INTERVAL) return;
 	lastPollingTime = getElapsedSeconds();
@@ -69,8 +69,13 @@ CameraParamEnum::CameraParamEnum(string uiText, string _spinnakerName, params::I
 }
 
 bool CameraParamEnum::applyParam() {
+	auto options = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, spinnakerName);
+	if (enumIndex > (int)options.size() - 1) { // cast from long to int is necessary, otherwise we get a crash comparing
+		console() << "Error applying param value " << enumIndex << " to enum " << spinnakerName << ". There are only " << options.size() << " options." << endl;
+		return false;
+	}
+
 	bool cameraStopped = false;
-	vector<string> options = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, spinnakerName);
 	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, spinnakerName) != options[enumIndex]) {
 		if (needsCameraStop) cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		string newChoice = SpinnakerDeviceCommunication::setParameterEnum(camera, spinnakerName, options[enumIndex]);
@@ -109,7 +114,7 @@ CameraParamFloat::CameraParamFloat(string uiText, string _spinnakerName, params:
 	paramGUI->addParam(uiText, &value).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<double>(spinnakerName, value);
-	}).min(range.first).max(range.second);
+	}).min((float)range.first).max((float)range.second);
 }
 
 bool CameraParamFloat::applyParam() {
@@ -138,7 +143,7 @@ CameraParamInt::CameraParamInt(string uiText, string _spinnakerName, params::Int
 	paramGUI->addParam(uiText, &value).updateFn([this] {
 		cameraSettingsDirty = true;
 		UserSettings::writeSetting<int>(spinnakerName, value);
-	}).min(range.first).max(range.second);
+	}).min((float)range.first).max((float)range.second);
 }
 
 bool CameraParamInt::applyParam() {
