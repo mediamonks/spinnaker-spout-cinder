@@ -12,7 +12,9 @@ using namespace Spinnaker::GenICam;
 
 /*
 Make sure to enable jumbo packets on your network interface and set them to 9014 bytes:
-https://www.ptgrey.com/KB/10899#Jumbo%20Packet (assuming you have a network interface that supports this)
+https://www.ptgrey.com/KB/10899#Jumbo%20Packet (assuming you have a network interface that supports this). 
+
+If set, make sure to set the GEV SCPS packet size setting on the camera to 9000 as well
 
 When working with multiple camera's on a network with limited bandwidth, make sure they distribute the bandwidth equally using the Device Link Throughput Limit setting.
 

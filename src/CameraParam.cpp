@@ -94,8 +94,6 @@ bool CameraParamEnum::applyParam() {
 }
 
 void CameraParamEnum::updateFromCamera() {
-	// TODO: only update the ones that we want updated, continuously auto-adjusted ones like exposure
-
 	vector<string> options = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, spinnakerName);
 	string newChoice = SpinnakerDeviceCommunication::getParameterEnumValue(camera, spinnakerName);
 	int newIndex = find(options.begin(), options.end(), newChoice) - options.begin();

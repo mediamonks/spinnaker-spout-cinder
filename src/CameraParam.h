@@ -34,8 +34,8 @@ protected:
 	virtual void updateFromCamera() = 0;
 	CameraPtr camera;
 	string spinnakerName;
-	bool needsCameraStop;
-	bool poll;
+	bool needsCameraStop = false;
+	bool poll = false;
 
 private:
 	static vector<CameraParam*> params;
