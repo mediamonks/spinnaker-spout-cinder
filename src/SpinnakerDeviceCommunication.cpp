@@ -498,6 +498,7 @@ bool SpinnakerDeviceCommunication::checkStreamingStopped(CameraPtr camera) {
 	}
 
 	try {
+		console() << "Stopping camera" << endl;
 		camera->EndAcquisition();
 		prevCaptureWidth = 0;
 		prevCaptureHeight = 0;

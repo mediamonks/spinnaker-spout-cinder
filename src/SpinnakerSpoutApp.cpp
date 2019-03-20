@@ -88,6 +88,7 @@ void SpinnakerSpoutApp::initParamInterface() {
 
 	paramGUI->addSeparator();
 
+	CameraParam::createEnum("Video Mode", "VideoMode", paramGUI, camera, 1, true); // determines what features like binning and color mode are available
 	CameraParam::createInt("Binning", "BinningVertical", paramGUI, camera, 1, true); // 1 is no binning (1x scale), 2 = factor 2 binning (0.5x scale)
 	CameraParam::createEnum("Gain Auto", "GainAuto", paramGUI, camera, 0);
 	CameraParam::createFloat("Gain", "Gain", paramGUI, camera, 15, false, true); // in dB
@@ -143,13 +144,19 @@ void SpinnakerSpoutApp::updateCameraTexture(string &status) {
 	}
 
 	stringstream ss;
-	ss << "Capturing from " << camera->DeviceModelName.GetValue() << " at " << cameraTexture->getWidth() << " x " << cameraTexture->getHeight() << ", sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight;
+	ss << "Capturing from " << camera->DeviceModelName.GetValue() << " at " << cameraTexture->getWidth() << " x " << cameraTexture->getHeight() << ", sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight << " num images in use " << camera->GetNumImagesInUse();
 	status = ss.str();
 }
 
+bool cameraInitialized = false;
 double lastCameraInitCheckTime = -100;
 bool SpinnakerSpoutApp::checkCameraInitialized() {
-	if (camera != NULL && camera->IsInitialized()) return true;
+	if (cameraInitialized) return true;
+
+	if (camera != NULL && camera->IsInitialized()) {
+		cameraInitialized = true;
+		return true;
+	}
 
 	if (getElapsedSeconds() - lastCameraInitCheckTime < CAMERA_AVAILABLE_CHECK_INTERVAL) return false;
 	lastCameraInitCheckTime = getElapsedSeconds();
@@ -159,38 +166,39 @@ bool SpinnakerSpoutApp::checkCameraInitialized() {
 			system = System::GetInstance();
 
 			const LibraryVersion spinnakerLibraryVersion = system->GetLibraryVersion();
-			console() << "Spinnaker library version: "
-				<< spinnakerLibraryVersion.major << "."
-				<< spinnakerLibraryVersion.minor << "."
-				<< spinnakerLibraryVersion.type << "."
-				<< spinnakerLibraryVersion.build << endl << endl;
+			console() << "Spinnaker library initialized, version: " << spinnakerLibraryVersion.major << "." << spinnakerLibraryVersion.minor << "." << spinnakerLibraryVersion.type << "." << spinnakerLibraryVersion.build << endl << endl;
 
 			system->RegisterLoggingEvent(loggingEventHandler);
 			system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
 		}
-
-		CameraList camList = system->GetCameras();
-
-		unsigned int numCameras = camList.GetSize();
-		if (numCameras == 0)
-		{
-			console() << "No cameras found" << endl;
-		}
-		else {
-			camera = camList.GetByIndex(0);
-			try {
-				console() << "Initializing camera 0 (" << camList.GetSize() << " available)..." << endl;
-				camera->Init();
-				//SpinnakerDeviceCommunication::printDeviceInfo(camera);
-				return true;
-			}
-			catch (Spinnaker::Exception &e) {
-				console() << "Error initializing camera: " << e.what() << endl;
-			}
-		}
 	}
 	catch (exception e) {
 		console() << "Error initializing Spinnaker library: " << e.what() << ". Do the included Spinnaker header and lib files match the dll version?" << endl;
+		cameraInitialized = false;
+		return false;
+	}
+
+	CameraList camList = system->GetCameras();
+
+	unsigned int numCameras = camList.GetSize();
+	if (numCameras == 0)
+	{
+		console() << "No cameras found, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
+		cameraInitialized = false;
+		return false;
+	}
+
+	camera = camList.GetByIndex(0);
+	try {
+		console() << "Initializing camera 0 (" << camList.GetSize() << " available)..." << endl;
+		camera->Init();
+		cameraInitialized = true;
+		//SpinnakerDeviceCommunication::printDeviceInfo(camera);
+		return true;
+	}
+	catch (Spinnaker::Exception &e) {
+		console() << "Error initializing camera: " << e.what() << ", retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
+		cameraInitialized = false;
 	}
 
 	console() << "Initializing camera failed, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
