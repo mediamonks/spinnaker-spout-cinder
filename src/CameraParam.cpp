@@ -81,7 +81,7 @@ bool CameraParamEnum::applyParam() {
 		string newChoice = SpinnakerDeviceCommunication::setParameterEnum(camera, spinnakerName, options[enumIndex]);
 		if (newChoice != "error") {
 			int newIndex = find(options.begin(), options.end(), newChoice) - options.begin();
-			if (newIndex != enumIndex) {
+			if (!poll && newIndex != enumIndex) {
 				enumIndex = newIndex;
 				UserSettings::writeSetting<int>(spinnakerName, enumIndex);
 			}
@@ -119,14 +119,19 @@ bool CameraParamFloat::applyParam() {
 	bool cameraStopped = false;
 	if (SpinnakerDeviceCommunication::getParameterFloatValue(camera, spinnakerName) != value) {
 		if (needsCameraStop) cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
-		value = SpinnakerDeviceCommunication::setParameterFloat(camera, spinnakerName, value);
+		float newValue = SpinnakerDeviceCommunication::setParameterFloat(camera, spinnakerName, value);
+		if (!poll && newValue != -1 && newValue != value) {
+			value = newValue;
+			UserSettings::writeSetting<double>(spinnakerName, value);
+		}
 	}
 	return cameraStopped;
 }
 
+// called repetitively if poll is true
 void CameraParamFloat::updateFromCamera() {
 	double newValue = SpinnakerDeviceCommunication::getParameterFloatValue(camera, spinnakerName);
-	if (newValue != value) {
+	if (newValue != -1 && newValue != value) {
 		value = newValue;
 		UserSettings::writeSetting<double>(spinnakerName, value);
 	}
@@ -151,7 +156,7 @@ bool CameraParamInt::applyParam() {
 		if (needsCameraStop) cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 
 		int newValue = SpinnakerDeviceCommunication::setParameterInt(camera, spinnakerName, value);
-		if (newValue != value) {
+		if (!poll && newValue != -1 && newValue != value) {
 			value = newValue;
 			UserSettings::writeSetting<int>(spinnakerName, value);
 		}
@@ -159,9 +164,10 @@ bool CameraParamInt::applyParam() {
 	return cameraStopped;
 }
 
+// called repetitively if poll is true
 void CameraParamInt::updateFromCamera() {
 	int newValue = SpinnakerDeviceCommunication::getParameterIntValue(camera, spinnakerName);
-	if (newValue != value) {
+	if (newValue != -1 && newValue != value) {
 		value = newValue;
 		UserSettings::writeSetting<int>(spinnakerName, value);
 	}
