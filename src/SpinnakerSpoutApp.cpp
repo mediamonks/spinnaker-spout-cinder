@@ -268,6 +268,7 @@ int SpinnakerSpoutApp::getLatestDroppedFrames() {
 void SpinnakerSpoutApp::cleanup()
 {
 	if (camera != NULL) {
+		SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		if (camera->IsStreaming()) camera->EndAcquisition();
 		if (camera->IsInitialized()) camera->DeInit();
 		camera = NULL;

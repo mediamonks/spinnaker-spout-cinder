@@ -458,12 +458,17 @@ void SpinnakerDeviceCommunication::indent(unsigned int level)
 	}
 }
 
-
+bool cameraStarted = false;
 int prevCaptureWidth = 0;
 int prevCaptureHeight = 0;
 // returns true if camera is streaming after calling this method
 bool SpinnakerDeviceCommunication::checkStreamingStarted(CameraPtr camera) {
-	if (camera->IsStreaming()) return true;
+	if (cameraStarted) return true;
+
+	if (camera->IsStreaming()) {
+		cameraStarted = true;
+		return true;
+	}
 
 	try
 	{
@@ -472,25 +477,37 @@ bool SpinnakerDeviceCommunication::checkStreamingStarted(CameraPtr camera) {
 		camera->BeginAcquisition();
 		prevCaptureWidth = 0;
 		prevCaptureHeight = 0;
+		cameraStarted = true;
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
 		console() << "Error starting camera aquisition: " << e.what() << endl;
 		camera->DeInit();
+		cameraStarted = false;
 		return false;
 	}
 }
 
 // returns true if camera is not streaming after calling this method
 bool SpinnakerDeviceCommunication::checkStreamingStopped(CameraPtr camera) {
-	if (!camera->IsStreaming()) return true;
+	if (!cameraStarted) return true;
+
+	if (!camera->IsStreaming()) {
+		cameraStarted = false;
+		return true;
+	}
 
 	try {
 		camera->EndAcquisition();
+		prevCaptureWidth = 0;
+		prevCaptureHeight = 0;
+		cameraStarted = false;
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
 		console() << "Error stopping camera aquisition: " << e.what() << endl;
+		camera->DeInit();
+		cameraStarted = false;
 		return false;
 	}
 }
