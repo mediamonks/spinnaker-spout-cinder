@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <spinnakerSpoutCinder>
-	<PixelFormat>4</PixelFormat>
-	<ExposureAuto>2</ExposureAuto>
-	<GainAuto>0</GainAuto>
-	<BalanceWhiteAuto>0</BalanceWhiteAuto>
-	<DeviceLinkThroughputLimit>40256000</DeviceLinkThroughputLimit>
-	<ExposureTimeAbs>27086.6</ExposureTimeAbs>
-	<BalanceRatio>1.18921</BalanceRatio>
-	<BinningVertical>2</BinningVertical>
+	<Gain0>0</Gain0>
+	<BalanceRatio0>1.26904</BalanceRatio0>
+	<ExposureTimeAbs0>4529.77</ExposureTimeAbs0>
+	<Gain1>0</Gain1>
+	<BalanceRatio1>1.24524</BalanceRatio1>
+	<ExposureTimeAbs1>21198.7</ExposureTimeAbs1>
+	<BinningVertical0>2</BinningVertical0>
+	<DeviceLinkThroughputLimit0>20192000</DeviceLinkThroughputLimit0>
+	<BalanceWhiteAuto0>0</BalanceWhiteAuto0>
+	<GainAuto0>0</GainAuto0>
+	<BalanceWhiteAuto1>0</BalanceWhiteAuto1>
+	<GainAuto1>0</GainAuto1>
+	<BinningVertical1>2</BinningVertical1>
+	<DeviceLinkThroughputLimit1>15880000</DeviceLinkThroughputLimit1>
+	<ExposureAuto1>2</ExposureAuto1>
+	<ExposureAuto0>2</ExposureAuto0>
 </spinnakerSpoutCinder>
 

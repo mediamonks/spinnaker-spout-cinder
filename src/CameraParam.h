@@ -11,6 +11,7 @@
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+
 using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
@@ -18,48 +19,43 @@ using namespace Spinnaker::GenICam;
 class CameraParam
 {
 public:
-	CameraParam(string spinnakerName, CameraPtr camera, bool needsCameraStop, bool poll);
-
-	static void createEnum(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop = false, bool poll = false);
-	static void createFloat(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, double defaultValue, bool needsCameraStop = false, bool poll = false);
-	static void createInt(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, bool needsCameraStop = false, bool poll = false);
-
-	static bool applyParams();
-	static void pollParamsFromCamera();
-	
-protected:
-	static bool cameraSettingsDirty;
-
+	CameraParam(string spinnakerName, CameraPtr camera, bool needsCameraStop, bool poll, int cameraIndex);
 	virtual bool applyParam() = 0;
 	virtual void updateFromCamera() = 0;
-	CameraPtr camera;
-	string spinnakerName;
 	bool needsCameraStop = false;
 	bool poll = false;
+	string getName() {
+		return settingName;
+	}
 
-private:
-	static vector<CameraParam*> params;
+protected:
+	static string getCameraName(int cameraIndex, CameraPtr camera);
+
+	CameraPtr camera;
+	string spinnakerName;
+	string settingName;
+	int cameraIndex = -1;
 };
 
 class CameraParamEnum : public CameraParam
 {
 public:
-	CameraParamEnum(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool needsCameraStop = false, bool poll = false);
-
-private:
+	CameraParamEnum(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll, bool* dirty);
 	bool applyParam() override;
 	void updateFromCamera() override;
+
+private:
 	int enumIndex = 0;
 };
 
 class CameraParamFloat: public CameraParam
 {
 public:
-	CameraParamFloat(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, double defaultValue, bool needsCameraStop = false, bool poll = false);
-
-private:
+	CameraParamFloat(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, double defaultValue, int cameraIndex, bool needsCameraStop, bool poll, bool* dirty);
 	bool applyParam() override;
 	void updateFromCamera() override;
+
+private:
 	double value = 0;
 	pair<double, double> range;
 
@@ -68,11 +64,11 @@ private:
 class CameraParamInt: public CameraParam
 {
 public:
-	CameraParamInt(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, bool needsCameraStop = false, bool poll = false);
-
-private:
+	CameraParamInt(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll, bool* dirty);
 	bool applyParam() override;
 	void updateFromCamera() override;
+
+private:
 	int value = 0;
 	pair<int, int> range;
 };

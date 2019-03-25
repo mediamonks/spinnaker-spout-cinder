@@ -15,10 +15,12 @@
 #include "UserSettings.h"
 
 #include "CameraParam.h"
+#include "SpinnakerCamera.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+
 using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
@@ -41,18 +43,13 @@ class LoggingEventHandler : public LoggingEvent
 };
 
 class SpinnakerSpoutApp : public App {
-	// -------- CINDER PARAM UI --------
-	params::InterfaceGlRef paramGUI = NULL;
-	void initParamInterface();
-
 	// -------- SPINNAKER --------
 	SystemPtr system = NULL;
-	CameraPtr camera = NULL;
+	vector<SpinnakerCamera*> cameras;
+	void initCameras(params::InterfaceGlRef paramsGUI);
+	int visibleCamera = 0;
 
-	bool checkCameraInitialized();
-
-	gl::TextureRef cameraTexture = NULL;
-	void updateCameraTexture(string &status);
+	params::InterfaceGlRef paramGUI = NULL;
 
 	// -------- SPOUT --------
 	SpoutSender spoutSender;					// Create a Spout sender object
@@ -67,8 +64,6 @@ class SpinnakerSpoutApp : public App {
 	bool needsInitText = true;
 
 	void drawInfoBoxes(string status, int fps);
-	int droppedFrames = 0;
-	int getLatestDroppedFrames();
 
 	LoggingEventHandler loggingEventHandler;
 	int logLevelIndex = 4; // 4 = LOG_LEVEL_ERROR

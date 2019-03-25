@@ -109,6 +109,8 @@
   <ItemGroup />
   <ItemGroup>
     <ClCompile Include="..\src\CameraParam.cpp" />
+    <ClCompile Include="..\src\CameraParams.cpp" />
+    <ClCompile Include="..\src\SpinnakerCamera.cpp" />
     <ClCompile Include="..\src\SpinnakerDeviceCommunication.cpp" />
     <ClCompile Include="..\src\SpinnakerSpoutApp.cpp" />
     <ClCompile Include="..\src\UserSettings.cpp" />
@@ -117,6 +119,8 @@
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\include\SpoutLibrary.h" />
     <ClInclude Include="..\src\CameraParam.h" />
+    <ClInclude Include="..\src\CameraParams.h" />
+    <ClInclude Include="..\src\SpinnakerCamera.h" />
     <ClInclude Include="..\src\SpinnakerDeviceCommunication.h" />
     <ClInclude Include="..\src\SpinnakerSpoutApp.h" />
     <ClInclude Include="..\src\UserSettings.h" />

@@ -458,57 +458,36 @@ void SpinnakerDeviceCommunication::indent(unsigned int level)
 	}
 }
 
-bool cameraStarted = false;
-int prevCaptureWidth = 0;
-int prevCaptureHeight = 0;
 // returns true if camera is streaming after calling this method
 bool SpinnakerDeviceCommunication::checkStreamingStarted(CameraPtr camera) {
-	if (cameraStarted) return true;
-
-	if (camera->IsStreaming()) {
-		cameraStarted = true;
-		return true;
-	}
+	if (camera->IsStreaming()) return true;
 
 	try
 	{
-		console() << "Starting camera with access mode " << SpinnakerDeviceCommunication::accessModeToString(camera->GetAccessMode()) << "..." << endl;
+		console() << "Starting camera " << camera->DeviceModelName() << " with access mode " << SpinnakerDeviceCommunication::accessModeToString(camera->GetAccessMode()) << "..." << endl;
 		SpinnakerDeviceCommunication::setParameterEnum(camera, "AcquisitionMode", "Continuous");
 		camera->BeginAcquisition();
-		prevCaptureWidth = 0;
-		prevCaptureHeight = 0;
-		cameraStarted = true;
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
 		console() << "Error starting camera aquisition: " << e.what() << endl;
 		camera->DeInit();
-		cameraStarted = false;
 		return false;
 	}
 }
 
 // returns true if camera is not streaming after calling this method
 bool SpinnakerDeviceCommunication::checkStreamingStopped(CameraPtr camera) {
-	if (!cameraStarted) return true;
-
-	if (!camera->IsStreaming()) {
-		cameraStarted = false;
-		return true;
-	}
+	if (!camera->IsStreaming()) return true;
 
 	try {
-		console() << "Stopping camera" << endl;
+		console() << "Stopping camera " << camera->DeviceModelName() << endl;
 		camera->EndAcquisition();
-		prevCaptureWidth = 0;
-		prevCaptureHeight = 0;
-		cameraStarted = false;
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
 		console() << "Error stopping camera aquisition: " << e.what() << endl;
 		camera->DeInit();
-		cameraStarted = false;
 		return false;
 	}
 }
@@ -528,12 +507,6 @@ bool SpinnakerDeviceCommunication::getCameraTexture(CameraPtr camera, gl::Textur
 		{
 			int w = capturedImage->GetWidth();
 			int h = capturedImage->GetHeight();
-
-			if (prevCaptureWidth != w || prevCaptureHeight != h) {
-				console() << "Now grabbing images at " << capturedImage->GetWidth() << " x " << capturedImage->GetHeight() << ", " << capturedImage->GetPixelFormatName() << endl;
-				prevCaptureWidth = w;
-				prevCaptureHeight = h;
-			}
 
 			ImagePtr convertedImage = capturedImage->Convert(PixelFormat_RGB8, NEAREST_NEIGHBOR); // Note that color processing algorithms other than NEAREST_NEIGHBOR are probably too slow for continous acquisition at high resolutions.
 			capturedImage->Release();
