@@ -38,7 +38,7 @@ gl::TextureRef SpinnakerCamera::getCameraTexture() {
 
 	checkParamInterfaceInitialized();
 
-	cameraParams.applyParams();  // potentially stops camera acquisition to apply changed settings
+	cameraStarted = cameraStarted && !cameraParams.applyParams();  // potentially stops camera acquisition to apply changed settings
 
 	if (!checkCameraStarted()) {
 		console() << "Unable to start Camera " + to_string(cameraIndex) << ", retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
