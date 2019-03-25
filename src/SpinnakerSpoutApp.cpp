@@ -23,7 +23,7 @@ https://www.ptgrey.com/KB/11151
 #define WINDOW_W 1024
 #define WINDOW_H 768
 
-#define NEEDED_NUM_CAMERAS 2
+#define NEEDED_NUM_CAMERAS 3
 
 void prepareSettings(App::Settings *settings)
 {
@@ -45,7 +45,7 @@ void SpinnakerSpoutApp::setup()
 	gl::color(ColorA(1, 1, 1, 1));
 
 	paramGUI = params::InterfaceGl::create(getWindow(), "Parameters", toPixels(ivec2(200, 300)));
-	paramGUI->setSize(vec2(WINDOW_W / 3, WINDOW_H / 2));
+	paramGUI->setSize(vec2(WINDOW_W / 3, WINDOW_H - 60));
 
 	paramGUI->addParam("Camera Log Level", SpinnakerDeviceCommunication::getLogLevelStrings(), &logLevelIndex).updateFn([this] {
 		system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
