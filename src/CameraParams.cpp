@@ -14,27 +14,23 @@ using namespace Spinnaker::GenICam;
 bool CameraParams::pollingEnabled = false;
 
 void CameraParams::createEnum(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll) {
-	params.push_back(new CameraParamEnum(uiText, spinnakerName, paramGUI, camera, defaultValue, cameraIndex, needsCameraStop, poll, &dirty));
-	dirty = true;
+	params.push_back(new CameraParamEnum(uiText, spinnakerName, paramGUI, camera, defaultValue, cameraIndex, needsCameraStop, poll));
 }
 
 void CameraParams::createFloat(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, double defaultValue, int cameraIndex, bool needsCameraStop, bool poll) {
-	params.push_back(new CameraParamFloat(uiText, spinnakerName, paramGUI, camera, defaultValue, cameraIndex, needsCameraStop, poll, &dirty));
-	dirty = true;
+	params.push_back(new CameraParamFloat(uiText, spinnakerName, paramGUI, camera, defaultValue, cameraIndex, needsCameraStop, poll));
 }
 
 void CameraParams::createInt(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll) {
-	params.push_back(new CameraParamInt(uiText, spinnakerName, paramGUI, camera, defaultValue, cameraIndex, needsCameraStop, poll, &dirty));
-	dirty = true;
+	params.push_back(new CameraParamInt(uiText, spinnakerName, paramGUI, camera, defaultValue, cameraIndex, needsCameraStop, poll));
 }
 
 // returns true if camera stopped
 bool CameraParams::applyParams() {
-	if (dirty == false) return false;
-	dirty = false;
-
 	bool cameraStopped = false;
 	for (auto param : params) {
+		if (!param->dirty) continue;
+		param->dirty = false;
 		cameraStopped = cameraStopped || param->applyParam();
 	}
 	return cameraStopped;

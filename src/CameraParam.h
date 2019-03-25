@@ -24,9 +24,9 @@ public:
 	virtual void updateFromCamera() = 0;
 	bool needsCameraStop = false;
 	bool poll = false;
-	string getName() {
-		return settingName;
-	}
+	bool dirty = true;
+
+	string getName() { return settingName; }
 
 protected:
 	static string getCameraName(int cameraIndex, CameraPtr camera);
@@ -40,7 +40,7 @@ protected:
 class CameraParamEnum : public CameraParam
 {
 public:
-	CameraParamEnum(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll, bool* dirty);
+	CameraParamEnum(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll);
 	bool applyParam() override;
 	void updateFromCamera() override;
 
@@ -51,7 +51,7 @@ private:
 class CameraParamFloat: public CameraParam
 {
 public:
-	CameraParamFloat(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, double defaultValue, int cameraIndex, bool needsCameraStop, bool poll, bool* dirty);
+	CameraParamFloat(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, double defaultValue, int cameraIndex, bool needsCameraStop, bool poll);
 	bool applyParam() override;
 	void updateFromCamera() override;
 
@@ -64,7 +64,7 @@ private:
 class CameraParamInt: public CameraParam
 {
 public:
-	CameraParamInt(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll, bool* dirty);
+	CameraParamInt(std::string uiText, std::string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll);
 	bool applyParam() override;
 	void updateFromCamera() override;
 

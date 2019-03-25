@@ -27,7 +27,6 @@ public:
 	void pollParamsFromCamera();
 
 private:
-	bool dirty = true;
 	vector<CameraParam*> params;
 	double lastPollingTime = 0;
 };
