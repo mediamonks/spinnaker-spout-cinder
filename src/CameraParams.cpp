@@ -11,6 +11,8 @@ using namespace Spinnaker::GenICam;
 
 #define POLL_INTERVAL 5 // seconds
 
+bool CameraParams::pollingEnabled = false;
+
 void CameraParams::createEnum(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll) {
 	params.push_back(new CameraParamEnum(uiText, spinnakerName, paramGUI, camera, defaultValue, cameraIndex, needsCameraStop, poll, &dirty));
 	dirty = true;
@@ -39,11 +41,13 @@ bool CameraParams::applyParams() {
 }
 
 void CameraParams::pollParamsFromCamera() {
+	if (!pollingEnabled) return;
+
 	if (getElapsedSeconds() - lastPollingTime < POLL_INTERVAL) return;
 	lastPollingTime = getElapsedSeconds();
+
 	for (auto param : params) {
 		if (param->poll) {
-			console() << "polling " << param->getName() << endl;;
 			param->updateFromCamera();
 		}
 	}

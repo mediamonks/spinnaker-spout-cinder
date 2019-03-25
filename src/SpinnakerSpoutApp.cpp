@@ -56,6 +56,7 @@ void SpinnakerSpoutApp::setup()
 
 	initCameras(paramGUI);
 
+	paramGUI->addParam<bool>("Polling", &CameraParams::pollingEnabled);
 	paramGUI->addParam("Camera to show", &visibleCamera).min(0).max(cameras.size() - 1);
 
 	// -------- SPOUT --------
