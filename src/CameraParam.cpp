@@ -13,7 +13,17 @@ using namespace Spinnaker::GenICam;
 
 CameraParam::CameraParam(string _spinnakerName, CameraPtr _camera, bool _needsCameraStop, bool _poll, int _cameraIndex) {
 	spinnakerName = _spinnakerName;
-	settingName = _spinnakerName + to_string(_cameraIndex);
+	if (_cameraIndex != -1) {
+		if (_camera->IsInitialized()) {
+			stringstream ss;
+			ss << _spinnakerName << "_" << _camera->DeviceSerialNumber();
+			settingName = ss.str();
+		}
+		else {
+			console() << "Error: camera not initialized when creating parameter" << endl;
+		}
+	}
+
 	camera = _camera;
 	needsCameraStop = _needsCameraStop;
 	poll = _poll;
@@ -55,7 +65,7 @@ bool CameraParamEnum::applyParam() {
 			cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		}
 
-		console() << "setting " << spinnakerName << " to " << options[enumIndex] << endl;
+		console() << "Setting " << spinnakerName << " to " << options[enumIndex] << endl;
 
 		string newChoice = SpinnakerDeviceCommunication::setParameterEnum(camera, spinnakerName, options[enumIndex]);
 		if (newChoice != "error") {
@@ -106,7 +116,7 @@ bool CameraParamFloat::applyParam() {
 			cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		}
 
-		console() << "setting " << spinnakerName << " to " << value << endl;
+		console() << "Setting " << spinnakerName << " to " << value << endl;
 
 		float newValue = SpinnakerDeviceCommunication::setParameterFloat(camera, spinnakerName, value);
 		if (!poll && newValue != -1 && newValue != value) {
@@ -150,8 +160,6 @@ bool CameraParamInt::applyParam() {
 			console() << spinnakerName << " needs camera to be stopped." << endl;
 			cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		}
-
-		console() << "setting " << spinnakerName << " to " << value << endl;
 
 		int newValue = SpinnakerDeviceCommunication::setParameterInt(camera, spinnakerName, value);
 		if (!poll && newValue != -1 && newValue != value) {
