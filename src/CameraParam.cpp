@@ -49,6 +49,7 @@ CameraParamEnum::CameraParamEnum(string uiText, string _spinnakerName, params::I
 	});
 
 	if (cameraIndex != -1) options.group(getCameraName(cameraIndex, camera));
+	applyParam();
 }
 
 bool CameraParamEnum::applyParam() {
@@ -106,6 +107,7 @@ CameraParamFloat::CameraParamFloat(string uiText, string _spinnakerName, params:
 	}).min((float)range.first).max((float)range.second);
 
 	if (cameraIndex != -1) options.group(getCameraName(cameraIndex, camera));
+	applyParam();
 }
 
 bool CameraParamFloat::applyParam() {
@@ -150,6 +152,7 @@ CameraParamInt::CameraParamInt(string uiText, string _spinnakerName, params::Int
 	}).min((float)range.first).max((float)range.second);
 
 	if (cameraIndex != -1) options.group(getCameraName(cameraIndex, camera));
+	applyParam();
 }
 
 bool CameraParamInt::applyParam() {
