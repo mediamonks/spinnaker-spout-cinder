@@ -23,6 +23,7 @@ public:
 	gl::TextureRef getCameraTexture();
 
 	int getLatestDroppedFrames();
+	string getSerialNumber();
 	void cleanup();
 
 private:

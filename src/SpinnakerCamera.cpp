@@ -157,6 +157,17 @@ int SpinnakerCamera::getLatestDroppedFrames() {
 	return droppedFrames;
 }
 
+string SpinnakerCamera::getSerialNumber() {
+	if (camera != NULL) {
+		stringstream ss;
+		ss << camera->DeviceSerialNumber();
+		return ss.str();
+	}
+	else {
+		return "";
+	}
+}
+
 void SpinnakerCamera::cleanup() {
 	if (camera != NULL) {
 		SpinnakerDeviceCommunication::checkStreamingStopped(camera);

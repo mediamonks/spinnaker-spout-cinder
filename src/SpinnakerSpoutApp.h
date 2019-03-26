@@ -52,13 +52,12 @@ class SpinnakerSpoutApp : public App {
 	params::InterfaceGlRef paramGUI = NULL;
 
 	// -------- SPOUT --------
-	SpoutSender spoutSender;					// Create a Spout sender object
-	string senderName = "Point Grey";
+	map<string, SpoutSender*> spoutSenders;
+	SpoutSender* getSpoutSender(string name);
 	int sendWidth = 640;
 	int sendHeight = 480;
 	gl::FboRef sendFbo;
-	bool checkSpoutInitialized();
-	void sendToSpout(gl::TextureRef &sendTexture);
+	void sendToSpout(string name, gl::TextureRef &sendTexture);
 
 	// -------- MISC --------
 	bool needsInitText = true;
