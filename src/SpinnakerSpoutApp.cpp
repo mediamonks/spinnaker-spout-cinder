@@ -99,39 +99,33 @@ void SpinnakerSpoutApp::draw()
 	string status;
 	int fps = 0;
 
-	if (needsInitText) {		
-		status = "Initializing..."; // draw this before starting camera initialization because that blocks app
-		needsInitText = false;
-	}
-	else {
-		bool capturingAll = true;
-		int i = 0;
-		for (auto camera : cameras) {
-			gl::TextureRef cameraTexture = camera->getLatestCameraTexture(); // gets latest available frame from camera
+	bool allCamerasStreaming = true;
+	int i = 0;
+	for (auto camera : cameras) {
+		gl::TextureRef cameraTexture = camera->getLatestCameraTexture(); // gets latest available frame from camera
 
-			if (cameraTexture != NULL) {
-				if (i == visibleCamera) {
-					bool flip = true;
-					gl::draw(cameraTexture, Rectf(0.f, flip ? (float)getWindowHeight() : 0.f, (float)getWindowWidth(), flip ? 0.f : (float)getWindowHeight()));
+		if (cameraTexture != NULL) {
+			if (i == visibleCamera) {
+				bool flip = true;
+				gl::draw(cameraTexture, Rectf(0.f, flip ? (float)getWindowHeight() : 0.f, (float)getWindowWidth(), flip ? 0.f : (float)getWindowHeight()));
 
-					stringstream ss;
-					ss << "Camera " << camera->getSerialNumber() << " capturing at " << camera->getFps() << " fps.";
-					status = ss.str();
-				}
-
-				// sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight << "
-				spoutPool.sendToSpout(camera->getSerialNumber(), sendWidth, sendHeight, cameraTexture);
+				stringstream ss;
+				ss << "Camera " << camera->getSerialNumber() << " capturing at " << camera->getFps() << " fps.";
+				status = ss.str();
 			}
-			else {
-				capturingAll = false;
-			}
-			i++;
+
+			// sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight << "
+			spoutPool.sendToSpout(camera->getSerialNumber(), sendWidth, sendHeight, cameraTexture);
 		}
-
-		if (!capturingAll) status = "Waiting for cameras";
-
-		fps = (int)getAverageFps();
+		else {
+			allCamerasStreaming = false;
+		}
+		i++;
 	}
+
+	if (!allCamerasStreaming) status = "Waiting for cameras...";
+
+	fps = (int)getAverageFps();
 
 	drawInfoBoxes(status, fps);
 	if (paramGUI != NULL) paramGUI->draw();
@@ -171,7 +165,7 @@ void SpinnakerSpoutApp::cleanup()
 		camera->cleanup();
 	}
 	system->UnregisterLoggingEvent(loggingEventHandler);
-	system->ReleaseInstance(); // Release system
+	system->ReleaseInstance();
 	spoutPool.cleanup();
 }
 
