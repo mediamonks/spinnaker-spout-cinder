@@ -494,9 +494,7 @@ bool SpinnakerDeviceCommunication::checkStreamingStopped(CameraPtr camera) {
 
 bool SpinnakerDeviceCommunication::getCameraTexture(CameraPtr camera, gl::TextureRef& outputTexture) {
 	try {
-		// TODO: we only grab one frame at a time. So if frame rate of app is lower than camera, we are building up the frame buffer of the camera and getting slow motion output as a result. Multithread this.
-
-		ImagePtr capturedImage = camera->GetNextImage(1000); // Note: blocks until a new frame is available, limiting the frame rate of the entire app
+		ImagePtr capturedImage = camera->GetNextImage(1000); // Note: blocks until a new frame is available
 		if (capturedImage->IsIncomplete())
 		{
 			console() << "Image incomplete with image status " << capturedImage->GetImageStatus() << endl;
