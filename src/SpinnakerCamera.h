@@ -25,6 +25,7 @@ public:
 	~SpinnakerCamera();
 
 	gl::TextureRef getLatestCameraTexture();
+	float getFps();
 
 	int getLatestDroppedFrames();
 	string getSerialNumber();
@@ -39,6 +40,9 @@ private:
 	gl::TextureRef cameraTexture = NULL;
 	double lastDroppedFramesTime = 0;
 	atomic<int> droppedFrames = 0;
+
+	float prevFrameTime = 0;
+	atomic<float> fps = 0;
 
 	CameraParams cameraParams;
 

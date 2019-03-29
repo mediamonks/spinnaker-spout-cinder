@@ -94,11 +94,21 @@ gl::TextureRef SpinnakerCamera::getNextCameraTexture() {
 		int h = cameraTexture->getHeight();
 
 		if (prevCaptureWidth != w || prevCaptureHeight != h) {
-			console() << "Now grabbing images at " << w << " x " << h << endl;
+			console() << "Camera " << camera->DeviceSerialNumber() << " now grabbing images at " << w << " x " << h << endl;
 			prevCaptureWidth = w;
 			prevCaptureHeight = h;
 		}
 
+		float now = getElapsedSeconds();
+		if (prevFrameTime == 0) {
+			prevFrameTime = now;
+			fps = 0;
+		}
+		else {
+			float thisFrameFps = 1 / (now - prevFrameTime);
+			fps = fps * 0.9f + 0.1f * thisFrameFps;
+			prevFrameTime = now;
+		}
 		return cameraTexture;
 	}
 }
@@ -136,12 +146,12 @@ bool SpinnakerCamera::checkCameraInitialized() {
 	try {
 		camera->Init();
 		cameraInitialized = true;
-		console() << "Initialized camera " << camera->DeviceModelName() << endl;
+		console() << "Initialized camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")" << endl;
 		//SpinnakerDeviceCommunication::printDeviceInfo(camera);
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
-		console() << "Error initializing camera: " << e.what() << endl;
+		console() << "Error initializing camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")" << ": " << e.what() << endl;
 		cameraInitialized = false;
 		return false;
 	}
@@ -203,6 +213,10 @@ string SpinnakerCamera::getSerialNumber() {
 	else {
 		return "";
 	}
+}
+
+float SpinnakerCamera::getFps() {
+	return fps;
 }
 
 void SpinnakerCamera::cleanup() {

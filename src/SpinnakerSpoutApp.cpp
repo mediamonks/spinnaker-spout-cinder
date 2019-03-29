@@ -113,6 +113,10 @@ void SpinnakerSpoutApp::draw()
 				if (i == visibleCamera) {
 					bool flip = true;
 					gl::draw(cameraTexture, Rectf(0.f, flip ? (float)getWindowHeight() : 0.f, (float)getWindowWidth(), flip ? 0.f : (float)getWindowHeight()));
+
+					stringstream ss;
+					ss << "Camera " << camera->getSerialNumber() << " capturing at " << camera->getFps() << " fps.";
+					status = ss.str();
 				}
 
 				// sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight << "
@@ -124,8 +128,7 @@ void SpinnakerSpoutApp::draw()
 			i++;
 		}
 
-		if (capturingAll) status = "Capturing...";
-		else status = "Waiting for camera...";
+		if (!capturingAll) status = "Waiting for cameras";
 
 		fps = (int)getAverageFps();
 	}
