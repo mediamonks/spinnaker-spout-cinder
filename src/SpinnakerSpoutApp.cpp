@@ -116,7 +116,7 @@ void SpinnakerSpoutApp::draw()
 				}
 
 				// sending as " << senderName.c_str() << " at " << sendWidth << " x " << sendHeight << "
-				sendToSpout(camera->getSerialNumber(), cameraTexture);
+				spoutPool.sendToSpout(camera->getSerialNumber(), sendWidth, sendHeight, cameraTexture);
 			}
 			else {
 				capturingAll = false;
@@ -132,51 +132,6 @@ void SpinnakerSpoutApp::draw()
 
 	drawInfoBoxes(status, fps);
 	if (paramGUI != NULL) paramGUI->draw();
-}
-
-void SpinnakerSpoutApp::sendToSpout(string name, gl::TextureRef &sendTexture) {
-	auto sender = getSpoutSender(name);
-
-	gl::ScopedFramebuffer frameBufferScope(sendFbo);
-	gl::ScopedViewport viewPortScope(sendFbo->getSize());
-	gl::ScopedMatrices matrixScope;
-	gl::setMatricesWindow(sendFbo->getSize(), false);
-
-	gl::draw(sendTexture, sendFbo->getBounds());
-
-	// Send the texture for all receivers to use
-	// NOTE : if SendTexture is called with a framebuffer object bound,
-	// include the FBO id as an argument so that the binding is restored afterwards
-	// because Spout uses an fbo for intermediate rendering
-	auto tex = sendFbo->getColorTexture();
-	sender->SendTexture(tex->getId(), tex->getTarget(), tex->getWidth(), tex->getHeight());
-}
-
-int prevSendWidth = 0;
-int prevSendHeight = 0;
-SpoutSender* SpinnakerSpoutApp::getSpoutSender(string name) { // also makes sure send fbo is initialized
-	if (prevSendWidth != sendWidth || prevSendHeight != sendHeight)
-	{
-		for (auto senderKv : spoutSenders) {
-			auto name = senderKv.first;
-			auto sender = senderKv.second;
-			sender->UpdateSender(name.c_str(), sendWidth, sendHeight);
-		}
-		prevSendWidth = sendWidth;
-		prevSendHeight = sendHeight;
-		sendFbo = gl::Fbo::create(sendWidth, sendHeight);
-	}
-
-	if (spoutSenders.count(name) <= 0) {
-		spoutSenders[name] = new SpoutSender();
-		bool success = spoutSenders[name]->CreateSender(name.c_str(), sendWidth, sendHeight);
-		bool memoryMode = spoutSenders[name]->GetMemoryShareMode();
-
-		if (success) console() << "Spout sender " << name << " initialized using " << (memoryMode ? "Memory" : "Texture") << " sharing at " << sendWidth << " x " << sendHeight << endl;
-		else console() << "Spout initialization failed" << endl;
-	}
-
-	return spoutSenders[name];
 }
 
 void SpinnakerSpoutApp::drawInfoBoxes(string status, int fps) {
@@ -214,11 +169,7 @@ void SpinnakerSpoutApp::cleanup()
 	}
 	system->UnregisterLoggingEvent(loggingEventHandler);
 	system->ReleaseInstance(); // Release system
-	for (auto senderKv : spoutSenders) {
-		auto sender = senderKv.second;
-		sender->ReleaseSender();
-		delete sender;
-	}
+	spoutPool.cleanup();
 }
 
 CINDER_APP(SpinnakerSpoutApp, RendererGl, prepareSettings)

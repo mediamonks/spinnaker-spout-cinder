@@ -4,9 +4,6 @@
 #include "cinder/gl/gl.h"
 #include "cinder/params/Params.h"
 
-#include "SpoutLibrary.h"
-#include "..\SpoutSDK\Spout.h"
-
 #include "Spinnaker.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
 
@@ -16,6 +13,7 @@
 
 #include "CameraParam.h"
 #include "SpinnakerCamera.h"
+#include "SpoutPool.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -52,12 +50,9 @@ class SpinnakerSpoutApp : public App {
 	params::InterfaceGlRef paramGUI = NULL;
 
 	// -------- SPOUT --------
-	map<string, SpoutSender*> spoutSenders;
-	SpoutSender* getSpoutSender(string name);
+	SpoutPool spoutPool;
 	int sendWidth = 640;
 	int sendHeight = 480;
-	gl::FboRef sendFbo;
-	void sendToSpout(string name, gl::TextureRef &sendTexture);
 
 	// -------- MISC --------
 	bool needsInitText = true;

@@ -113,6 +113,7 @@
     <ClCompile Include="..\src\SpinnakerCamera.cpp" />
     <ClCompile Include="..\src\SpinnakerDeviceCommunication.cpp" />
     <ClCompile Include="..\src\SpinnakerSpoutApp.cpp" />
+    <ClCompile Include="..\src\SpoutPool.cpp" />
     <ClCompile Include="..\src\UserSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +124,7 @@
     <ClInclude Include="..\src\SpinnakerCamera.h" />
     <ClInclude Include="..\src\SpinnakerDeviceCommunication.h" />
     <ClInclude Include="..\src\SpinnakerSpoutApp.h" />
+    <ClInclude Include="..\src\SpoutPool.h" />
     <ClInclude Include="..\src\UserSettings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
