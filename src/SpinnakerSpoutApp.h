@@ -72,5 +72,3 @@ public:
 	void draw() override;
 	void cleanup() override;
 };
-
-SpinnakerLogLevel indexToSpinnakerLogLevel(int index);

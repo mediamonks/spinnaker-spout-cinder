@@ -42,4 +42,5 @@ public:
 	static bool getCameraTexture(CameraPtr camera, gl::TextureRef& outputTexture);
 
 	static vector<string> getLogLevelStrings();
+	static SpinnakerLogLevel indexToLogLevel(int index);
 };

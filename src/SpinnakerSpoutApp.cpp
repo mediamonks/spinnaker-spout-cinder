@@ -48,7 +48,7 @@ void SpinnakerSpoutApp::setup()
 	paramGUI->setSize(vec2(WINDOW_W / 3, WINDOW_H - 60));
 
 	paramGUI->addParam("Camera Log Level", SpinnakerDeviceCommunication::getLogLevelStrings(), &logLevelIndex).updateFn([this] {
-		system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
+		system->SetLoggingEventPriorityLevel(SpinnakerDeviceCommunication::indexToLogLevel(logLevelIndex));
 		UserSettings::writeSetting<int>("LogLevelIndex", logLevelIndex);
 	});
 
@@ -79,7 +79,7 @@ void SpinnakerSpoutApp::initCameras(params::InterfaceGlRef paramGUI) {
 			console() << "Spinnaker library initialized, version: " << spinnakerLibraryVersion.major << "." << spinnakerLibraryVersion.minor << "." << spinnakerLibraryVersion.type << "." << spinnakerLibraryVersion.build << endl << endl;
 
 			system->RegisterLoggingEvent(loggingEventHandler);
-			system->SetLoggingEventPriorityLevel(indexToSpinnakerLogLevel(logLevelIndex));
+			system->SetLoggingEventPriorityLevel(SpinnakerDeviceCommunication::indexToLogLevel(logLevelIndex));
 
 			for (int i = 0; i < NEEDED_NUM_CAMERAS; i++) {
 				cameras.push_back(new SpinnakerCamera(system, i, paramGUI));
@@ -218,22 +218,6 @@ void SpinnakerSpoutApp::cleanup()
 		auto sender = senderKv.second;
 		sender->ReleaseSender();
 		delete sender;
-	}
-}
-
-SpinnakerLogLevel indexToSpinnakerLogLevel(int index) {
-	switch (index) {
-		case 0: return LOG_LEVEL_OFF;
-		case 1: return LOG_LEVEL_FATAL;
-		case 2: return LOG_LEVEL_ALERT;
-		case 3: return LOG_LEVEL_CRIT;
-		case 4: return LOG_LEVEL_ERROR;
-		case 5: return LOG_LEVEL_WARN;
-		case 6: return LOG_LEVEL_NOTICE;
-		case 7: return LOG_LEVEL_INFO;
-		case 8: return LOG_LEVEL_DEBUG;
-		case 9: return LOG_LEVEL_NOTSET;
-		default: return LOG_LEVEL_OFF;
 	}
 }
 
