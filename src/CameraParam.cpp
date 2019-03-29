@@ -66,7 +66,7 @@ bool CameraParamEnum::applyParam() {
 			cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		}
 
-		console() << "Setting " << spinnakerName << " to " << options[enumIndex] << endl;
+		//console() << "Setting " << spinnakerName << " to " << options[enumIndex] << endl;
 
 		string newChoice = SpinnakerDeviceCommunication::setParameterEnum(camera, spinnakerName, options[enumIndex]);
 		if (newChoice != "error") {
@@ -118,7 +118,7 @@ bool CameraParamFloat::applyParam() {
 			cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		}
 
-		console() << "Setting " << spinnakerName << " to " << value << endl;
+		//console() << "Setting " << spinnakerName << " to " << value << endl;
 
 		float newValue = SpinnakerDeviceCommunication::setParameterFloat(camera, spinnakerName, value);
 		if (!poll && newValue != -1 && newValue != value) {

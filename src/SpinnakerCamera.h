@@ -3,6 +3,8 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/params/Params.h"
+#include "cinder/Thread.h"
+#include "cinder/ConcurrentCircularBuffer.h"
 
 #include "Spinnaker.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
@@ -20,7 +22,9 @@ using namespace Spinnaker::GenICam;
 class SpinnakerCamera {
 public:
 	SpinnakerCamera(SystemPtr system, int index, params::InterfaceGlRef paramGUI);
-	gl::TextureRef getCameraTexture();
+	~SpinnakerCamera();
+
+	gl::TextureRef getLatestCameraTexture();
 
 	int getLatestDroppedFrames();
 	string getSerialNumber();
@@ -34,7 +38,7 @@ private:
 	CameraPtr camera = NULL;
 	gl::TextureRef cameraTexture = NULL;
 	double lastDroppedFramesTime = 0;
-	int droppedFrames = 0;
+	atomic<int> droppedFrames = 0;
 
 	CameraParams cameraParams;
 
@@ -52,4 +56,13 @@ private:
 	
 	int prevCaptureWidth = 0;
 	int prevCaptureHeight = 0;
+
+	shared_ptr<thread> captureThread;
+	ConcurrentCircularBuffer<gl::TextureRef> *frameBuffer;
+	void captureThreadFn(gl::ContextRef sharedGlContext);
+	bool shouldQuit = false;
+
+	gl::TextureRef latestTexture = NULL;
+
+	gl::TextureRef getNextCameraTexture(); // also makes user camera is initialized. blocks during camera initialization and until next texture is received
 };

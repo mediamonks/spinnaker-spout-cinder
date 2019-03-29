@@ -107,7 +107,7 @@ void SpinnakerSpoutApp::draw()
 		bool capturingAll = true;
 		int i = 0;
 		for (auto camera : cameras) {
-			gl::TextureRef cameraTexture = camera->getCameraTexture(); // blocks during intializion of the camera and every frame until a new texture arrived 
+			gl::TextureRef cameraTexture = camera->getLatestCameraTexture(); // gets latest available frame from camera
 
 			if (cameraTexture != NULL) {
 				if (i == visibleCamera) {

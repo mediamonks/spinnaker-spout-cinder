@@ -17,9 +17,47 @@ SpinnakerCamera::SpinnakerCamera(SystemPtr _system, int index, params::Interface
 	cameraIndex = index;
 	system = _system;
 	paramGUI = _paramGUI;
+
+	frameBuffer = new ConcurrentCircularBuffer<gl::TextureRef>(5); // room for 5 frames
+
+	gl::ContextRef backgroundCtx = gl::Context::create(gl::context());
+	captureThread = shared_ptr<thread>(new thread(bind(&SpinnakerCamera::captureThreadFn, this, backgroundCtx)));
 }
 
-gl::TextureRef SpinnakerCamera::getCameraTexture() {
+void SpinnakerCamera::captureThreadFn(gl::ContextRef context) {
+	ci::ThreadSetup threadSetup; // instantiate this if you're talking to Cinder from a secondary thread
+								 // we received as a parameter a gl::Context we can use safely that shares resources with the primary Context
+	context->makeCurrent();
+
+	while (!shouldQuit) {
+		try {
+			auto tex = getNextCameraTexture();
+
+			if (tex != NULL) {
+				// we need to wait on a fence before alerting the primary thread that the Texture is ready
+				auto fence = gl::Sync::create();
+				fence->clientWaitSync();
+
+				frameBuffer->pushFront(tex);
+			}
+			else {
+				droppedFrames++;
+			}
+		}
+		catch (ci::Exception &exc) {
+			console() << "Failed to create camera texture: " << exc.what() << endl;
+		}
+	}
+}
+
+gl::TextureRef SpinnakerCamera::getLatestCameraTexture() {
+	while (frameBuffer->getSize() > 0) {
+		frameBuffer->popBack(&latestTexture);
+	}
+	return latestTexture;
+}
+
+gl::TextureRef SpinnakerCamera::getNextCameraTexture() {
 	if (getElapsedSeconds() - lastCameraInitFailTime < CAMERA_AVAILABLE_CHECK_INTERVAL) return false;
 
 	if (!checkCameraAssigned()) {
@@ -49,7 +87,6 @@ gl::TextureRef SpinnakerCamera::getCameraTexture() {
 	bool success = SpinnakerDeviceCommunication::getCameraTexture(camera, cameraTexture); // block until a new frame is available or a frame is reported incomplete. (re-)initializes output texture if needed
 
 	if (success == false || cameraTexture == NULL) {
-		droppedFrames++;
 		return NULL;
 	}
 	else {
@@ -176,4 +213,12 @@ void SpinnakerCamera::cleanup() {
 		cameraStarted = false;
 		camera = NULL;
 	}
+}
+
+SpinnakerCamera::~SpinnakerCamera()
+{
+	shouldQuit = true;
+	frameBuffer->cancel();
+	captureThread->join();
+	cleanup();
 }
