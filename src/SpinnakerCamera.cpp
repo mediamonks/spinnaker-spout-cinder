@@ -163,7 +163,7 @@ bool SpinnakerCamera::checkCameraInitialized() {
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
-		console() << "Error initializing camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")" << ": " << e.what() << endl;
+		console() << "Error initializing camera " << cameraIndex << ": " << e.what() << endl;
 		cameraInitialized = false;
 		return false;
 	}
