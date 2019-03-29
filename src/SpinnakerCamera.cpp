@@ -220,6 +220,12 @@ float SpinnakerCamera::getFps() {
 }
 
 void SpinnakerCamera::cleanup() {
+	if (!shouldQuit) {
+		shouldQuit = true;
+		frameBuffer->cancel(); // note, order matters here. joining before cancelling the frame buffer may hang the app
+		captureThread->join();
+	}
+
 	if (camera != NULL) {
 		SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		if (camera->IsStreaming()) camera->EndAcquisition();
@@ -231,8 +237,5 @@ void SpinnakerCamera::cleanup() {
 
 SpinnakerCamera::~SpinnakerCamera()
 {
-	shouldQuit = true;
-	frameBuffer->cancel();
-	captureThread->join();
 	cleanup();
 }
