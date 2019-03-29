@@ -20,8 +20,6 @@ SpinnakerCamera::SpinnakerCamera(SystemPtr _system, int index, params::Interface
 }
 
 gl::TextureRef SpinnakerCamera::getCameraTexture() {
-	cameraParams.pollParamsFromCamera();
-
 	if (getElapsedSeconds() - lastCameraInitFailTime < CAMERA_AVAILABLE_CHECK_INTERVAL) return false;
 
 	if (!checkCameraAssigned()) {
@@ -37,8 +35,10 @@ gl::TextureRef SpinnakerCamera::getCameraTexture() {
 	}
 
 	checkParamInterfaceInitialized();
+	cameraParams.pollParamsFromCamera();
 
-	cameraStarted = cameraStarted && !cameraParams.applyParams();  // potentially stops camera acquisition to apply changed settings
+	bool cameraStopped = cameraParams.applyParams();  // potentially stops camera acquisition to apply changed settings
+	cameraStarted = cameraStarted && !cameraStopped;
 
 	if (!checkCameraStarted()) {
 		console() << "Unable to start Camera " + to_string(cameraIndex) << ", retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
