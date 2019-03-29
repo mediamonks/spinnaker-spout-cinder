@@ -1,3 +1,5 @@
+#include <chrono> 
+
 #include "SpinnakerCamera.h"
 
 #include "SpinnakerDeviceCommunication.h"
@@ -30,18 +32,29 @@ void SpinnakerCamera::captureThreadFn(gl::ContextRef context) {
 	context->makeCurrent();
 
 	while (!shouldQuit) {
+		if (getElapsedSeconds() - lastCameraInitFailTime < CAMERA_AVAILABLE_CHECK_INTERVAL) {
+			this_thread::sleep_for(std::chrono::milliseconds(10));
+			continue;
+		}
+
+		if (!checkCameraUpdatedAndRunning()) {
+			console() << "Camera " + to_string(cameraIndex) + " initialization failed, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
+			lastCameraInitFailTime = getElapsedSeconds();
+			continue;
+		}
+
 		try {
 			auto tex = getNextCameraTexture();
 
-			if (tex != NULL) {
+			if (tex == NULL) {
+				droppedFrames++;
+			}
+			else {
 				// we need to wait on a fence before alerting the primary thread that the Texture is ready
 				auto fence = gl::Sync::create();
 				fence->clientWaitSync();
 
 				frameBuffer->pushFront(tex);
-			}
-			else {
-				droppedFrames++;
 			}
 		}
 		catch (ci::Exception &exc) {
@@ -57,19 +70,15 @@ gl::TextureRef SpinnakerCamera::getLatestCameraTexture() {
 	return latestTexture;
 }
 
-gl::TextureRef SpinnakerCamera::getNextCameraTexture() {
-	if (getElapsedSeconds() - lastCameraInitFailTime < CAMERA_AVAILABLE_CHECK_INTERVAL) return false;
-
+bool SpinnakerCamera::checkCameraUpdatedAndRunning() {
 	if (!checkCameraAssigned()) {
-		console() << "Camera " + to_string(cameraIndex) + " not available, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
-		lastCameraInitFailTime = getElapsedSeconds();
-		return NULL;
+		console() << "Camera " + to_string(cameraIndex) + " not available." << endl;
+		return false;
 	}
 
 	if (!checkCameraInitialized()) { // blocks while initializing
-		console() << "Could not initialize Camera " + to_string(cameraIndex) << ", retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
-		lastCameraInitFailTime = getElapsedSeconds();
-		return NULL;
+		console() << "Could not initialize Camera " + to_string(cameraIndex) << "." << endl;
+		return false;
 	}
 
 	checkParamInterfaceInitialized();
@@ -79,11 +88,14 @@ gl::TextureRef SpinnakerCamera::getNextCameraTexture() {
 	cameraStarted = cameraStarted && !cameraStopped;
 
 	if (!checkCameraStarted()) {
-		console() << "Unable to start Camera " + to_string(cameraIndex) << ", retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
-		lastCameraInitFailTime = getElapsedSeconds();
-		return NULL;
+		console() << "Unable to start Camera " + to_string(cameraIndex) << "." << endl;
+		return false;
 	}
 
+	return true;
+}
+
+gl::TextureRef SpinnakerCamera::getNextCameraTexture() {
 	bool success = SpinnakerDeviceCommunication::getCameraTexture(camera, cameraTexture); // block until a new frame is available or a frame is reported incomplete. (re-)initializes output texture if needed
 
 	if (success == false || cameraTexture == NULL) {

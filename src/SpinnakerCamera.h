@@ -68,5 +68,6 @@ private:
 
 	gl::TextureRef latestTexture = NULL;
 
+	bool checkCameraUpdatedAndRunning();
 	gl::TextureRef getNextCameraTexture(); // also makes user camera is initialized. blocks during camera initialization and until next texture is received
 };
