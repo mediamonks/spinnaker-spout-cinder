@@ -76,7 +76,7 @@ void SpinnakerSpoutApp::initCameras(params::InterfaceGlRef paramGUI) {
 			system = System::GetInstance();
 
 			const LibraryVersion spinnakerLibraryVersion = system->GetLibraryVersion();
-			console() << "Spinnaker library initialized, version: " << spinnakerLibraryVersion.major << "." << spinnakerLibraryVersion.minor << "." << spinnakerLibraryVersion.type << "." << spinnakerLibraryVersion.build << endl << endl;
+			Log() << "Spinnaker library initialized, version: " << spinnakerLibraryVersion.major << "." << spinnakerLibraryVersion.minor << "." << spinnakerLibraryVersion.type << "." << spinnakerLibraryVersion.build << endl << endl;
 
 			system->RegisterLoggingEvent(loggingEventHandler);
 			system->SetLoggingEventPriorityLevel(SpinnakerDeviceCommunication::indexToLogLevel(logLevelIndex));
@@ -87,7 +87,7 @@ void SpinnakerSpoutApp::initCameras(params::InterfaceGlRef paramGUI) {
 		}
 	}
 	catch (exception e) {
-		console() << "Error initializing Spinnaker library: " << e.what() << ". Do the included Spinnaker header and lib files match the dll version?" << endl;
+		Log() << "Error initializing Spinnaker library: " << e.what() << ". Do the included Spinnaker header and lib files match the dll version?" << endl;
 	}
 }
 
@@ -129,6 +129,7 @@ void SpinnakerSpoutApp::draw()
 
 	drawInfoBoxes(status, fps);
 	if (paramGUI != NULL) paramGUI->draw();
+	Log::printAll();
 }
 
 void SpinnakerSpoutApp::drawInfoBoxes(string status, int fps) {

@@ -1,6 +1,8 @@
 #include "UserSettings.h"
 #include "cinder/app/App.h"
 
+#include "Log.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -10,7 +12,7 @@ template<typename T> void UserSettings::writeSetting(std::string name, T value) 
 template<> void UserSettings::writeSetting<int>(std::string name, int value) {
 	XmlTree doc(loadAsset("settings.xml"));
 	if (!doc.hasChild("spinnakerSpoutCinder")) {
-		console() << "Error: Invalid settings file" << endl;
+		Log() << "Error: Invalid settings file";
 		return;
 	}
 	XmlTree &spinnakerSpoutCinder = doc.getChild("spinnakerSpoutCinder");
@@ -31,7 +33,7 @@ template<> void UserSettings::writeSetting<int>(std::string name, int value) {
 template<> void UserSettings::writeSetting<double>(std::string name, double value) {
 	XmlTree doc(loadAsset("settings.xml"));
 	if (!doc.hasChild("spinnakerSpoutCinder")) {
-		console() << "Error: Invalid settings file" << endl;
+		Log() << "Error: Invalid settings file";
 		return;
 	}
 	XmlTree &spinnakerSpoutCinder = doc.getChild("spinnakerSpoutCinder");
@@ -52,7 +54,7 @@ template<> void UserSettings::writeSetting<double>(std::string name, double valu
 template<> void UserSettings::writeSetting<string>(std::string name, string value) {
 	XmlTree doc(loadAsset("settings.xml"));
 	if (!doc.hasChild("spinnakerSpoutCinder")) {
-		console() << "Error: Invalid settings file" << endl;
+		Log() << "Error: Invalid settings file";
 		return;
 	}
 	XmlTree &spinnakerSpoutCinder = doc.getChild("spinnakerSpoutCinder");
@@ -78,7 +80,7 @@ template<typename T> T UserSettings::getSetting(std::string name, T defaultValue
 template<> int UserSettings::getSetting(std::string name, int defaultValue) {
 	XmlTree doc(loadAsset("settings.xml"));
 	if (!doc.hasChild("spinnakerSpoutCinder")) {
-		console() << "Error: Invalid settings file" << endl;
+		Log() << "Error: Invalid settings file";
 		return 0;
 	}
 	XmlTree &spinnakerSpoutCinder = doc.getChild("spinnakerSpoutCinder");
@@ -96,7 +98,7 @@ template<> int UserSettings::getSetting(std::string name, int defaultValue) {
 template<> double UserSettings::getSetting(std::string name, double defaultValue) {
 	XmlTree doc(loadAsset("settings.xml"));
 	if (!doc.hasChild("spinnakerSpoutCinder")) {
-		console() << "Error: Invalid settings file" << endl;
+		Log() << "Error: Invalid settings file";
 		return 0.0;
 	}
 	XmlTree &spinnakerSpoutCinder = doc.getChild("spinnakerSpoutCinder");
@@ -114,7 +116,7 @@ template<> double UserSettings::getSetting(std::string name, double defaultValue
 template<> string UserSettings::getSetting(std::string name, string defaultValue) {
 	XmlTree doc(loadAsset("settings.xml"));
 	if (!doc.hasChild("spinnakerSpoutCinder")) {
-		console() << "Error: Invalid settings file" << endl;
+		Log() << "Error: Invalid settings file";
 		return "";
 	}
 	XmlTree &spinnakerSpoutCinder = doc.getChild("spinnakerSpoutCinder");

@@ -1,4 +1,5 @@
 #include "SpinnakerDeviceCommunication.h"
+#include "Log.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -16,7 +17,7 @@ int SpinnakerDeviceCommunication::getParameterIntValue(CameraPtr camera, string 
 		return node->GetValue();
 	}
 	else {
-		console() << " > " << paramName << " setting not available for reading as Integer." << endl;
+		Log() << " > " << paramName << " setting not available for reading as Integer.";
 		return 0;
 	}
 }
@@ -29,7 +30,7 @@ pair<int, int> SpinnakerDeviceCommunication::getIntParameterMinMax(CameraPtr cam
 		return make_pair(node->GetMin(), node->GetMax());
 	}
 	else {
-		console() << " > " << paramName << " setting not available as Integer for getting range." << endl;
+		Log() << " > " << paramName << " setting not available as Integer for getting range.";
 		return make_pair(0, 0);
 	}
 }
@@ -42,7 +43,7 @@ double SpinnakerDeviceCommunication::getParameterFloatValue(CameraPtr camera, st
 		return node->GetValue();
 	}
 	else {
-		console() << " > " << paramName << " setting not available for reading as Float." << endl;
+		Log() << " > " << paramName << " setting not available for reading as Float.";
 		return 0;
 	}
 }
@@ -55,7 +56,7 @@ pair<double, double> SpinnakerDeviceCommunication::getFloatParameterMinMax(Camer
 		return make_pair(node->GetMin(), node->GetMax());
 	}
 	else {
-		console() << " > " << paramName << " setting not available as Float for getting range." << endl;
+		Log() << " > " << paramName << " setting not available as Float for getting range.";
 		return make_pair(0.0, 0.0);
 	}
 }
@@ -70,7 +71,7 @@ string SpinnakerDeviceCommunication::getParameterEnumValue(CameraPtr camera, str
 		return entry->GetSymbolic();
 	}
 	else {
-		console() << " > "  << paramName << " setting not available for reading as Enumeration." << endl;
+		Log() << " > "  << paramName << " setting not available for reading as Enumeration.";
 		return "";
 	}
 }
@@ -90,7 +91,7 @@ vector<string> SpinnakerDeviceCommunication::getParameterEnumOptions(CameraPtr c
 		return entryStrings;
 	}
 	else {
-		console() << " > "  << paramName << " setting not available for reading as Enumeration." << endl;
+		Log() << " > "  << paramName << " setting not available for reading as Enumeration.";
 		return entryStrings;
 	}
 }
@@ -108,19 +109,19 @@ string SpinnakerDeviceCommunication::setParameterEnum(CameraPtr camera, string p
 			node->SetIntValue(value); // Set integer as new value for enumeration node
 			string currentValue = node->GetCurrentEntry()->GetSymbolic();
 			if (enumValueName != currentValue) {
-				console() << " > "  << paramName << " set to " << enumValueName << " and is now " << currentValue << endl;
+				Log() << " > "  << paramName << " set to " << enumValueName << " and is now " << currentValue;
 			}
 			else {
-				console() << " > "  << paramName << " set to " << currentValue << endl;
+				Log() << " > "  << paramName << " set to " << currentValue;
 			}
 			return currentValue;
 		}
 		else {
-			console() << "> Value " << enumValueName << " not available in Enumerator parameter " << paramName << endl;
+			Log() << "> Value " << enumValueName << " not available in Enumerator parameter " << paramName;
 		}
 	}
 	else {
-		console() << " > "  << paramName << " parameter not available for writing as Enumeration." << endl;
+		Log() << " > "  << paramName << " parameter not available for writing as Enumeration.";
 	}
 	return "error";
 }
@@ -137,21 +138,21 @@ double SpinnakerDeviceCommunication::setParameterFloat(CameraPtr camera, string 
 		{
 			if (newValueInRange < valueMin) newValueInRange = valueMin;
 			if (newValueInRange > valueMax) newValueInRange = valueMax;
-			console() << "> Value " << newValue << " out of range for Float parameter " << paramName << ". Clipped to " << newValueInRange << endl;
+			Log() << "> Value " << newValue << " out of range for Float parameter " << paramName << ". Clipped to " << newValueInRange;
 		}
 
 		node->SetValue(newValueInRange);
 		double currentValue = node->GetValue();
 		if (math<float>::abs(newValueInRange - currentValue) > 0.00001) {
-			console() << " > "  << paramName << " set to " << newValueInRange << " and is now " << currentValue << endl;
+			Log() << " > "  << paramName << " set to " << newValueInRange << " and is now " << currentValue;
 		}
 		else {
-			console() << " > "  << paramName << " set to " << currentValue << endl;
+			Log() << " > "  << paramName << " set to " << currentValue << endl;
 		}
 		return currentValue;
 	}
 	else {
-		console() << " > "  << paramName << " parameter not available for writing as Float." << endl;
+		Log() << " > "  << paramName << " parameter not available for writing as Float.";
 	}
 	return -1;
 }
@@ -170,7 +171,7 @@ int SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string param
 		{
 			if (newValueInRange < valueMin) newValueInRange = valueMin;
 			if (newValueInRange > valueMax) newValueInRange = valueMax;
-			console() << "> Value " << newValue << " out of range for Int parameter " << paramName << ". Clipped to " << newValueInRange << endl;
+			Log() << "> Value " << newValue << " out of range for Int parameter " << paramName << ". Clipped to " << newValueInRange;
 		}
 
 		int valueFromMin = newValueInRange - valueMin;
@@ -180,15 +181,15 @@ int SpinnakerDeviceCommunication::setParameterInt(CameraPtr camera, string param
 		node->SetValue(newValueInRange);
 		int currentValue = node->GetValue();
 		if (newValueInRange != currentValue) {
-			console() << " > "  << paramName << " set to " << newValueInRange << " and is now " << currentValue << endl;
+			Log() << " > "  << paramName << " set to " << newValueInRange << " and is now " << currentValue;
 		}
 		else {
-			console() << " > "  << paramName << " set to " << currentValue << endl;
+			Log() << " > "  << paramName << " set to " << currentValue << endl;
 		}
 		return currentValue;
 	}
 	else {
-		console() << " > "  << paramName << " parameter not available for writing as Integer." << endl;
+		Log() << " > "  << paramName << " parameter not available for writing as Integer.";
 	}
 	return -1;
 }
@@ -209,7 +210,7 @@ void SpinnakerDeviceCommunication::printDeviceInfo(CameraPtr camera)
 		// information fundamental to the camera such as the serial number,
 		// vendor, and model.
 		//
-		console() << endl << "*** PRINTING TRANSPORT LAYER DEVICE NODEMAP ***" << endl << endl;
+		Log() << endl << "*** PRINTING TRANSPORT LAYER DEVICE NODEMAP ***" << endl;
 
 		INodeMap & genTLNodeMap = camera->GetTLDeviceNodeMap();
 
@@ -226,7 +227,7 @@ void SpinnakerDeviceCommunication::printDeviceInfo(CameraPtr camera)
 		// layer allows the information to be retrieved without affecting camera
 		// performance.
 		//
-		console() << "*** PRINTING TL STREAM NODEMAP ***" << endl << endl;
+		Log() << "*** PRINTING TL STREAM NODEMAP ***" << endl;
 
 		INodeMap & nodeMapTLStream = camera->GetTLStreamNodeMap();
 
@@ -243,7 +244,7 @@ void SpinnakerDeviceCommunication::printDeviceInfo(CameraPtr camera)
 		// *** LATER ***
 		// Cameras should be deinitialized when no longer needed.
 		//
-		console() << "*** PRINTING GENICAM NODEMAP ***" << endl << endl;
+		Log() << "*** PRINTING GENICAM NODEMAP ***" << endl;
 
 		// 
 		// Retrieve GenICam nodemap
@@ -260,7 +261,7 @@ void SpinnakerDeviceCommunication::printDeviceInfo(CameraPtr camera)
 	}
 	catch (Spinnaker::Exception &e)
 	{
-		console() << "Error: " << e.what() << endl;
+		Log() << "Error: " << e.what();
 	}
 }
 
@@ -328,25 +329,25 @@ int SpinnakerDeviceCommunication::printValueNode(CNodePtr node, unsigned int lev
 				i++;
 			}
 
-			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " (" << ss.str() << ")" << endl;
+			Log() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " (" << ss.str() << ")";
 		}
 		else if (interfaceType == intfIFloat || interfaceType == intfIInteger) {
 			gcstring unit;
 			gcstring attribute;
 			node->GetProperty("Unit", unit, attribute);
 
-			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " " << unit << endl;
+			Log() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " " << unit;
 		}
 		else if (interfaceType == intfIBoolean) {
-			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << (std::stoi(value.c_str()) == 0 ? "Off" : "On") << endl;
+			Log() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << (std::stoi(value.c_str()) == 0 ? "Off" : "On");
 		}
 		else {
-			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << endl;
+			Log() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value;
 		}
 	}
 	catch (Spinnaker::Exception &e)
 	{
-		console() << "Error: " << e.what() << endl;
+		Log() << "Error: " << e.what();
 		result = -1;
 	}
 
@@ -370,7 +371,7 @@ int SpinnakerDeviceCommunication::printCategoryNodeAndAllFeatures(CNodePtr node,
 
 		// Print display name
 		indent(level);
-		console() << displayName << endl;
+		Log() << displayName;
 
 		//
 		// Retrieve children
@@ -414,11 +415,11 @@ int SpinnakerDeviceCommunication::printCategoryNodeAndAllFeatures(CNodePtr node,
 			}
 			result = result | printValueNode(ptrFeatureNode, level + 1);
 		}
-		console() << endl;
+		Log() << endl;
 	}
 	catch (Spinnaker::Exception &e)
 	{
-		console() << "Error: " << e.what() << endl;
+		Log() << "Error: " << e.what();
 		result = -1;
 	}
 
@@ -454,7 +455,7 @@ void SpinnakerDeviceCommunication::indent(unsigned int level)
 {
 	for (unsigned int i = 0; i < level; i++)
 	{
-		console() << "   ";
+		Log() << "   ";
 	}
 }
 
@@ -465,12 +466,12 @@ bool SpinnakerDeviceCommunication::checkStreamingStarted(CameraPtr camera) {
 	try
 	{
 		SpinnakerDeviceCommunication::setParameterEnum(camera, "AcquisitionMode", "Continuous");
-		console() << "Starting camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")" << " with access mode " << SpinnakerDeviceCommunication::accessModeToString(camera->GetAccessMode()) << endl;
+		Log() << "Starting camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")" << " with access mode " << SpinnakerDeviceCommunication::accessModeToString(camera->GetAccessMode());
 		camera->BeginAcquisition();
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
-		console() << "Error starting camera aquisition: " << e.what() << endl;
+		Log() << "Error starting camera aquisition: " << e.what();
 		camera->DeInit();
 		return false;
 	}
@@ -481,12 +482,12 @@ bool SpinnakerDeviceCommunication::checkStreamingStopped(CameraPtr camera) {
 	if (!camera->IsStreaming()) return true;
 
 	try {
-		console() << "Stopping camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")" << endl;
+		Log() << "Stopping camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")";
 		camera->EndAcquisition();
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
-		console() << "Error stopping camera aquisition: " << e.what() << endl;
+		Log() << "Error stopping camera aquisition: " << e.what();
 		camera->DeInit();
 		return false;
 	}
@@ -497,7 +498,7 @@ bool SpinnakerDeviceCommunication::getCameraTexture(CameraPtr camera, gl::Textur
 		ImagePtr capturedImage = camera->GetNextImage(1000); // Note: blocks until a new frame is available
 		if (capturedImage->IsIncomplete())
 		{
-			console() << "Image incomplete with image status " << capturedImage->GetImageStatus() << endl;
+			//Log() << "Image incomplete with image status " << capturedImage->GetImageStatus() << endl;
 			capturedImage->Release();
 			return false;
 		}
@@ -519,7 +520,7 @@ bool SpinnakerDeviceCommunication::getCameraTexture(CameraPtr camera, gl::Textur
 	}
 	catch (Spinnaker::Exception &e)
 	{
-		console() << "Error capturing image: " << e.what() << endl;
+		Log() << "Error capturing image: " << e.what();
 	}
 
 	return false;

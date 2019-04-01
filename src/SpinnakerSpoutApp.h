@@ -15,6 +15,8 @@
 #include "SpinnakerCamera.h"
 #include "SpoutPool.h"
 
+#include "Log.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -34,9 +36,9 @@ class LoggingEventHandler : public LoggingEvent
 	// This function displays readily available logging information.
 	void OnLogEvent(LoggingEventDataPtr loggingEventDataPtr)
 	{
-		console() << "Camera Log (" << loggingEventDataPtr->GetTimestamp() << ")";
-		console() << " " << loggingEventDataPtr->GetCategoryName() << " | " << loggingEventDataPtr->GetPriorityName() << ": ";
-		console() << loggingEventDataPtr->GetLogMessage() << endl;
+		Log() << "Camera Log (" << loggingEventDataPtr->GetTimestamp() << ")";
+		Log() << " " << loggingEventDataPtr->GetCategoryName() << " | " << loggingEventDataPtr->GetPriorityName() << ": ";
+		Log() << loggingEventDataPtr->GetLogMessage();
 	}
 };
 

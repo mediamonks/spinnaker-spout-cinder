@@ -4,6 +4,7 @@
 
 #include "SpinnakerDeviceCommunication.h"
 #include "CameraParam.h"
+#include "Log.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -38,7 +39,7 @@ void SpinnakerCamera::captureThreadFn(gl::ContextRef context) {
 		}
 
 		if (!checkCameraUpdatedAndRunning()) {
-			console() << "Camera " + to_string(cameraIndex) + " initialization failed, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds." << endl;
+			Log() << "Camera " + to_string(cameraIndex) + " initialization failed, retrying in " << CAMERA_AVAILABLE_CHECK_INTERVAL << " seconds.";
 			lastCameraInitFailTime = getElapsedSeconds();
 			continue;
 		}
@@ -58,7 +59,7 @@ void SpinnakerCamera::captureThreadFn(gl::ContextRef context) {
 			}
 		}
 		catch (ci::Exception &exc) {
-			console() << "Failed to create camera texture: " << exc.what() << endl;
+			Log() << "Failed to create camera texture: " << exc.what();
 		}
 	}
 }
@@ -72,12 +73,12 @@ gl::TextureRef SpinnakerCamera::getLatestCameraTexture() {
 
 bool SpinnakerCamera::checkCameraUpdatedAndRunning() {
 	if (!checkCameraAssigned()) {
-		console() << "Camera " + to_string(cameraIndex) + " not available." << endl;
+		Log() << "Camera " + to_string(cameraIndex) + " not available.";
 		return false;
 	}
 
 	if (!checkCameraInitialized()) { // blocks while initializing
-		console() << "Could not initialize Camera " + to_string(cameraIndex) << "." << endl;
+		Log() << "Could not initialize Camera " + to_string(cameraIndex) << ".";
 		return false;
 	}
 
@@ -88,7 +89,7 @@ bool SpinnakerCamera::checkCameraUpdatedAndRunning() {
 	cameraStarted = cameraStarted && !cameraStopped;
 
 	if (!checkCameraStarted()) {
-		console() << "Unable to start Camera " + to_string(cameraIndex) << "." << endl;
+		Log() << "Unable to start Camera " + to_string(cameraIndex) << ".";
 		return false;
 	}
 
@@ -106,7 +107,7 @@ gl::TextureRef SpinnakerCamera::getNextCameraTexture() {
 		int h = cameraTexture->getHeight();
 
 		if (prevCaptureWidth != w || prevCaptureHeight != h) {
-			console() << "Camera " << camera->DeviceSerialNumber() << " now grabbing images at " << w << " x " << h << endl;
+			Log() << "Camera " << camera->DeviceSerialNumber() << " now grabbing images at " << w << " x " << h;
 			prevCaptureWidth = w;
 			prevCaptureHeight = h;
 		}
@@ -133,18 +134,18 @@ bool SpinnakerCamera::checkCameraAssigned() {
 	unsigned int numCameras = camList.GetSize();
 	if (numCameras == 0)
 	{
-		console() << "No cameras found." << endl;
+		Log() << "No cameras found.";
 		cameraInitialized = false;
 		return false;
 	}
 	if (cameraIndex > numCameras - 1) {
-		console() << "No camera found at index " << cameraIndex << ", only " << numCameras << " available." << endl;
+		Log() << "No camera found at index " << cameraIndex << ", only " << numCameras << " available.";
 		cameraInitialized = false;
 		return false;
 	}
 
 	camera = camList.GetByIndex(cameraIndex);
-	console() << "Assigned camera " << cameraIndex << " (of " << numCameras << ")" << endl;
+	Log() << "Assigned camera " << cameraIndex << " (of " << numCameras << ")";
 }
 
 bool SpinnakerCamera::checkCameraInitialized() {
@@ -158,12 +159,12 @@ bool SpinnakerCamera::checkCameraInitialized() {
 	try {
 		camera->Init();
 		cameraInitialized = true;
-		console() << "Initialized camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")" << endl;
+		Log() << "Initialized camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")";
 		//SpinnakerDeviceCommunication::printDeviceInfo(camera);
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
-		console() << "Error initializing camera " << cameraIndex << ": " << e.what() << endl;
+		Log() << "Error initializing camera " << cameraIndex << ": " << e.what();
 		cameraInitialized = false;
 		return false;
 	}
@@ -191,7 +192,7 @@ void SpinnakerCamera::checkParamInterfaceInitialized() {
 bool SpinnakerCamera::checkCameraStarted() {
 	if (cameraStarted) {
 		if (!camera->IsValid()) {
-			console() << "Camera " << cameraIndex << " is invalid, stopping it." << endl;
+			Log() << "Camera " << cameraIndex << " is invalid, stopping it.";
 			SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 			camera->DeInit();
 			cameraInitialized = false;

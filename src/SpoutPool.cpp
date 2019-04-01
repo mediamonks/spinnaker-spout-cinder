@@ -1,4 +1,5 @@
 #include "SpoutPool.h"
+#include "Log.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -42,8 +43,8 @@ SpoutSender* SpoutPool::getSpoutSender(string name, int width, int height) { // 
 		bool success = spoutSenders[name]->CreateSender(name.c_str(), width, height);
 		bool memoryMode = spoutSenders[name]->GetMemoryShareMode();
 
-		if (success) console() << "Spout sender " << name << " initialized using " << (memoryMode ? "Memory" : "Texture") << " sharing at " << width << " x " << height << endl;
-		else console() << "Spout initialization failed" << endl;
+		if (success) Log() << "Spout sender " << name << " initialized using " << (memoryMode ? "Memory" : "Texture") << " sharing at " << width << " x " << height;
+		else Log() << "Spout initialization failed";
 	}
 
 	return spoutSenders[name];

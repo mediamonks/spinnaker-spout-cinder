@@ -1,5 +1,6 @@
 #include "CameraParam.h"
 #include "UserSettings.h"
+#include "Log.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -20,7 +21,7 @@ CameraParam::CameraParam(string _spinnakerName, CameraPtr _camera, bool _needsCa
 			settingName = ss.str();
 		}
 		else {
-			console() << "Error: camera not initialized when creating parameter" << endl;
+			Log() << "Error: camera not initialized when creating parameter";
 		}
 	}
 
@@ -55,18 +56,18 @@ CameraParamEnum::CameraParamEnum(string uiText, string _spinnakerName, params::I
 bool CameraParamEnum::applyParam() {
 	auto options = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, spinnakerName);
 	if (enumIndex > (int)options.size() - 1) { // cast from long to int is necessary, otherwise we get a crash comparing
-		console() << "Error applying param value " << enumIndex << " to enum " << spinnakerName << ". There are only " << options.size() << " options." << endl;
+		Log() << "Error applying param value " << enumIndex << " to enum " << spinnakerName << ". There are only " << options.size() << " options.";
 		return false;
 	}
 
 	bool cameraStopped = false;
 	if (SpinnakerDeviceCommunication::getParameterEnumValue(camera, spinnakerName) != options[enumIndex]) {
 		if (needsCameraStop) {
-			console() << spinnakerName << " needs camera to be stopped." << endl;
+			Log() << spinnakerName << " needs camera to be stopped.";
 			cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		}
 
-		//console() << "Setting " << spinnakerName << " to " << options[enumIndex] << endl;
+		//Log() << "Setting " << spinnakerName << " to " << options[enumIndex];
 
 		string newChoice = SpinnakerDeviceCommunication::setParameterEnum(camera, spinnakerName, options[enumIndex]);
 		if (newChoice != "error") {
@@ -77,7 +78,7 @@ bool CameraParamEnum::applyParam() {
 			}
 		}
 		else {
-			console() << "Error writing param value " << options[enumIndex] << " to enum " << spinnakerName << endl;
+			Log() << "Error writing param value " << options[enumIndex] << " to enum " << spinnakerName;
 		}
 	}
 	return cameraStopped;
@@ -114,11 +115,11 @@ bool CameraParamFloat::applyParam() {
 	bool cameraStopped = false;
 	if (SpinnakerDeviceCommunication::getParameterFloatValue(camera, spinnakerName) != value) {
 		if (needsCameraStop) {
-			console() << spinnakerName << " needs camera to be stopped." << endl;
+			Log() << spinnakerName << " needs camera to be stopped.";
 			cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		}
 
-		//console() << "Setting " << spinnakerName << " to " << value << endl;
+		//Log() << "Setting " << spinnakerName << " to " << value;
 
 		float newValue = SpinnakerDeviceCommunication::setParameterFloat(camera, spinnakerName, value);
 		if (!poll && newValue != -1 && newValue != value) {
@@ -160,7 +161,7 @@ bool CameraParamInt::applyParam() {
 
 	if (SpinnakerDeviceCommunication::getParameterIntValue(camera, spinnakerName) != value) {
 		if (needsCameraStop) {
-			console() << spinnakerName << " needs camera to be stopped." << endl;
+			Log() << spinnakerName << " needs camera to be stopped.";
 			cameraStopped = SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 		}
 
