@@ -159,8 +159,7 @@ bool SpinnakerCamera::checkCameraInitialized() {
 	try {
 		camera->Init();
 		cameraInitialized = true;
-		Log() << "Initialized camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")";
-		//SpinnakerDeviceCommunication::printDeviceInfo(camera);
+		Log() << "Initialized camera " << camera->DeviceModelName() << " (" << camera->DeviceSerialNumber() << ")";		
 		return true;
 	}
 	catch (Spinnaker::Exception &e) {
@@ -168,6 +167,10 @@ bool SpinnakerCamera::checkCameraInitialized() {
 		cameraInitialized = false;
 		return false;
 	}
+}
+
+void SpinnakerCamera::printInfo() {
+	SpinnakerDeviceCommunication::printDeviceInfo(camera);
 }
 
 // requires an active camera

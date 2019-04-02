@@ -9,6 +9,8 @@ using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
 
+#define PRINT_UNITS false
+
 int SpinnakerDeviceCommunication::getParameterIntValue(CameraPtr camera, string paramName) {
 	INodeMap& nodeMap = camera->GetNodeMap();
 	CIntegerPtr node = nodeMap.GetNode(paramName.c_str());
@@ -210,7 +212,7 @@ void SpinnakerDeviceCommunication::printDeviceInfo(CameraPtr camera)
 		// information fundamental to the camera such as the serial number,
 		// vendor, and model.
 		//
-		Log() << endl << "*** PRINTING TRANSPORT LAYER DEVICE NODEMAP ***" << endl;
+		console() << endl << "*** PRINTING TRANSPORT LAYER DEVICE NODEMAP ***" << endl << endl;
 
 		INodeMap & genTLNodeMap = camera->GetTLDeviceNodeMap();
 
@@ -227,7 +229,7 @@ void SpinnakerDeviceCommunication::printDeviceInfo(CameraPtr camera)
 		// layer allows the information to be retrieved without affecting camera
 		// performance.
 		//
-		Log() << "*** PRINTING TL STREAM NODEMAP ***" << endl;
+		console() << "*** PRINTING TL STREAM NODEMAP ***" << endl << endl;
 
 		INodeMap & nodeMapTLStream = camera->GetTLStreamNodeMap();
 
@@ -244,7 +246,7 @@ void SpinnakerDeviceCommunication::printDeviceInfo(CameraPtr camera)
 		// *** LATER ***
 		// Cameras should be deinitialized when no longer needed.
 		//
-		Log() << "*** PRINTING GENICAM NODEMAP ***" << endl;
+		console() << "*** PRINTING GENICAM NODEMAP ***" << endl << endl;
 
 		// 
 		// Retrieve GenICam nodemap
@@ -261,7 +263,7 @@ void SpinnakerDeviceCommunication::printDeviceInfo(CameraPtr camera)
 	}
 	catch (Spinnaker::Exception &e)
 	{
-		Log() << "Error: " << e.what();
+		console() << "Error: " << e.what();
 	}
 }
 
@@ -329,25 +331,30 @@ int SpinnakerDeviceCommunication::printValueNode(CNodePtr node, unsigned int lev
 				i++;
 			}
 
-			Log() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " (" << ss.str() << ")";
+			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " (" << ss.str() << ")" << endl;
 		}
 		else if (interfaceType == intfIFloat || interfaceType == intfIInteger) {
-			gcstring unit;
-			gcstring attribute;
-			node->GetProperty("Unit", unit, attribute);
+			if (PRINT_UNITS) {
+				gcstring unit;
+				gcstring attribute;
+				node->GetProperty("Unit", unit, attribute);
 
-			Log() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " " << unit;
+				console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << " " << unit << endl;
+			}
+			else {
+				console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << endl;
+			}
 		}
 		else if (interfaceType == intfIBoolean) {
-			Log() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << (std::stoi(value.c_str()) == 0 ? "Off" : "On");
+			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << (std::stoi(value.c_str()) == 0 ? "Off" : "On") << endl;
 		}
 		else {
-			Log() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value;
+			console() << displayName << " (" << nodeName << ", " << interfaceTypeString << "): " << value << endl;
 		}
 	}
 	catch (Spinnaker::Exception &e)
 	{
-		Log() << "Error: " << e.what();
+		console() << "Error: " << e.what() << endl;
 		result = -1;
 	}
 
@@ -371,7 +378,7 @@ int SpinnakerDeviceCommunication::printCategoryNodeAndAllFeatures(CNodePtr node,
 
 		// Print display name
 		indent(level);
-		Log() << displayName;
+		console() << displayName << endl;
 
 		//
 		// Retrieve children
@@ -415,11 +422,11 @@ int SpinnakerDeviceCommunication::printCategoryNodeAndAllFeatures(CNodePtr node,
 			}
 			result = result | printValueNode(ptrFeatureNode, level + 1);
 		}
-		Log() << endl;
+		console() << endl;
 	}
 	catch (Spinnaker::Exception &e)
 	{
-		Log() << "Error: " << e.what();
+		console() << "Error: " << e.what() << endl;
 		result = -1;
 	}
 
@@ -455,7 +462,7 @@ void SpinnakerDeviceCommunication::indent(unsigned int level)
 {
 	for (unsigned int i = 0; i < level; i++)
 	{
-		Log() << "   ";
+		console() << "   ";
 	}
 }
 

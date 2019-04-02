@@ -31,6 +31,8 @@ public:
 	string getSerialNumber();
 	void cleanup();
 
+	void printInfo();
+
 private:
 	SystemPtr system;
 	int cameraIndex = -1;

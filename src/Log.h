@@ -8,6 +8,7 @@
 class Log {
 public:
 	static void printAll();
+	static void markMainThread();
 
 	~Log();
 
@@ -23,6 +24,7 @@ public:
 
 private:
 	static ci::ConcurrentCircularBuffer<std::string>* logBuffer;
+	static std::thread::id mainThreadId;
 
 	std::ostringstream _message;
 };

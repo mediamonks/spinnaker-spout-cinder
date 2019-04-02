@@ -23,7 +23,7 @@ https://www.ptgrey.com/KB/11151
 #define WINDOW_W 1024
 #define WINDOW_H 768
 
-#define NEEDED_NUM_CAMERAS 3
+#define NEEDED_NUM_CAMERAS 2
 
 void prepareSettings(App::Settings *settings)
 {
@@ -37,6 +37,8 @@ void prepareSettings(App::Settings *settings)
 
 void SpinnakerSpoutApp::setup()
 {
+	Log::markMainThread();
+
 	sendWidth = UserSettings::getSetting<int>("SendWidth", sendWidth);
 	sendHeight = UserSettings::getSetting<int>("SendHeight", sendHeight);
 	logLevelIndex = UserSettings::getSetting<int>("LogLevelIndex", logLevelIndex);
@@ -130,6 +132,12 @@ void SpinnakerSpoutApp::draw()
 	drawInfoBoxes(status, fps);
 	if (paramGUI != NULL) paramGUI->draw();
 	Log::printAll();
+}
+
+void SpinnakerSpoutApp::keyDown(KeyEvent e) {
+	for (auto camera : cameras) {
+		camera->printInfo();
+	}
 }
 
 void SpinnakerSpoutApp::drawInfoBoxes(string status, int fps) {

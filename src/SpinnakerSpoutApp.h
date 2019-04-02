@@ -68,4 +68,5 @@ public:
 	void setup() override;
 	void draw() override;
 	void cleanup() override;
+	void keyDown(KeyEvent e);
 };
