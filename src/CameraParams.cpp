@@ -1,5 +1,4 @@
 #include "CameraParams.h"
-#include "UserSettings.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -11,7 +10,7 @@ using namespace Spinnaker::GenICam;
 
 #define POLL_INTERVAL 5 // seconds
 
-bool CameraParams::pollingEnabled = false;
+bool CameraParams::pollingEnabled = true;
 
 void CameraParams::createEnum(string uiText, string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, int cameraIndex, bool needsCameraStop, bool poll) {
 	params.push_back(new CameraParamEnum(uiText, spinnakerName, paramGUI, camera, defaultValue, cameraIndex, needsCameraStop, poll));

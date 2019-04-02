@@ -1,41 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <spinnakerSpoutCinder>
-    <DeviceLinkThroughputLimit_18550254>20928000</DeviceLinkThroughputLimit_18550254>
-    <DeviceLinkThroughputLimit_17308974>30312000</DeviceLinkThroughputLimit_17308974>
-    <DeviceLinkThroughputLimit_18550251>39992000</DeviceLinkThroughputLimit_18550251>
-    <DeviceLinkThroughputLimit_17170238>39904000</DeviceLinkThroughputLimit_17170238>
-    <PixelFormat_17308974>4</PixelFormat_17308974>
-    <PixelFormat_18550254>4</PixelFormat_18550254>
-    <PixelFormat_18550251>4</PixelFormat_18550251>
-    <PixelFormat_17170238>4</PixelFormat_17170238>
-    <ExposureAuto_18550254>2</ExposureAuto_18550254>
-    <Gain_18550254>0</Gain_18550254>
-    <Gain_17308974>0</Gain_17308974>
-    <Gain_18550251>0</Gain_18550251>
-    <Gain_17170238>0</Gain_17170238>
-    <BalanceRatio_18550254>1.15118</BalanceRatio_18550254>
-    <BalanceRatio_17308974>0.599457</BalanceRatio_17308974>
-    <BalanceRatio_18550251>1.16058</BalanceRatio_18550251>
-    <BalanceRatio_17170238>1.14807</BalanceRatio_17170238>
-    <ExposureTimeAbs_18550254>4262.92</ExposureTimeAbs_18550254>
-    <ExposureTimeAbs_17308974>35220.5</ExposureTimeAbs_17308974>
-    <ExposureTimeAbs_18550251>4485.31</ExposureTimeAbs_18550251>
-    <ExposureTimeAbs_17170238>19962.3</ExposureTimeAbs_17170238>
-    <BinningVertical_17308974>2</BinningVertical_17308974>
-    <BinningVertical_18550254>2</BinningVertical_18550254>
-    <BinningVertical_17170238>2</BinningVertical_17170238>
-    <BinningVertical_18550251>2</BinningVertical_18550251>
-    <BalanceWhiteAuto_18550254>0</BalanceWhiteAuto_18550254>
-    <BalanceWhiteAuto_17308974>2</BalanceWhiteAuto_17308974>
-    <BalanceWhiteAuto_18550251>0</BalanceWhiteAuto_18550251>
-    <BalanceWhiteAuto_17170238>0</BalanceWhiteAuto_17170238>
-    <GainAuto_18550251>0</GainAuto_18550251>
-    <ExposureAuto_18550251>2</ExposureAuto_18550251>
-    <ExposureAuto_17170238>2</ExposureAuto_17170238>
-    <GainAuto_17170238>0</GainAuto_17170238>
-    <VideoMode_17170238>1</VideoMode_17170238>
-    <VideoMode_18550254>1</VideoMode_18550254>
-    <VideoMode_18550251>1</VideoMode_18550251>
     <SendHeight>364</SendHeight>
     <LogLevelIndex>4</LogLevelIndex>
 </spinnakerSpoutCinder>

@@ -1,5 +1,4 @@
 #include "CameraParam.h"
-#include "UserSettings.h"
 #include "Log.h"
 
 using namespace ci;
@@ -40,13 +39,15 @@ string CameraParam::getCameraName(int cameraIndex, CameraPtr camera) {
 /***** Enum *****/
 
 CameraParamEnum::CameraParamEnum(string uiText, string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, int _cameraIndex, bool _needsCameraStop, bool _poll) : CameraParam (_spinnakerName, _camera, _needsCameraStop, _poll, _cameraIndex) {
-	enumIndex = UserSettings::getSetting<int>(settingName, defaultValue); // enum, but index stored as int
+	auto enumOptions = SpinnakerDeviceCommunication::getParameterEnumOptions(camera, spinnakerName);
+	string currentValue = SpinnakerDeviceCommunication::getParameterEnumValue(camera, spinnakerName);
+
+	enumIndex = find(enumOptions.begin(), enumOptions.end(), currentValue) - enumOptions.begin();
 
 	if (cameraIndex != -1) uiText = uiText + " " + to_string(cameraIndex);
 
-	auto options = paramGUI->addParam(uiText, SpinnakerDeviceCommunication::getParameterEnumOptions(camera, spinnakerName), &enumIndex).updateFn([this] {
+	auto options = paramGUI->addParam(uiText, enumOptions, &enumIndex).updateFn([this] {
 		dirty = true;
-		UserSettings::writeSetting<int>(settingName, enumIndex);
 	});
 
 	if (cameraIndex != -1) options.group(getCameraName(cameraIndex, camera));
@@ -74,7 +75,6 @@ bool CameraParamEnum::applyParam() {
 			int newIndex = find(options.begin(), options.end(), newChoice) - options.begin();
 			if (!poll && newIndex != enumIndex) {
 				enumIndex = newIndex;
-				UserSettings::writeSetting<int>(settingName, enumIndex);
 			}
 		}
 		else {
@@ -90,21 +90,20 @@ void CameraParamEnum::updateFromCamera() {
 	int newIndex = find(options.begin(), options.end(), newChoice) - options.begin();
 	if (newIndex != enumIndex) {
 		enumIndex = newIndex;
-		UserSettings::writeSetting<int>(settingName, enumIndex);
 	}
 }
 
 /***** Float *****/
 
 CameraParamFloat::CameraParamFloat(string uiText, string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, double defaultValue, int _cameraIndex, bool _needsCameraStop, bool _poll) : CameraParam(_spinnakerName, _camera, _needsCameraStop, _poll, _cameraIndex) {
-	value = UserSettings::getSetting<double>(settingName, defaultValue);
+	value = SpinnakerDeviceCommunication::getParameterFloatValue(camera, spinnakerName);
+
 	range = SpinnakerDeviceCommunication::getFloatParameterMinMax(camera, spinnakerName);
 
 	if (cameraIndex != -1) uiText = uiText + " " + to_string(cameraIndex);
 	
 	auto options = paramGUI->addParam(uiText, &value).updateFn([this] {
 		dirty = true;
-		UserSettings::writeSetting<double>(settingName, value);
 	}).min((float)range.first).max((float)range.second);
 
 	if (cameraIndex != -1) options.group(getCameraName(cameraIndex, camera));
@@ -124,7 +123,6 @@ bool CameraParamFloat::applyParam() {
 		float newValue = SpinnakerDeviceCommunication::setParameterFloat(camera, spinnakerName, value);
 		if (!poll && newValue != -1 && newValue != value) {
 			value = newValue;
-			UserSettings::writeSetting<double>(settingName, value);
 		}
 	}
 	return cameraStopped;
@@ -135,21 +133,21 @@ void CameraParamFloat::updateFromCamera() {
 	double newValue = SpinnakerDeviceCommunication::getParameterFloatValue(camera, spinnakerName);
 	if (newValue != -1 && newValue != value) {
 		value = newValue;
-		UserSettings::writeSetting<double>(settingName, value);
 	}
 }
 
 /***** Int *****/
 
 CameraParamInt::CameraParamInt(string uiText, string _spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr _camera, int defaultValue, int _cameraIndex, bool _needsCameraStop, bool _poll) : CameraParam(_spinnakerName, _camera, _needsCameraStop, _poll, _cameraIndex) {
-	value = UserSettings::getSetting<int>(settingName, defaultValue);
+	//value = UserSettings::getSetting<int>(settingName, defaultValue);
+	value = SpinnakerDeviceCommunication::getParameterIntValue(camera, spinnakerName);
+
 	range = SpinnakerDeviceCommunication::getIntParameterMinMax(camera, spinnakerName);
 
 	if (cameraIndex != -1) uiText = uiText + " " + to_string(cameraIndex);
 
 	auto options = paramGUI->addParam(uiText, &value).updateFn([this] {
 		dirty = true;
-		UserSettings::writeSetting<int>(settingName, value);
 	}).min((float)range.first).max((float)range.second);
 
 	if (cameraIndex != -1) options.group(getCameraName(cameraIndex, camera));
@@ -168,7 +166,6 @@ bool CameraParamInt::applyParam() {
 		int newValue = SpinnakerDeviceCommunication::setParameterInt(camera, spinnakerName, value);
 		if (!poll && newValue != -1 && newValue != value) {
 			value = newValue;
-			UserSettings::writeSetting<int>(settingName, value);
 		}
 	}
 	return cameraStopped;
@@ -179,6 +176,5 @@ void CameraParamInt::updateFromCamera() {
 	int newValue = SpinnakerDeviceCommunication::getParameterIntValue(camera, spinnakerName);
 	if (newValue != -1 && newValue != value) {
 		value = newValue;
-		UserSettings::writeSetting<int>(settingName, value);
 	}
 }
