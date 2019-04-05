@@ -135,8 +135,10 @@ void SpinnakerSpoutApp::draw()
 }
 
 void SpinnakerSpoutApp::keyDown(KeyEvent e) {
-	for (auto camera : cameras) {
-		camera->printInfo();
+	if (e.getCode() == 49) {
+		for (auto camera : cameras) {
+			camera->printInfo();
+		}
 	}
 }
 
