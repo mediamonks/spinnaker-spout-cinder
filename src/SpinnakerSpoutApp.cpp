@@ -23,8 +23,6 @@ https://www.ptgrey.com/KB/11151
 #define WINDOW_W 1024
 #define WINDOW_H 768
 
-#define NEEDED_NUM_CAMERAS 2
-
 void prepareSettings(App::Settings *settings)
 {
 	settings->setHighDensityDisplayEnabled();
@@ -83,7 +81,7 @@ void SpinnakerSpoutApp::initCameras(params::InterfaceGlRef paramGUI) {
 			system->RegisterLoggingEvent(loggingEventHandler);
 			system->SetLoggingEventPriorityLevel(SpinnakerDeviceCommunication::indexToLogLevel(logLevelIndex));
 
-			for (int i = 0; i < NEEDED_NUM_CAMERAS; i++) {
+			for (int i = 0; i < system->GetCameras().GetSize(); i++) {
 				cameras.push_back(new SpinnakerCamera(system, i, paramGUI));
 			}
 		}
