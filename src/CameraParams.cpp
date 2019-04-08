@@ -35,15 +35,17 @@ bool CameraParams::applyParams() {
 	return cameraStopped;
 }
 
-void CameraParams::pollParamsFromCamera() {
-	if (!pollingEnabled) return;
+void CameraParams::pollParamsFromCamera(bool forceUpdateAll) {
+	if (!pollingEnabled && !forceUpdateAll) return;
 
-	if (getElapsedSeconds() - lastPollingTime < POLL_INTERVAL) return;
+	if (!forceUpdateAll && getElapsedSeconds() - lastPollingTime < POLL_INTERVAL) return;
 	lastPollingTime = getElapsedSeconds();
 
 	for (auto param : params) {
-		if (param->poll) {
+		if (param->poll || forceUpdateAll) {
 			param->updateFromCamera();
 		}
 	}
+
+	forceUpdateAll = false;
 }

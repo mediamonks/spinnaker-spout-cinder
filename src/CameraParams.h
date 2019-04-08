@@ -24,7 +24,7 @@ public:
 	void createInt(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, int cameraIndex = -1, bool needsCameraStop = false, bool poll = false);
 
 	bool applyParams();
-	void pollParamsFromCamera();
+	void pollParamsFromCamera(bool forceUpdateAll = false);
 
 private:
 	vector<CameraParam*> params;

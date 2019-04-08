@@ -83,10 +83,11 @@ bool SpinnakerCamera::checkCameraUpdatedAndRunning() {
 	}
 
 	checkParamInterfaceInitialized();
-	cameraParams.pollParamsFromCamera();
 
 	bool cameraStopped = cameraParams.applyParams();  // potentially stops camera acquisition to apply changed settings
 	cameraStarted = cameraStarted && !cameraStopped;
+
+	cameraParams.pollParamsFromCamera(cameraStopped); // if camera was stopped, poll all parameters
 
 	if (!checkCameraStarted()) {
 		Log() << "Unable to start Camera " + to_string(cameraIndex) << ".";
