@@ -43,7 +43,7 @@ private:
 	double lastDroppedFramesTime = 0;
 	atomic<int> droppedFrames = 0;
 
-	float prevFrameTime = 0;
+	double prevFrameTime = 0;
 	atomic<float> fps = 0;
 
 	CameraParams cameraParams;

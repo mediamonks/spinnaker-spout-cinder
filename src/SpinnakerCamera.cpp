@@ -113,13 +113,13 @@ gl::TextureRef SpinnakerCamera::getNextCameraTexture() {
 			prevCaptureHeight = h;
 		}
 
-		float now = getElapsedSeconds();
+		double now = getElapsedSeconds();
 		if (prevFrameTime == 0) {
 			prevFrameTime = now;
 			fps = 0;
 		}
 		else {
-			float thisFrameFps = 1 / (now - prevFrameTime);
+			double thisFrameFps = 1 / (now - prevFrameTime);
 			fps = fps * 0.9f + 0.1f * thisFrameFps;
 			prevFrameTime = now;
 		}
@@ -132,7 +132,7 @@ bool SpinnakerCamera::checkCameraAssigned() {
 
 	CameraList camList = system->GetCameras();
 
-	unsigned int numCameras = camList.GetSize();
+	int numCameras = camList.GetSize();
 	if (numCameras == 0)
 	{
 		Log() << "No cameras found.";
@@ -147,6 +147,7 @@ bool SpinnakerCamera::checkCameraAssigned() {
 
 	camera = camList.GetByIndex(cameraIndex);
 	Log() << "Assigned camera " << cameraIndex << " (of " << numCameras << ")";
+	return true;
 }
 
 bool SpinnakerCamera::checkCameraInitialized() {

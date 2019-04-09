@@ -110,7 +110,7 @@ void SpinnakerSpoutApp::draw()
 				gl::draw(cameraTexture, Rectf(0.f, flip ? (float)getWindowHeight() : 0.f, (float)getWindowWidth(), flip ? 0.f : (float)getWindowHeight()));
 
 				stringstream ss;
-				ss << "Camera " << camera->getSerialNumber() << " capturing at " << camera->getFps() << " fps.";
+				ss << "Camera " << camera->getSerialNumber() << " capturing at " << cameraTexture->getWidth() << "x" << cameraTexture->getHeight() << ", " << camera->getFps() << " fps.";
 				status = ss.str();
 			}
 
