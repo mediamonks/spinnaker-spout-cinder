@@ -1,14 +1,18 @@
 # Spinnaker Spout sender in Cinder
 
-Publishes the feed captured with a FLIR (Point Grey) camera via Spout. Tested with the Blackfly BFLY-PGE-31S4C camera.
+Publishes the feeds from all connected FLIR (Point Grey) cameras to Spout. Tested with Blackfly BFLY-PGE-31S4C and BFLY-PGE-09S2C cameras.
 
-Download the executable [here](https://github.com/mediamonks/spinnaker-spout-cinder/releases).
+  ![Interface](./interface.png)
+
+## Download
+
+Download the executable [here](https://github.com/mediamonks/spinnaker-spout-cinder/releases). Before running it, see the instructions below.
 
 ## Running
-- Download and install the 64 bit Spinnaker SDK from[ FLIR/Point Grey](https://www.ptgrey.com/support/downloads) (requires creating an account): 
+- First download and install the 64 bit Spinnaker SDK from[ FLIR/Point Grey](https://www.ptgrey.com/support/downloads) (requires creating an account): 
 	- Make sure to choose to install the full SDK (don't choose Camera Evaluation)
 	- For Visual Studio Version, **choose Visual Studio 2015 instead of 2013**
-- Run the executable
+- Run this app
 
 ## Developing
 
