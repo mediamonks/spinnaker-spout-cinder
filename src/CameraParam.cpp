@@ -32,7 +32,7 @@ CameraParam::CameraParam(string _spinnakerName, CameraPtr _camera, bool _needsCa
 
 string CameraParam::getCameraName(int cameraIndex, CameraPtr camera) {
 	stringstream ss;
-	ss << "Camera " << to_string(cameraIndex) << " (" << camera->DeviceModelName() << ")";
+	ss << "Cam " << to_string(cameraIndex) << ": " << camera->DeviceSerialNumber() << " (" << camera->DeviceModelName() << ")";
 	return ss.str();
 }
 

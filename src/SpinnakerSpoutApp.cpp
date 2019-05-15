@@ -36,17 +36,30 @@ void prepareSettings(App::Settings *settings)
 void SpinnakerSpoutApp::setup()
 {
 	Log::markMainThread();
+	initSystem();
 
-	sendWidth = UserSettings::getSetting<int>("SendWidth", sendWidth);
-	sendHeight = UserSettings::getSetting<int>("SendHeight", sendHeight);
-	logLevelIndex = UserSettings::getSetting<int>("LogLevelIndex", logLevelIndex);
-
-	gl::enableAlphaBlending();
-	gl::color(ColorA(1, 1, 1, 1));
-
-	paramGUI = params::InterfaceGl::create(getWindow(), "Parameters", toPixels(ivec2(200, 300)));
+	paramGUI = params::InterfaceGl::create(getWindow(), "Spinnaker to Spout", toPixels(ivec2(200, 300)));
 	paramGUI->setSize(vec2(WINDOW_W / 3, WINDOW_H - 60));
 
+	paramGUI->addParam("Preview camera", &visibleCamera).min(0).max(system->GetCameras().GetSize() - 1);
+
+	// -------- SPOUT --------
+	paramGUI->addSeparator("Spout");
+	sendWidth = UserSettings::getSetting<int>("SendWidth", sendWidth);
+	paramGUI->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
+		UserSettings::writeSetting<int>("SendWidth", sendWidth);
+	});
+
+	sendHeight = UserSettings::getSetting<int>("SendHeight", sendHeight);
+	paramGUI->addParam("Send Height", &sendHeight).min(20).updateFn([this] {
+		UserSettings::writeSetting<int>("SendHeight", sendHeight);
+	});
+
+	paramGUI->addSeparator();
+
+	paramGUI->addParam<bool>("Poll for parameter changes", &CameraParams::pollingEnabled);
+
+	logLevelIndex = UserSettings::getSetting<int>("LogLevelIndex", logLevelIndex);
 	paramGUI->addParam("Camera Log Level", SpinnakerDeviceCommunication::getLogLevelStrings(), &logLevelIndex).updateFn([this] {
 		system->SetLoggingEventPriorityLevel(SpinnakerDeviceCommunication::indexToLogLevel(logLevelIndex));
 		UserSettings::writeSetting<int>("LogLevelIndex", logLevelIndex);
@@ -56,38 +69,30 @@ void SpinnakerSpoutApp::setup()
 
 	initCameras(paramGUI);
 
-	paramGUI->addParam<bool>("Polling", &CameraParams::pollingEnabled);
-	paramGUI->addParam("Camera to show", &visibleCamera).min(0).max(cameras.size() - 1);
-
-	// -------- SPOUT --------
-	paramGUI->addSeparator("Spout");
-	paramGUI->addParam("Send Width", &sendWidth).min(20).updateFn([this] {
-		UserSettings::writeSetting<int>("SendWidth", sendWidth);
-	});
-
-	paramGUI->addParam("Send Height", &sendHeight).min(20).updateFn([this] {
-		UserSettings::writeSetting<int>("SendHeight", sendHeight);
-	});
+	gl::enableAlphaBlending();
+	gl::color(ColorA(1, 1, 1, 1));
 }
 
-void SpinnakerSpoutApp::initCameras(params::InterfaceGlRef paramGUI) {
+void SpinnakerSpoutApp::initSystem() {
 	try {
 		if (system == NULL) {
 			system = System::GetInstance();
-
 			const LibraryVersion spinnakerLibraryVersion = system->GetLibraryVersion();
 			Log() << "Spinnaker library initialized, version: " << spinnakerLibraryVersion.major << "." << spinnakerLibraryVersion.minor << "." << spinnakerLibraryVersion.type << "." << spinnakerLibraryVersion.build << endl << endl;
-
 			system->RegisterLoggingEvent(loggingEventHandler);
 			system->SetLoggingEventPriorityLevel(SpinnakerDeviceCommunication::indexToLogLevel(logLevelIndex));
-
-			for (int i = 0; i < system->GetCameras().GetSize(); i++) {
-				cameras.push_back(new SpinnakerCamera(system, i, paramGUI));
-			}
 		}
 	}
 	catch (exception e) {
 		Log() << "Error initializing Spinnaker library: " << e.what() << ". Do the included Spinnaker header and lib files match the dll version?" << endl;
+	}
+}
+
+void SpinnakerSpoutApp::initCameras(params::InterfaceGlRef paramGUI) {
+	assert(system != NULL);
+
+	for (int i = 0; i < system->GetCameras().GetSize(); i++) {
+		cameras.push_back(new SpinnakerCamera(system, i, paramGUI));
 	}
 }
 

@@ -46,6 +46,7 @@ class SpinnakerSpoutApp : public App {
 	// -------- SPINNAKER --------
 	SystemPtr system = NULL;
 	vector<SpinnakerCamera*> cameras;
+	void initSystem();
 	void initCameras(params::InterfaceGlRef paramsGUI);
 	int visibleCamera = 0;
 
