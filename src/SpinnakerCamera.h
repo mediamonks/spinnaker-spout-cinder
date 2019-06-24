@@ -59,7 +59,7 @@ private:
 
 	bool checkCameraStreaming();
 	bool checkCameraStopped();
-	bool cameraStarted = false; // cache of camera streaming state
+	bool cameraStreaming = false; // cache of camera streaming state
 	
 	int prevCaptureWidth = 0;
 	int prevCaptureHeight = 0;

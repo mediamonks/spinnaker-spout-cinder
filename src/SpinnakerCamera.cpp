@@ -93,7 +93,7 @@ bool SpinnakerCamera::checkCameraUpdatedAndRunning() {
 	bool cameraStopped = feedback.second;
 
 	// make sure to register if the camera is no longer in streaming state
-	cameraStarted = cameraStarted && !cameraStopped;
+	cameraStreaming = cameraStreaming && !cameraStopped;
 
 	if (SAVE_TO_NON_VOLATILE_ON_CHANGE && paramApplied) save(); // note: this stops the camera
 
@@ -212,28 +212,28 @@ void SpinnakerCamera::checkParamInterfaceInitialized() {
 }
 
 bool SpinnakerCamera::checkCameraStreaming() {
-	if (cameraStarted) {
+	if (cameraStreaming) {
 		if (!camera->IsValid()) {
 			Log() << "Camera " << cameraIndex << " is invalid, stopping it.";
 			SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 			camera->DeInit();
 			cameraInitialized = false;
-			cameraStarted = false;
+			cameraStreaming = false;
 		}
 	}
 
-	if (cameraStarted) return true;
+	if (cameraStreaming) return true;
 
-	cameraStarted = SpinnakerDeviceCommunication::checkStreamingStarted(camera);
+	cameraStreaming = SpinnakerDeviceCommunication::checkStreamingStarted(camera);
 	prevCaptureWidth = 0;
 	prevCaptureHeight = 0;
 
-	return cameraStarted;
+	return cameraStreaming;
 }
 
 bool SpinnakerCamera::checkCameraStopped() {
-	if (!cameraStarted) return true;
-	cameraStarted = !SpinnakerDeviceCommunication::checkStreamingStopped(camera);
+	if (!cameraStreaming) return true;
+	cameraStreaming = !SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 }
 
 int SpinnakerCamera::getLatestDroppedFrames() {
