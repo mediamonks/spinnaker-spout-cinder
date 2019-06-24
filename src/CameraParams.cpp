@@ -8,7 +8,7 @@ using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
 
-#define POLL_INTERVAL 5 // seconds
+#define POLL_INTERVAL 1 // seconds
 
 bool CameraParams::pollingEnabled = true;
 
