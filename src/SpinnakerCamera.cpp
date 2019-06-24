@@ -16,6 +16,10 @@ using namespace Spinnaker::GenICam;
 
 #define CAMERA_AVAILABLE_CHECK_INTERVAL 2
 
+// Whether to save the changed settings to the non-volatile memory of the camera. 
+// If true, always saves to User Set 1 and makes User Set 1 the default for initialization
+#define SAVE_TO_NON_VOLATILE_ON_CHANGE true 
+
 SpinnakerCamera::SpinnakerCamera(SystemPtr _system, int index, params::InterfaceGlRef _paramGUI) {
 	cameraIndex = index;
 	system = _system;
@@ -84,17 +88,30 @@ bool SpinnakerCamera::checkCameraUpdatedAndRunning() {
 
 	checkParamInterfaceInitialized();
 
-	bool cameraStopped = cameraParams.applyParams();  // potentially stops camera acquisition to apply changed settings
+	pair<bool, bool> feedback = cameraParams.applyParams();  // note: potentially stops camera acquisition to apply changed settings
+	bool paramApplied = feedback.first;
+	bool cameraStopped = feedback.second;
+
+	// make sure to register if the camera is no longer in streaming state
 	cameraStarted = cameraStarted && !cameraStopped;
 
-	cameraParams.pollParamsFromCamera(cameraStopped); // if camera was stopped, poll all parameters
+	if (SAVE_TO_NON_VOLATILE_ON_CHANGE && paramApplied) save(); // note: this stops the camera
 
-	if (!checkCameraStarted()) {
+	cameraParams.pollParamsFromCamera(cameraStopped); // if camera was stopped, poll all parameters once
+
+	if (!checkCameraStreaming()) {
 		Log() << "Unable to start Camera " + to_string(cameraIndex) << ".";
 		return false;
 	}
 
 	return true;
+}
+
+void SpinnakerCamera::save() {
+	checkCameraStopped();
+	camera->UserSetDefault.SetIntValue(1);
+	camera->UserSetSelector.SetIntValue(1);
+	camera->UserSetSave.Execute();
 }
 
 gl::TextureRef SpinnakerCamera::getNextCameraTexture() {
@@ -194,7 +211,7 @@ void SpinnakerCamera::checkParamInterfaceInitialized() {
 	paramInterfaceInitialized = true;
 }
 
-bool SpinnakerCamera::checkCameraStarted() {
+bool SpinnakerCamera::checkCameraStreaming() {
 	if (cameraStarted) {
 		if (!camera->IsValid()) {
 			Log() << "Camera " << cameraIndex << " is invalid, stopping it.";
@@ -212,6 +229,11 @@ bool SpinnakerCamera::checkCameraStarted() {
 	prevCaptureHeight = 0;
 
 	return cameraStarted;
+}
+
+bool SpinnakerCamera::checkCameraStopped() {
+	if (!cameraStarted) return true;
+	cameraStarted = !SpinnakerDeviceCommunication::checkStreamingStopped(camera);
 }
 
 int SpinnakerCamera::getLatestDroppedFrames() {
@@ -245,10 +267,8 @@ void SpinnakerCamera::cleanup() {
 	}
 
 	if (camera != NULL) {
-		SpinnakerDeviceCommunication::checkStreamingStopped(camera);
-		if (camera->IsStreaming()) camera->EndAcquisition();
+		checkCameraStopped();
 		if (camera->IsInitialized()) camera->DeInit();
-		cameraStarted = false;
 		camera = NULL;
 	}
 }

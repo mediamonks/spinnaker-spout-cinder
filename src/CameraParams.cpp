@@ -25,14 +25,16 @@ void CameraParams::createInt(string uiText, string spinnakerName, params::Interf
 }
 
 // returns true if camera stopped
-bool CameraParams::applyParams() {
+pair<bool, bool> CameraParams::applyParams() {
 	bool cameraStopped = false;
+	bool paramApplied = false;
 	for (auto param : params) {
 		if (!param->dirty) continue;
 		param->dirty = false;
+		paramApplied = true;
 		cameraStopped = cameraStopped || param->applyParam();
 	}
-	return cameraStopped;
+	return make_pair(paramApplied, cameraStopped);
 }
 
 void CameraParams::pollParamsFromCamera(bool forceUpdateAll) {

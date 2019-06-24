@@ -23,7 +23,7 @@ public:
 	void createFloat(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, double defaultValue, int cameraIndex = -1, bool needsCameraStop = false, bool poll = false);
 	void createInt(std::string uiText, std::string spinnakerName, params::InterfaceGlRef paramGUI, CameraPtr camera, int defaultValue, int cameraIndex = -1, bool needsCameraStop = false, bool poll = false);
 
-	bool applyParams();
+	pair<bool, bool> applyParams(); // returns pair: 1) was new parameter value applied?, 2) was camera stopped in the process?
 	void pollParamsFromCamera(bool forceUpdateAll = false);
 
 private:

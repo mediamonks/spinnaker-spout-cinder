@@ -57,8 +57,9 @@ private:
 	void checkParamInterfaceInitialized();
 	bool paramInterfaceInitialized = false;
 
-	bool checkCameraStarted();
-	bool cameraStarted = false;
+	bool checkCameraStreaming();
+	bool checkCameraStopped();
+	bool cameraStarted = false; // cache of camera streaming state
 	
 	int prevCaptureWidth = 0;
 	int prevCaptureHeight = 0;
@@ -72,4 +73,6 @@ private:
 
 	bool checkCameraUpdatedAndRunning();
 	gl::TextureRef getNextCameraTexture(); // also makes user camera is initialized. blocks during camera initialization and until next texture is received
+
+	void save();
 };
